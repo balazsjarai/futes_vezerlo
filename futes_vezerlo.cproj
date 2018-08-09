@@ -93,6 +93,7 @@
   <avrgcc.compiler.symbols.DefSymbols>
     <ListValues>
       <Value>DEBUG</Value>
+      <Value>F_CPU 16000000</Value>
     </ListValues>
   </avrgcc.compiler.symbols.DefSymbols>
   <avrgcc.compiler.directories.IncludePaths>
@@ -120,9 +121,100 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BME280\bme280.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="BME280\bme280.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DS18B20\crc8.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DS18B20\crc8.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DS18B20\delay.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DS18B20\delay.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DS18B20\ds18x20.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DS18B20\ds18x20.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DS18B20\onewire.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="DS18B20\onewire.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="I2C\i2c_master.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="I2C\i2c_master.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LCD\lcd.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="LCD\lcd.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="main.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MENU\menu.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MENU\menu.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MENU\menu_items.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MENU\menu_items.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MENU\menu_portsio.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MENU\menu_portsio.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SPI\spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SPI\spi.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="UART\UART.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="UART\UART.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Utils\ftoa.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Utils\ftoa.h">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BME280" />
+    <Folder Include="I2C" />
+    <Folder Include="LCD" />
+    <Folder Include="MENU" />
+    <Folder Include="DS18B20" />
+    <Folder Include="SPI" />
+    <Folder Include="UART" />
+    <Folder Include="Utils" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
