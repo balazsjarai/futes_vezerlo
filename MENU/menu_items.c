@@ -16,22 +16,32 @@ extern volatile unsigned int eeBME280_temp_min, eeBME280_temp_desired;
 extern volatile uint8_t menutimer;
 
 extern volatile uint16_t DHW_temp_actual, DHW_temp_desired, DHW_temp_min;
-extern volatile uint16_t eeDHW_temp_actual, eeDHW_temp_desired, eeDHW_temp_min;
+extern volatile uint16_t eeDHW_temp_desired, eeDHW_temp_min;
 
 extern volatile unsigned char DHW_sensor_ID;
 extern volatile unsigned char eeDHW_sensor_ID;
 
-extern volatile uint16_t solar_temp_actual, solar_temp_desired, solar_temp_up_threshold;
-extern volatile uint16_t buffer_temp_actual;
+extern volatile uint16_t Solar_temp_actual, Solar_temp_desired, Solar_temp_up_threshold;
+extern volatile uint16_t Buffer_temp_actual;
 
-extern volatile char DHW_PWM, solar_pump, buffer_pump;
+extern volatile char DHW_PWM, Solar_pump, Buffer_pump;
+extern volatile eeDHW_PWM, eeSolar_pump, eeBuffer_pump;
 
-extern unsigned char relays_1;
+extern unsigned char Pump_relays, Valve_relays;
 
-/*
-** Callback functions menu
-*/
+extern void SwitchPump();
+extern void SwitchValve();
 
+
+void ChangeMsg()
+{
+	lcd_clrscr();
+	lcd_puts_P("Fel / le gombokkal");
+	lcd_gotoxy(0,1);
+	lcd_puts_hu(PSTR("lehet változtatni"));
+	lcd_gotoxy(0,2);
+	return;
+}
 
 void BME280_temp_CallbackRender(uint8_t which){
 	char buf[7];
@@ -179,7 +189,7 @@ void DHW_switch_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("HMV pumpa állapot"));
 	lcd_gotoxy(0,1);
 	if (DHW_PWM == 0)
-	{	if (relays_1 & DHW_RELAY)
+	{	if (pump_relays & DHW_RELAY)
 			lcd_puts_hu(PSTR("Relé bekapcsolva"));
 		else
 			lcd_puts_hu(PSTR("Relé kikapcsolva"));
@@ -289,14 +299,15 @@ bool DHW_switch_ActionCallback(MENU_BUTTON *button, uint8_t column){
 		case MENU_DOWN:
 			if (DHW_PWM == 0)
 			{
-				if (relays_1 & DHW_RELAY)
-					switch_off_DHW_relay;
+				if (pump_relays & DHW_RELAY)
+					Pump_relays &= ~(1 << DHW_RELAY);;
 				else
-					switch_on_DHW_relay;
+					Pump_relays |= (1 << DHW_RELAY);
+				SwitchPump();
 			}
 			else
 			{
-				if (DHW_PWM_OCR < 10)
+				if (DHW_PWM_OCR > 10)
 					switch_on_PWM_for_DHW_pump();
 				else
 					switch_off_PWM_for_DHW_pump();
@@ -310,7 +321,7 @@ bool DHW_switch_ActionCallback(MENU_BUTTON *button, uint8_t column){
 
 	ChangeMsg();
 	if (DHW_PWM == 0)
-	{	if (relays_1 & DHW_RELAY)
+	{	if (pump_relays & DHW_RELAY)
 			lcd_puts_hu(PSTR("Relé bekapcsolva"));
 		else
 			lcd_puts_hu(PSTR("Relé kikapcsolva"));
@@ -324,20 +335,20 @@ bool DHW_switch_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-# define DHW_SUBMENU_ITEMS  5
-static MENU_ITEM DHW_submenu[DHW_SUBMENU_ITEMS] = {
-	{"HMV akt hõm", 		DHW_temp_actual_CallbackRender, 	menuUniversalCallback, 				0, NULL},
-	{"HMV kívánt hõm",		DHW_temp_desired_CallbackRender,	DHW_temp_desired_ActionCallback,	0, NULL},
-	{"HMV min hõm",			DHW_temp_min_CallbackRender,  		DHW_temp_min_ActionCallback, 		0, NULL},
-	{"HMV szenzor",			DHW_sensor_CallbackRender, 			DHW_sensor_ActionCallback, 			0, NULL},
-	{"HMV pumpa",			NULL,								NULL,					 			DHW_PUMP_ITEMS, DHW_pump_submenu},
-};
-
 #define DHW_PUMP_ITEMS 2
 static MENU_ITEM DHW_pump_submenu[DHW_PUMP_ITEMS] ={
 	{"HMV pumpa beáll", 	DHW_PWM_CallbackRender,				DHW_PWM_ActionCallback, 			0, NULL},
 	{"HMV pumpa kapcs", 	DHW_switch_CallbackRender, 			DHW_switch_ActionCallback			0, NULL},
 }
+
+# define DHW_SUBMENU_ITEMS  5
+static MENU_ITEM DHW_submenu[DHW_SUBMENU_ITEMS] = {
+	{"HMV akt hõm", 		DHW_temp_actual_CallbackRender, 	NULL, 								0,				NULL},
+	{"HMV kívánt hõm",		DHW_temp_desired_CallbackRender,	DHW_temp_desired_ActionCallback,	0,				NULL},
+	{"HMV min hõm",			DHW_temp_min_CallbackRender,  		DHW_temp_min_ActionCallback, 		0, 				NULL},
+	{"HMV szenzor",			DHW_sensor_CallbackRender, 			DHW_sensor_ActionCallback, 			0, 				NULL},
+	{"HMV pumpa",			NULL,								NULL,					 			DHW_PUMP_ITEMS, DHW_pump_submenu},
+};
 
 #define VALVES_SUBMENU_ITEMS 3
 static MENU_ITEM VALVES_submenu[VALVES_SUBMENU_ITEMS] = {
@@ -384,14 +395,4 @@ MENU_ITEM *menuItemsGetHomeMenu(){
 
 uint8_t menuItemsGetHomeMenuSize(){
 	return MENU_HOME_ITEMS;
-}
-
-void ChangeMsg()
-{
-	lcd_clrscr();
-	lcd_puts_P("Fel / le gombokkal");
-	lcd_gotoxy(0,1);
-	lcd_puts_hu(PSTR("lehet változtatni"));
-	lcd_gotoxy(0,2);
-	return;
 }

@@ -151,4 +151,44 @@ extern void uart1_puts_p(const char *s );
 /** @brief  Macro to automatically put a string constant into program memory */
 #define uart1_puts_P(__s)       uart1_puts_p(PSTR(__s))
 
+
+/**
+ * @brief    Put integer to ringbuffer for transmitting via UART.
+ *
+ * The integer is converted to a string which is buffered by the uart 
+ * library in a circular buffer and one character at a time is transmitted 
+ * to the UART using interrupts.
+ *
+ * @param    value to transfer
+ * @return   none
+ * @see      uart_puts_p
+ */
+extern void uart_puti( int i );
+
+/**
+ * @brief    Put nibble as hex to ringbuffer for transmit via UART.
+ *
+ * The lower nibble of the parameter is convertet to correspondig
+ * hex-char and put in a circular buffer and one character at a time 
+ * is transmitted to the UART using interrupts.
+ *
+ * @param    value to transfer (byte, only lower nibble converted)
+ * @return   none
+ * @see      uart_putc
+ */
+extern void uart_puthex_nibble(const unsigned char b);
+
+/**
+ * @brief    Put byte as hex to ringbuffer for transmit via UART.
+ *
+ * The upper and lower nibble of the parameter are convertet to 
+ * correspondig hex-chars and put in a circular buffer and one 
+ * character at a time is transmitted to the UART using interrupts.
+ *
+ * @param    value to transfer
+ * @return   none
+ * @see      uart_puthex_nibble
+ */
+extern void uart_puthex_byte(const unsigned char b);
+
 /**@}*/

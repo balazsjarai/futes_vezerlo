@@ -21,101 +21,108 @@
 #include "DS18B20/ds18x20.h"
 #include "DS18B20/onewire.h"
 
-#define UART_BAUD_RATE      9600
-
-#define RELAYS_1_PIN	PINA1
-
-#define DHW_RELAY 		1
-#define SOLAR_RELAY 	2
-#define BUFFER_RELAY 	3
-
-#define DHW_PWM_OCR		OCRA2
-
-volatile float bme280_temp; char BME280_temp_buf[5];
-volatile float bme280_humid; char BME280_humid_buf[5];
 volatile uint8_t menutimer = 10;
 
+volatile float BME280_temp; char BME280_temp_buf[5];
+volatile float BME280_humid; char BME280_humid_buf[5];
+volatile int BME280_temp_min = 10;
+volatile int BME280_temp_desired = 15;
+
 volatile uint16_t DHW_temp_actual, DHW_temp_desired, DHW_temp_max, DHW_temp_lowlimit; char DHW_temp_actual_buf[5];
-volatile uint16_t solar_temp_actual, solar_temp_desired, solar_temp_up_threshold;
-volatile uint16_t buffer_temp_actual;
-volatile uint16_t first_termo, second_termo, aux_temp_actual, aux_temp_desired, forward_heat_temp;
+volatile uint16_t Solar_temp_actual, Solar_temp_desired, Solar_temp_up_threshold;
+volatile uint16_t Buffer_temp_actual, Forward_heat_temp;
 
-volatile char DHW_pump, DHW_PWM, solar_pump, buffer_pump, RELAYED_PUMP;
+volatile char DHW_pump, DHW_PWM, Solar_pump, Buffer_pump, RELAYED_PUMP;
 
-unsigned char relays_1;
+unsigned char Pump_relays;
+unsigned char Valve_relays;
+
 unsigned char DHW_sensor_ID = 0;
 unsigned char EEMEM eeDHW_sensor_ID = 0;
+
+uint8_t nSensors;
+uint8_t gSensorIDs[6][OW_ROMCODE_SIZE];
 
 
 ISR(ADC_vect)
 {
-	if (ADMUX & (1<<MUX0))
-	{
-		OCR0 = ADC >> 2; //ADC / 4; jobbra shiftelés = osztás néggyel
-		ADMUX &= ~(1<<MUX0);
-	}
+	if (ADC < 10)
+		OCR3C = 10;
 	else
-	{
-		tempADC = ADC;
-		ADMUX |= (1<<MUX0);
-	}
-	if (OCR0 == 0 || OCR0 == 255)
-	OCR0 = 128;
+		OCR3C = ADC;	
 }
 
 ISR(TIMER1_COMPA_vect)
 {
 	sensor_read();
-}
-
-void beep()
-{
-	TCCR0 |= (1 << CS00)|(1 << CS02);
-	OCR0 = 125;
-	TIMSK |= (1 << OCIE0);
-	BUZZER_PORT |= (1 << BUZZER_PIN);
+	check_conditions();
 }
 
 void sensor_read()
 {
 	static uint8_t timer_state = BMP280_temp;
 	char buf[10];
-	div_t tempLM;
 
 	switch (timer_state)
 	{
-		case (BMP280_temp):
-			bme280_temp = bme280_readTemperature();
-			ftoa(BME280_temp_buf, bme280_temp, 2);
+		case (BME280_temp):
+			BME280_temp = bme280_readTemperature();
+			ftoa(BME280_temp_buf, BME280_temp, 2);
 			uart_puts_p(PSTR("BME280 Temperature: ")); uart_puts(BME280_temp_buf); uart_puts_p(PSTR("C \n"));
 			timer_state++;
 		break;
 
-		case (BMP280_humid):
-			bme280_humid = bme280_readHumidity();
-			ftoa(BME280_humid_buf, bme280_humid, 2);
+		case (BME280_humid):
+			BME280_humid = bme280_readHumidity();
+			ftoa(BME280_humid_buf, BME280_humid, 2);
 			uart_puts_p(PSTR("BME280 Humidity: "));	uart_puts(BME280_humid_buf);	uart_puts_p(PSTR("% \n"));
-			timer_state++;
-		break;
-
-		case (ADC_state):
+			
+			ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
+			for ( i=0; i<nSensors; i++ )
+			{
+				DS18X20_start_meas(DS18X20_POWER_EXTERN,&gSensorIDs[i][0]);
+			}
 			
 			timer_state++;
 		break;
 
-		case (ADC_state_ex):
-		
-		
+		case (DS18B20):
+			
+			ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
+			for ( i=0; i<nSensors; i++ )
+			{
+				if ( DS18X20_read_meas( &gSensorIDs[i][0], &subzero, &cel, &cel_frac_bits) == DS18X20_OK )
+				{
+					switch (i)
+					{
+						case (DHW_sensor_ID):
+						uart_puts_P("DHW temperature: ");
+					}
+					uart_puti(subzero); uart_puti(cel); uart_puts_P("."); uart_puti(cel_frac_bits); uart_puts_P("\n");
+				}
+			}
+			
 			timer_state++;
 		break;
-
-		case (DS18B20):
-
+		
+		case (MAX31865):
+			SPIInit();
+			
+			char temp1;
+			char temp2;
+			temp1 = SPIWrite(MAX31865_1_CS_PIN, READ_RTD_LSB);
+			temp2 = SPIWrite(MAX31865_1_CS_PIN, 0xFF);
+			
+			uart_puts_P("MAX1: ");
+			uart_puthex_nibble(temp1); uart_puthex_nibble(temp2);
+			uart_puts_P("\n");
+			
+			SPIClose();
 			timer_state = 0;
 		break;
 
 		default:
-		timer_state = 0;
+			timer_state = 0;
 		break;
 	}
 
@@ -124,180 +131,221 @@ void sensor_read()
 		lcd_clrscr();
 		lcd_puts_hu(PSTR("BME280 hõm ")); lcd_puts(BME280_temp_buf); 
 		lcd_gotoxy(0,1);
-		lcd_puts_hu(PSTR("HMV hõm ")); lcd_puts(DHW_temp_actual_buf);
-		
+		lcd_puts_hu(PSTR("HMV hõm ")); lcd_puts(DHW_temp_actual_buf);		
 	}
 	else
-	menutimer--;
+		menutimer--;
+	
+	SPIInit();
+	SPIWrite(2, menutimer);
+	SPIClose();
 
-	//PORTD ^= (1 << PIND7);
-
+	ADCSRA |= (1<<ADSC);
+	
 	return;
 }
 
-
-void switch_on_DHW_relay()
+void check_conditions()
 {
-	relays_1 |= (1 << DHW_RELAY);
-	SPI_Write(RELAYS_1_PIN, relays_1);
-}
+	// DHW felsõ kör
+	if (DHW_temp_actual < DHW_temp_min && (solar_temp_actual < DHW_temp_actual || Buffer_temp_actual < DHW_temp_actual))
+	{
+		if (DHW_pump == RELAYED_PUMP)
+		{
+			Pump_relays |= (1 << DHW_RELAY);
+		}
+		else
+		{
+			switch_on_PWM_for_DHW_pump();
+			uint16_t temp_diff = DHW_temp_desired - DHW_temp_actual;
+			if (temp_diff > 30)
+				DHW_PWM = 20;
+			else if (temp_diff > 20)
+				DHW_PWM = 60;
+			else if (temp_diff > 10)
+				DHW_PWM = 150;
+			else if (temp_diff > 5)
+				DHW_PWM = 220;
+			else if (temp_diff > 0)
+				DHW_PWM = 240;
+		}
+	}
+	else if (DHW_temp_actual > DHW_temp_desired || Solar_temp_actual > DHW_temp_actual || Buffer_temp_actual > DHW_temp_actual)
+	{
+		if (DHW_pump == RELAYED_PUMP)
+		{
+			Pump_relays &= ~(1 << DHW_RELAY);
+		}
+		else
+		{
+			switch_off_PWM_for_DHW_pump();
+		}
+	}
 
-void switch_off_DHW_relay()
-{
-	relays_1 &= ~(1 << DHW_RELAY);
-	SPI_Write(RELAYS_1_PIN, relays_1);
+	if (Solar_temp_actual > Solar_temp_up_threshold)
+	{
+		if (Solar_temp_actual > DHW_temp_actual && Solar_temp_actual < DHW_temp_max)
+		{
+			Pump_relays |= (1 << SOLAR_RELAY);
+			Valve_relays |= (1 << SOLAR_VALVE);			
+		}
+		else if (Solar_temp_actual > DHW_temp_max && buffer_temp_actual < Solar_temp_actual)
+		{
+			Pump_relays |= (1 << SOLAR_RELAY);
+			Valve_relays |= (1 << BUFFER_VALVE);
+		}
+	}
+	else
+	{
+		pump_solar_off();
+		if (DHW_temp_actual < DHW_temp_desired && Buffer_temp_actual > DHW_temp_actual)
+		{
+			Pump_relays |= (1 << SOLAR_BACK_RELAY);
+		}
+	}
+
+	if (Solar_pump != RELAYED_PUMP)
+	{
+		uint16_t temp_diff = Solar_temp_desired - DHW_temp_actual;
+		if (temp_diff > 30)
+			DHW_PWM = 20;
+		else if (temp_diff > 20)
+			DHW_PWM = 60;
+		else if (temp_diff > 10)
+			DHW_PWM = 150;
+		else if (temp_diff > 5)
+			DHW_PWM = 220;
+		else if (temp_diff > 0)
+			DHW_PWM = 240;
+	}
+
+	if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)) || (THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)) || BME_temp < BME280_temp_desired)
+	{
+		if (Buffer_temp_actual < Forward_heat_temp)
+		{
+			Pump_relays |= (1 << GAS_RELAY);
+			Pump_relays &= ~(1 << BUFFER_RELAY);
+		}
+		else
+		{
+			Pump_relays &= ~(1 << GAS_RELAY);
+			Pump_relays |= (1 << BUFFER_RELAY);
+		}
+		
+		if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)))
+			Valve_relays |= (1 << FIRST_FLOOR_VALVE);
+		if (!(THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)))
+			Valve_relays &= ~(1 << FIRST_FLOOR_VALVE);
+		
+		if ((THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)))
+			Valve_relays |= (1 << SECOND_FLOOR_VALVE);
+		if (!(THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)))
+			Valve_relays &= ~(1 << SECOND_FLOOR_VALVE);
+	}
+	else
+	{
+		Pump_relays &= ~((1 << BUFFER_RELAY) | (1 << GAS_RELAY));
+		Valve_relays &= ~((1 << BUFFER_VALVE) | (1 << FIRST_FLOOR_VALVE) | (1 << SECOND_FLOOR_VALVE));
+	}
+	
+	SwitchPump();
+	SwitchValve();
 }
 
 void switch_on_PWM_for_DHW_pump(){};
 void switch_off_PWM_for_DHW_pump(){};
 
+void SwitchValve()
+{
+	SPIInit();
+	SPIWrite(VALVES_CS_PIN, Valve_relays);
+	SPIClose();
+}
 
-void valve_solar_on(){};
-void pump_solar_on(){};
-void pump_solar_off(){};
-void valve_buffer_on(){};
-void pump_back_on(){};
-void switch_on_gas(){};
-void switch_on_buffer_heating_pump(){};
-void valve_first_on(){};
-void valve_second_on(){};
+void SwitchPump()
+{
+	SPIInit();
+	SPIWrite(PUMPS_CS_PIN, Pump_relays);
+	SPIClose();
+}
 
 void read_from_eeprom()
 {
-	DWH_sensor_ID = eeprom_read_byte(&eeDHW_sensor_ID);
+	DHW_sensor_ID = eeprom_read_byte(&eeDHW_sensor_ID);
 }
 
-int main(void){
-
-	tempADC = 0;
-	bme280_temp = 0;
-	bme280_pres = 0;
-	bme280_humid = 0;
-
+int main(void)
+{
 	lcd_init(LCD_DISP_ON);
-	//menuInit();
-	//uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
+	menuInit();
+	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
 
-	//ADMUX |= (1<<REFS0) | (1<< REFS1);
-	//ADCSRA |= (1 << ADEN)|(1<<ADIE)|(1<<ADSC)|(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2);
+	DDRF &= ~(1 << PINF0); //ADC input
+	PORTF &= ~(1 << PINF0);
+	
+	BUZZER_DDR |= (1 << BUZZER_PIN);
+	
+	THERMOSTAT_DDR &= ~(1 << FIRST_THERMO_PIN)|(1 << SECOND_THERMO_PIN);
+	THERMOSTAT_PORT |= (1 << FIRST_THERMO_PIN)|(1 << SECOND_THERMO_PIN);
+	
+	i2c_init();
+	init_BME280(); //BMP 280
 
-	//i2c_init();
-	//init_BME280(); //BMP 280
-
-	//InitADCEx();
-
-	//TCCR1B |= (1 << CS12)|(1 << CS10)|(1 << WGM12);
-	//TCNT1 = 0;
-	//OCR1A = 3600;//14400; // 1000ms
-	//TIMSK |= (1 << OCIE1A);
-
-	//MCUCR |= (1 << ISC00);
-	//GICR |= (1 << INT0);
-	//DDRD |= (1 << PIND2);
-	//PORTD |= (1 << PIND2);
-
-	//uart_puts_p(PSTR("Timer initiated\n"));
+	uart_puts_p(PSTR("Timer initiated\n"));
 	sei();
-	//uart_puts_p(PSTR("Interrupt enabled\n"));
+	uart_puts_p(PSTR("Interrupt enabled\n"));
 
 	//reset watchdog
 	//wdt_reset();
 	//WDTCR = (1<<WDE);
 	//WDTCR = (1<<WDP2)|(1<<WDP1)|(1<<WDP0);
+	
+	ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
+	nSensors = search_sensors();
+		
+	uart_puts_P("Found "); uart_puti(nSensors); uart_puts_P(" DS18B20 sensors");
 
+	SPIInit();
+	
+	DDRA |= (1 << PINA6);
+	SPIWrite(6, WRITE_CONFIG);
+	SPIWrite(6, 0xD1);
+	
+	_delay_us(100);
+	char temp1;
+	char temp2;
+	temp1 = SPIWrite(6, READ_CONFIG);
+	temp2 = SPIWrite(6, 0xFF);
+	
+	uart_puts_P("MAX: ");
+	uart_puthex_nibble(temp1); uart_puthex_nibble(temp2);
+	uart_puts_P("\n");	
+	
+	
+	DDRA |= (1 << PINA2);
+	_delay_us(1);
+	SPIWrite(2, 0x55);
+	
+	SPIClose();
+	
 
-	TCCR0 |= (1 << CS00)|(1 << CS01)|(1 << WGM01)|(1 << WGM00)|(1<<COM01);
-	OCR0 = 128;
-	DDRB |= (1 << PINB4);
-	PORTB |= (1 << PINB4);
+	TCCR3A |= (1 << WGM30)|(1<<COM3C1);
+	TCCR3B |= (1 << WGM32)|(1 << CS30)|(1 << CS31);
+	OCR3C = 128;
+	DDRE |= (1 << PINE5);	//LCD led PWM
+	PORTE |= (1 << PINE5);	//LCD led PWM
+	
+	TCCR1B |= (1 << CS12);
+	TCNT1 = 0;
+	OCR1A = 62500;//14400; // 1000ms
+	TIMSK |= (1 << OCIE1A);
 
+	//ADMUX |= (1<<REFS0) | (1<< REFS1);
+	ADCSRA |= (1 << ADEN)|(1<<ADIE)|(1<<ADSC)|(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2);
+	
 	while(1)
 	{
 		menuPollButtons();
-
-		// DHW felsõ kör
-		if (DHW_temp_actual < DHW_temp_lowlimit && (solar_temp_actual < DHW_temp_actual || buffer_temp_actual < DHW_temp_actual))
-		{
-			if (DHW_pump == RELAYED_PUMP)
-			switch_on_DHW_relay();
-			else
-			{
-				switch_on_PWM_for_DHW_pump();
-				uint16_t temp_diff = DHW_temp_desired - DHW_temp_actual;
-				if (temp_diff > 30)
-					DHW_PWM = 20;
-				else if (temp_diff > 20)
-					DHW_PWM = 60;
-				else if (temp_diff > 10)
-					DHW_PWM = 150;
-				else if (temp_diff > 5)
-					DHW_PWM = 220;
-				else if (temp_diff > 0)
-					DHW_PWM = 240;
-			}
-		}
-		else if (DHW_temp_actual > DHW_temp_desired || solar_temp_actual > DHW_temp_actual || buffer_temp_actual > DHW_temp_actual)
-		{
-			if (DHW_pump == RELAYED_PUMP)
-			switch_off_DHW_relay();
-			else
-			{
-				switch_off_PWM_for_DHW_pump();
-			}
-		}
-
-		if (solar_temp_actual > solar_temp_up_threshold)
-		{
-			if (solar_temp_actual > DHW_temp_actual && solar_temp_actual < DHW_temp_max)
-			{
-				valve_solar_on();
-				pump_solar_on();
-			}
-			else if (solar_temp_actual > DHW_temp_max && buffer_temp_actual < solar_temp_actual)
-			{
-				valve_buffer_on();
-				pump_solar_on();
-			}
-		}
-		else
-		{
-			pump_solar_off();
-			if (DHW_temp_actual < DHW_temp_desired && buffer_temp_actual > DHW_temp_actual)
-			{
-				pump_back_on();
-			}
-		}
-
-		if (solar_pump != RELAYED_PUMP)
-		{
-			uint16_t temp_diff = solar_temp_desired - DHW_temp_actual;
-			if (temp_diff > 30)
-			DHW_PWM = 20;
-			else if (temp_diff > 20)
-			DHW_PWM = 60;
-			else if (temp_diff > 10)
-			DHW_PWM = 150;
-			else if (temp_diff > 5)
-			DHW_PWM = 220;
-			else if (temp_diff > 0)
-			DHW_PWM = 240;
-		}
-
-		if (first_termo || second_termo || aux_temp_actual < aux_temp_desired)
-		{
-			if (buffer_temp_actual < forward_heat_temp)
-			{
-				switch_on_gas();
-			}
-			else
-			{
-				switch_on_buffer_heating_pump();
-			}
-			if (first_termo)
-			valve_first_on();
-			if (second_termo)
-			valve_second_on();
-		}
 	}
 	uart_puts_p(PSTR("Fatal error, program end\n"));
 }

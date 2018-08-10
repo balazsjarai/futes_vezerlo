@@ -6,7 +6,7 @@
 #include <avr/pgmspace.h>
 
 #include "menu_portsio.h"
-#include "LCD/lcd.h"
+#include "../LCD/lcd.h"
 #include "menu.h"
 #include "menu_items.h"
 
@@ -169,16 +169,16 @@ void menuInit(){
 	menuReset();
 }
 
-int menuPollButtons(){
+void menuPollButtons(){
 	for(uint8_t i=0; i<MENU_BUTTON_ROLE_COUNT; i++){
 		MENU_BUTTON *b = &menu_buttons[i];
-		// Eliminate button debouncing
-		// http://www.ganssle.com/debouncing-pt2.htm
-		b->state = (b->state << 1) | !((MENU_PORTSIO_PIN) & (1<<(b->button_PIN))) | 0XE000;
 
+		b->state = (b->state << 1) | !((MENU_PORTSIO_PIN) & (1<<(b->button_PIN))) | 0XE000;
+		
 		if(b->state == 0xF000){
 			b->pressed = true;
 			menutimer = 10;
+			BUZZER_PORT |= (1 << BUZZER_PIN);
 			if(current_state->level != MENU_CALLBACK){
 				scrollMenu(b);
 			}else{
@@ -187,11 +187,11 @@ int menuPollButtons(){
 					current_state = &menu_states[current_state->prev_state->level];
 					renderMenu();
 				}
-				return 1;
 			}
 		}else{
 			b->pressed = false;
-			return 0;
+			BUZZER_PORT &= ~(1 << BUZZER_PIN);
 		}
 	}
 }
+

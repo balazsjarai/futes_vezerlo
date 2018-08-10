@@ -7,13 +7,17 @@
 /*
 * General menu buttons
 */
-#define MENU_PORTSIO_DDR					DDRC				// used for buttons in PCB
-#define MENU_PORTSIO_PIN					PINC
-#define MENU_PORTSIO_PORT	     		    PORTC
-#define MENU_PORTSIO_BTN_UP	        	    PORTC2				// button UP
-#define MENU_PORTSIO_BTN_DOWN		        PORTC4				// button DOWN
-#define MENU_PORTSIO_BTN_CONFIRM	        PORTC5      		// button CONFIRM
-#define MENU_PORTSIO_BTN_CANCEL	            PORTC3      		// button CANCEL
+#define MENU_PORTSIO_DDR					DDRD				// used for buttons in PCB
+#define MENU_PORTSIO_PIN					PIND
+#define MENU_PORTSIO_PORT	     		    PORTD
+#define MENU_PORTSIO_BTN_UP	        	    PORTD6  				// button UP
+#define MENU_PORTSIO_BTN_DOWN		        PORTD7  				// button DOWN
+#define MENU_PORTSIO_BTN_CONFIRM	        PORTD5        		// button CONFIRM
+#define MENU_PORTSIO_BTN_CANCEL	            PORTD4        		// button CANCEL
+
+#define BUZZER_DDR		DDRC
+#define BUZZER_PORT		PORTC
+#define BUZZER_PIN		PINC0
 
 
 void menuPortsioInit();
