@@ -4,17 +4,18 @@
 #include <stdlib.h>
 
 typedef enum {
-	BME280_temp,
-	BME280_humid,
-	DS18B20,
-	MAX31865
+	BME280_temp_state,
+	BME280_humid_state,
+	DS18B20_state1,
+	DS18B20_state2,
+	MAX31865_state
 } states;
 
 #define UART_BAUD_RATE      9600
 
 #define DHW_RELAY_CS_PIN	1
 #define PUMPS_CS_PIN		2
-#define VALVE_CS_PIN		3
+#define VALVES_CS_PIN		3
 #define MAX31865_1_CS_PIN	7
 
 #define DHW_RELAY 			1
@@ -28,7 +29,7 @@ typedef enum {
 #define SOLAR_VALVE			3
 #define BUFFER_VALVE		4
 
-#define DHW_PWM_OCR		OCRA2
+#define DHW_PWM_OCR		OCR2
 
 #define BUZZER_DDR		DDRC
 #define BUZZER_PORT		PORTC

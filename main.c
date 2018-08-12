@@ -11,11 +11,11 @@
 #include "main.h"
 #include "MENU/menu.h"
 #include "LCD/lcd.h"
-#include "DHT/DHTxx.h"
-#include "BMP280/bme280.h"
+#include "BME280/bme280.h"
 #include "Utils/ftoa.h"
 #include "UART/UART.h"
 #include "SPI/spi.h"
+#include "MAX31865/max31865.h"
 #include "DS18B20/crc8.h"
 #include "DS18B20/delay.h"
 #include "DS18B20/ds18x20.h"
@@ -28,17 +28,24 @@ volatile float BME280_humid; char BME280_humid_buf[5];
 volatile int BME280_temp_min = 10;
 volatile int BME280_temp_desired = 15;
 
-volatile uint16_t DHW_temp_actual, DHW_temp_desired, DHW_temp_max, DHW_temp_lowlimit; char DHW_temp_actual_buf[5];
+volatile int eeBME280_temp_min = 10;
+volatile int eeBME280_temp_desired = 15;
+
+volatile uint16_t DHW_temp_actual, DHW_temp_desired, DHW_temp_max, DHW_temp_min; char DHW_temp_actual_buf[5];
 volatile uint16_t Solar_temp_actual, Solar_temp_desired, Solar_temp_up_threshold;
 volatile uint16_t Buffer_temp_actual, Forward_heat_temp;
 
+volatile uint16_t eeDHW_temp_desired, eeDHW_temp_max, eeDHW_temp_min;
+
 volatile char DHW_pump, DHW_PWM, Solar_pump, Buffer_pump, RELAYED_PUMP;
+volatile char eeDHW_pump, eeDHW_PWM, eeSolar_pump, eeBuffer_pump, eeRELAYED_PUMP;
+
 
 unsigned char Pump_relays;
 unsigned char Valve_relays;
 
-unsigned char DHW_sensor_ID = 0;
-unsigned char EEMEM eeDHW_sensor_ID = 0;
+unsigned int DHW_sensor_ID = 0;
+unsigned int EEMEM eeDHW_sensor_ID = 0;
 
 uint8_t nSensors;
 uint8_t gSensorIDs[6][OW_ROMCODE_SIZE];
@@ -55,49 +62,52 @@ ISR(ADC_vect)
 ISR(TIMER1_COMPA_vect)
 {
 	sensor_read();
-	check_conditions();
+	//check_conditions();
 }
 
 void sensor_read()
 {
-	static uint8_t timer_state = BMP280_temp;
-	char buf[10];
+	static uint8_t timer_state = BME280_temp_state;
+	uint8_t i;
+	uint8_t subzero, cel, cel_frac_bits;
+
 
 	switch (timer_state)
 	{
-		case (BME280_temp):
+		case (BME280_temp_state):
 			BME280_temp = bme280_readTemperature();
 			ftoa(BME280_temp_buf, BME280_temp, 2);
 			uart_puts_p(PSTR("BME280 Temperature: ")); uart_puts(BME280_temp_buf); uart_puts_p(PSTR("C \n"));
 			timer_state++;
 		break;
 
-		case (BME280_humid):
+		case (BME280_humid_state):
 			BME280_humid = bme280_readHumidity();
 			ftoa(BME280_humid_buf, BME280_humid, 2);
 			uart_puts_p(PSTR("BME280 Humidity: "));	uart_puts(BME280_humid_buf);	uart_puts_p(PSTR("% \n"));
 			
+			timer_state++;
+		break;
+
+		case (DS18B20_state1):
 			ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
 			for ( i=0; i<nSensors; i++ )
 			{
 				DS18X20_start_meas(DS18X20_POWER_EXTERN,&gSensorIDs[i][0]);
 			}
-			
 			timer_state++;
 		break;
-
-		case (DS18B20):
+		
+		case (DS18B20_state2):
 			
 			ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
 			for ( i=0; i<nSensors; i++ )
 			{
 				if ( DS18X20_read_meas( &gSensorIDs[i][0], &subzero, &cel, &cel_frac_bits) == DS18X20_OK )
 				{
-					switch (i)
-					{
-						case (DHW_sensor_ID):
+					if (i == DHW_sensor_ID)
 						uart_puts_P("DHW temperature: ");
-					}
+
 					uart_puti(subzero); uart_puti(cel); uart_puts_P("."); uart_puti(cel_frac_bits); uart_puts_P("\n");
 				}
 			}
@@ -105,7 +115,7 @@ void sensor_read()
 			timer_state++;
 		break;
 		
-		case (MAX31865):
+		case (MAX31865_state):
 			SPIInit();
 			
 			char temp1;
@@ -136,10 +146,6 @@ void sensor_read()
 	else
 		menutimer--;
 	
-	SPIInit();
-	SPIWrite(2, menutimer);
-	SPIClose();
-
 	ADCSRA |= (1<<ADSC);
 	
 	return;
@@ -148,7 +154,7 @@ void sensor_read()
 void check_conditions()
 {
 	// DHW felsõ kör
-	if (DHW_temp_actual < DHW_temp_min && (solar_temp_actual < DHW_temp_actual || Buffer_temp_actual < DHW_temp_actual))
+	if (DHW_temp_actual < DHW_temp_min && (Solar_temp_actual < DHW_temp_actual || Buffer_temp_actual < DHW_temp_actual))
 	{
 		if (DHW_pump == RELAYED_PUMP)
 		{
@@ -189,7 +195,7 @@ void check_conditions()
 			Pump_relays |= (1 << SOLAR_RELAY);
 			Valve_relays |= (1 << SOLAR_VALVE);			
 		}
-		else if (Solar_temp_actual > DHW_temp_max && buffer_temp_actual < Solar_temp_actual)
+		else if (Solar_temp_actual > DHW_temp_max && Buffer_temp_actual < Solar_temp_actual)
 		{
 			Pump_relays |= (1 << SOLAR_RELAY);
 			Valve_relays |= (1 << BUFFER_VALVE);
@@ -197,7 +203,7 @@ void check_conditions()
 	}
 	else
 	{
-		pump_solar_off();
+		Pump_relays &= ~(1 << SOLAR_RELAY);
 		if (DHW_temp_actual < DHW_temp_desired && Buffer_temp_actual > DHW_temp_actual)
 		{
 			Pump_relays |= (1 << SOLAR_BACK_RELAY);
@@ -219,7 +225,7 @@ void check_conditions()
 			DHW_PWM = 240;
 	}
 
-	if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)) || (THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)) || BME_temp < BME280_temp_desired)
+	if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)) || (THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)) || BME280_temp < BME280_temp_desired)
 	{
 		if (Buffer_temp_actual < Forward_heat_temp)
 		{
@@ -251,6 +257,46 @@ void check_conditions()
 	SwitchPump();
 	SwitchValve();
 }
+
+uint8_t search_sensors(void)
+{
+	uint8_t i;
+	uint8_t id[OW_ROMCODE_SIZE];
+	uint8_t diff, nSensors;
+	
+	/* clear display and home cursor */
+	uart_puts_P("Bus scanning ...\n");
+	
+	nSensors = 0;
+	
+	for( diff = OW_SEARCH_FIRST;
+	diff != OW_LAST_DEVICE && nSensors < 6 ; )
+	{
+		DS18X20_find_sensor( &diff, &id[0] );
+		
+		if( diff == OW_PRESENCE_ERR ) {
+			uart_puts_P("No sensor found\n");
+			break;
+		}
+		
+		if( diff == OW_DATA_ERR ) {
+			uart_puts_P("Bus error\n");
+			break;
+		}
+		
+		for (i=0;i<OW_ROMCODE_SIZE;i++)
+		{
+			gSensorIDs[nSensors][i]=id[i];
+			//uart_puts_P("ID: "); uart_puti(id[i]); uart_puts_P("\n");
+		}
+		
+		nSensors++;
+	}
+	
+	delay_ms(1000);
+	return nSensors;
+}
+
 
 void switch_on_PWM_for_DHW_pump(){};
 void switch_off_PWM_for_DHW_pump(){};
@@ -303,19 +349,19 @@ int main(void)
 	ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
 	nSensors = search_sensors();
 		
-	uart_puts_P("Found "); uart_puti(nSensors); uart_puts_P(" DS18B20 sensors");
+	uart_puts_P("Found "); uart_puti(nSensors); uart_puts_P(" DS18B20 sensors\n");
 
 	SPIInit();
 	
-	DDRA |= (1 << PINA6);
-	SPIWrite(6, WRITE_CONFIG);
-	SPIWrite(6, 0xD1);
+	DDRA |= (1 << MAX31865_1_CS_PIN);
+	SPIWrite(MAX31865_1_CS_PIN, WRITE_CONFIG);
+	SPIWrite(MAX31865_1_CS_PIN, 0xD1);
 	
 	_delay_us(100);
 	char temp1;
 	char temp2;
-	temp1 = SPIWrite(6, READ_CONFIG);
-	temp2 = SPIWrite(6, 0xFF);
+	temp1 = SPIWrite(MAX31865_1_CS_PIN, READ_CONFIG);
+	temp2 = SPIWrite(MAX31865_1_CS_PIN, 0xFF);
 	
 	uart_puts_P("MAX: ");
 	uart_puthex_nibble(temp1); uart_puthex_nibble(temp2);

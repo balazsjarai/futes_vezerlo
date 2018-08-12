@@ -1,6 +1,7 @@
 ﻿#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include <stdlib.h>
 #include "uart.h"
 
 

@@ -77,6 +77,6 @@ void menuReset();
  @param    void                                        
  @return   none
 */
-int menuPollButtons();
+void menuPollButtons();
 
 #endif /* MENU_H_ */

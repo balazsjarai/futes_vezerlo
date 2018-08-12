@@ -22,13 +22,13 @@ static inline void delayloop16(uint16_t count)
                    );                            
 }
 // delayloop16(x) eats 4 cycles per x
-#define DELAY_US_CONV(us) ((uint16_t)(((((us)*1000L)/(1000000000/F_OSC))-1)/4))
+#define DELAY_US_CONV(us) ((uint16_t)(((((us)*1000L)/(1000000000/F_CPU))-1)/4))
 #define delay_us(us)	  delayloop16(DELAY_US_CONV(us))
 
 /* delay function for millisec
   (6 cycles per x + 20(?) overhead) */
 void delayloop32( uint32_t l); // not inline
-#define DELAY_MS_CONV(ms) ( (uint32_t) (ms*(F_OSC/6000L)) ) 
+#define DELAY_MS_CONV(ms) ( (uint32_t) (ms*(F_CPU/6000L)) ) 
 #define delay_ms(ms)  delayloop32(DELAY_MS_CONV(ms))
 
 /* mth 9/04:
