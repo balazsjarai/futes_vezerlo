@@ -252,12 +252,14 @@ bool DHW_temp_min_ActionCallback(MENU_BUTTON *button, uint8_t column){
 bool DHW_sensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (++DHW_sensor_ID > nSensors);
+			DHW_sensor_ID++;
+			if (DHW_sensor_ID == nSensors)
 				DHW_sensor_ID = 0;
 			break;
 		case MENU_DOWN:
-			if (--DHW_sensor_ID == DS18B20_MAX_NO);
-				DHW_sensor_ID = nSensors;
+			DHW_sensor_ID--;
+			if (DHW_sensor_ID >= nSensors);
+				DHW_sensor_ID = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
 			eeprom_update_byte(&eeDHW_sensor_ID, DHW_sensor_ID);

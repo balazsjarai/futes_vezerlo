@@ -912,7 +912,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x32e0
+.text           0x00000000     0x32ea
  *(.vectors)
  .vectors       0x00000000       0x8c C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
                 0x00000000                __vector_default
@@ -1268,288 +1268,288 @@ END GROUP
                 0x000012d6       0x3e main.o
                 0x000012d6                __vector_21
  .text.sensor_read
-                0x00001314      0x2aa main.o
+                0x00001314      0x2a2 main.o
                 0x00001314                sensor_read
  .text.search_sensors
-                0x000015be       0xa8 main.o
-                0x000015be                search_sensors
+                0x000015b6       0xa8 main.o
+                0x000015b6                search_sensors
  .text.switch_on_PWM_for_DHW_pump
-                0x00001666        0x2 main.o
-                0x00001666                switch_on_PWM_for_DHW_pump
+                0x0000165e        0x2 main.o
+                0x0000165e                switch_on_PWM_for_DHW_pump
  .text.switch_off_PWM_for_DHW_pump
-                0x00001668        0x2 main.o
-                0x00001668                switch_off_PWM_for_DHW_pump
+                0x00001660        0x2 main.o
+                0x00001660                switch_off_PWM_for_DHW_pump
  .text.SwitchValve
-                0x0000166a       0x14 main.o
-                0x0000166a                SwitchValve
+                0x00001662       0x14 main.o
+                0x00001662                SwitchValve
  .text.SwitchPump
-                0x0000167e       0x14 main.o
-                0x0000167e                SwitchPump
+                0x00001676       0x14 main.o
+                0x00001676                SwitchPump
  .text.check_conditions
-                0x00001692      0x2aa main.o
-                0x00001692                check_conditions
+                0x0000168a      0x2aa main.o
+                0x0000168a                check_conditions
  .text.__vector_12
-                0x0000193c       0x5c main.o
-                0x0000193c                __vector_12
+                0x00001934       0x5c main.o
+                0x00001934                __vector_12
  .text.read_from_eeprom
-                0x00001998       0x7a main.o
-                0x00001998                read_from_eeprom
- .text.main     0x00001a12      0x14c main.o
-                0x00001a12                main
+                0x00001990       0x7a main.o
+                0x00001990                read_from_eeprom
+ .text.main     0x00001a0a      0x14c main.o
+                0x00001a0a                main
  .text.renderMenu
-                0x00001b5e       0xd6 MENU/menu.o
+                0x00001b56       0xd6 MENU/menu.o
  .text.menuReset
-                0x00001c34       0x1e MENU/menu.o
-                0x00001c34                menuReset
+                0x00001c2c       0x1e MENU/menu.o
+                0x00001c2c                menuReset
  .text.menuInit
-                0x00001c52        0xa MENU/menu.o
-                0x00001c52                menuInit
+                0x00001c4a        0xa MENU/menu.o
+                0x00001c4a                menuInit
  .text.menuPollButtons
-                0x00001c5c      0x2dc MENU/menu.o
-                0x00001c5c                menuPollButtons
+                0x00001c54      0x2dc MENU/menu.o
+                0x00001c54                menuPollButtons
  .text.DHW_PWM_CallbackRender
-                0x00001f38       0x30 MENU/menu_items.o
-                0x00001f38                DHW_PWM_CallbackRender
+                0x00001f30       0x30 MENU/menu_items.o
+                0x00001f30                DHW_PWM_CallbackRender
  .text.ZoneValve1_CallbackRender
-                0x00001f68       0x30 MENU/menu_items.o
-                0x00001f68                ZoneValve1_CallbackRender
+                0x00001f60       0x30 MENU/menu_items.o
+                0x00001f60                ZoneValve1_CallbackRender
  .text.ZoneValve2_CallbackRender
-                0x00001f98       0x30 MENU/menu_items.o
-                0x00001f98                ZoneValve2_CallbackRender
+                0x00001f90       0x30 MENU/menu_items.o
+                0x00001f90                ZoneValve2_CallbackRender
  .text.ThreeWayValve1_CallbackRender
-                0x00001fc8       0x30 MENU/menu_items.o
-                0x00001fc8                ThreeWayValve1_CallbackRender
+                0x00001fc0       0x30 MENU/menu_items.o
+                0x00001fc0                ThreeWayValve1_CallbackRender
  .text.ThreeWayValve2_CallbackRender
-                0x00001ff8       0x30 MENU/menu_items.o
-                0x00001ff8                ThreeWayValve2_CallbackRender
+                0x00001ff0       0x30 MENU/menu_items.o
+                0x00001ff0                ThreeWayValve2_CallbackRender
  .text.DebugMode_CallbackRender
-                0x00002028       0x30 MENU/menu_items.o
-                0x00002028                DebugMode_CallbackRender
+                0x00002020       0x30 MENU/menu_items.o
+                0x00002020                DebugMode_CallbackRender
  .text.BME280_temp_CallbackRender
-                0x00002058       0x1e MENU/menu_items.o
-                0x00002058                BME280_temp_CallbackRender
+                0x00002050       0x1e MENU/menu_items.o
+                0x00002050                BME280_temp_CallbackRender
  .text.BME280_humidity_CallbackRender
-                0x00002076       0x1e MENU/menu_items.o
-                0x00002076                BME280_humidity_CallbackRender
+                0x0000206e       0x1e MENU/menu_items.o
+                0x0000206e                BME280_humidity_CallbackRender
  .text.DHW_switch_CallbackRender
-                0x00002094       0x70 MENU/menu_items.o
-                0x00002094                DHW_switch_CallbackRender
+                0x0000208c       0x70 MENU/menu_items.o
+                0x0000208c                DHW_switch_CallbackRender
  .text.BME280_min_CallbackRender
-                0x00002104       0x54 MENU/menu_items.o
-                0x00002104                BME280_min_CallbackRender
+                0x000020fc       0x54 MENU/menu_items.o
+                0x000020fc                BME280_min_CallbackRender
  .text.BME280_desired_CallbackRender
-                0x00002158       0x54 MENU/menu_items.o
-                0x00002158                BME280_desired_CallbackRender
+                0x00002150       0x54 MENU/menu_items.o
+                0x00002150                BME280_desired_CallbackRender
  .text.DHW_temp_actual_CallbackRender
-                0x000021ac       0x54 MENU/menu_items.o
-                0x000021ac                DHW_temp_actual_CallbackRender
+                0x000021a4       0x54 MENU/menu_items.o
+                0x000021a4                DHW_temp_actual_CallbackRender
  .text.DHW_temp_desired_CallbackRender
-                0x00002200       0x54 MENU/menu_items.o
-                0x00002200                DHW_temp_desired_CallbackRender
+                0x000021f8       0x54 MENU/menu_items.o
+                0x000021f8                DHW_temp_desired_CallbackRender
  .text.DHW_temp_min_CallbackRender
-                0x00002254       0x54 MENU/menu_items.o
-                0x00002254                DHW_temp_min_CallbackRender
+                0x0000224c       0x54 MENU/menu_items.o
+                0x0000224c                DHW_temp_min_CallbackRender
  .text.DHW_sensor_CallbackRender
-                0x000022a8       0x48 MENU/menu_items.o
-                0x000022a8                DHW_sensor_CallbackRender
+                0x000022a0       0x48 MENU/menu_items.o
+                0x000022a0                DHW_sensor_CallbackRender
  .text.MenuTimer_CallbackRender
-                0x000022f0       0x40 MENU/menu_items.o
-                0x000022f0                MenuTimer_CallbackRender
+                0x000022e8       0x40 MENU/menu_items.o
+                0x000022e8                MenuTimer_CallbackRender
  .text.LCDBackLight_CallbackRender
-                0x00002330       0x48 MENU/menu_items.o
-                0x00002330                LCDBackLight_CallbackRender
+                0x00002328       0x48 MENU/menu_items.o
+                0x00002328                LCDBackLight_CallbackRender
  .text.ChangeMsg
-                0x00002378       0x26 MENU/menu_items.o
-                0x00002378                ChangeMsg
+                0x00002370       0x26 MENU/menu_items.o
+                0x00002370                ChangeMsg
  .text.BME280_min_ActionCallback
-                0x0000239e       0x7e MENU/menu_items.o
-                0x0000239e                BME280_min_ActionCallback
+                0x00002396       0x7e MENU/menu_items.o
+                0x00002396                BME280_min_ActionCallback
  .text.BME280_desired_ActionCallback
-                0x0000241c       0x7e MENU/menu_items.o
-                0x0000241c                BME280_desired_ActionCallback
+                0x00002414       0x7e MENU/menu_items.o
+                0x00002414                BME280_desired_ActionCallback
  .text.DHW_temp_desired_ActionCallback
-                0x0000249a       0x7e MENU/menu_items.o
-                0x0000249a                DHW_temp_desired_ActionCallback
+                0x00002492       0x7e MENU/menu_items.o
+                0x00002492                DHW_temp_desired_ActionCallback
  .text.DHW_temp_min_ActionCallback
-                0x00002518       0x7e MENU/menu_items.o
-                0x00002518                DHW_temp_min_ActionCallback
+                0x00002510       0x7e MENU/menu_items.o
+                0x00002510                DHW_temp_min_ActionCallback
  .text.DHW_sensor_ActionCallback
-                0x00002596       0x86 MENU/menu_items.o
-                0x00002596                DHW_sensor_ActionCallback
+                0x0000258e       0x98 MENU/menu_items.o
+                0x0000258e                DHW_sensor_ActionCallback
  .text.DHW_PWM_ActionCallback
-                0x0000261c       0x56 MENU/menu_items.o
-                0x0000261c                DHW_PWM_ActionCallback
+                0x00002626       0x56 MENU/menu_items.o
+                0x00002626                DHW_PWM_ActionCallback
  .text.DHW_switch_ActionCallback
-                0x00002672       0xac MENU/menu_items.o
-                0x00002672                DHW_switch_ActionCallback
+                0x0000267c       0xac MENU/menu_items.o
+                0x0000267c                DHW_switch_ActionCallback
  .text.ZoneValve1_ActionCallback
-                0x0000271e       0x46 MENU/menu_items.o
-                0x0000271e                ZoneValve1_ActionCallback
+                0x00002728       0x46 MENU/menu_items.o
+                0x00002728                ZoneValve1_ActionCallback
  .text.ZoneValve2_ActionCallback
-                0x00002764       0x46 MENU/menu_items.o
-                0x00002764                ZoneValve2_ActionCallback
+                0x0000276e       0x46 MENU/menu_items.o
+                0x0000276e                ZoneValve2_ActionCallback
  .text.ThreeWayValve1_ActionCallback
-                0x000027aa       0x46 MENU/menu_items.o
-                0x000027aa                ThreeWayValve1_ActionCallback
+                0x000027b4       0x46 MENU/menu_items.o
+                0x000027b4                ThreeWayValve1_ActionCallback
  .text.ThreeWayValve2_ActionCallback
-                0x000027f0       0x46 MENU/menu_items.o
-                0x000027f0                ThreeWayValve2_ActionCallback
+                0x000027fa       0x46 MENU/menu_items.o
+                0x000027fa                ThreeWayValve2_ActionCallback
  .text.DebugMode_ActionCallback
-                0x00002836       0x7a MENU/menu_items.o
-                0x00002836                DebugMode_ActionCallback
+                0x00002840       0x7a MENU/menu_items.o
+                0x00002840                DebugMode_ActionCallback
  .text.MenuTimer_ActionCallback
-                0x000028b0       0x7a MENU/menu_items.o
-                0x000028b0                MenuTimer_ActionCallback
+                0x000028ba       0x7a MENU/menu_items.o
+                0x000028ba                MenuTimer_ActionCallback
  .text.LCDBackLight_ActionCallback
-                0x0000292a       0x8c MENU/menu_items.o
-                0x0000292a                LCDBackLight_ActionCallback
+                0x00002934       0x8c MENU/menu_items.o
+                0x00002934                LCDBackLight_ActionCallback
  .text.menuItemsGetHomeMenu
-                0x000029b6        0x6 MENU/menu_items.o
-                0x000029b6                menuItemsGetHomeMenu
+                0x000029c0        0x6 MENU/menu_items.o
+                0x000029c0                menuItemsGetHomeMenu
  .text.menuItemsGetHomeMenuSize
-                0x000029bc        0x4 MENU/menu_items.o
-                0x000029bc                menuItemsGetHomeMenuSize
+                0x000029c6        0x4 MENU/menu_items.o
+                0x000029c6                menuItemsGetHomeMenuSize
  .text.menuPortsioInit
-                0x000029c0        0xe MENU/menu_portsio.o
-                0x000029c0                menuPortsioInit
- .text.SPIInit  0x000029ce       0x1e SPI/spi.o
-                0x000029ce                SPIInit
+                0x000029ca        0xe MENU/menu_portsio.o
+                0x000029ca                menuPortsioInit
+ .text.SPIInit  0x000029d8       0x1e SPI/spi.o
+                0x000029d8                SPIInit
  .text.SPIClose
-                0x000029ec        0xa SPI/spi.o
-                0x000029ec                SPIClose
+                0x000029f6        0xa SPI/spi.o
+                0x000029f6                SPIClose
  .text.SPIWrite
-                0x000029f6       0x2c SPI/spi.o
-                0x000029f6                SPIWrite
+                0x00002a00       0x2c SPI/spi.o
+                0x00002a00                SPIWrite
  .text.__vector_18
-                0x00002a22       0x58 UART/UART.o
-                0x00002a22                __vector_18
+                0x00002a2c       0x58 UART/UART.o
+                0x00002a2c                __vector_18
  .text.__vector_19
-                0x00002a7a       0x4a UART/UART.o
-                0x00002a7a                __vector_19
+                0x00002a84       0x4a UART/UART.o
+                0x00002a84                __vector_19
  .text.uart_init
-                0x00002ac4       0x2c UART/UART.o
-                0x00002ac4                uart_init
+                0x00002ace       0x2c UART/UART.o
+                0x00002ace                uart_init
  .text.uart_putc
-                0x00002af0       0x22 UART/UART.o
-                0x00002af0                uart_putc
+                0x00002afa       0x22 UART/UART.o
+                0x00002afa                uart_putc
  .text.uart_puts
-                0x00002b12       0x1e UART/UART.o
-                0x00002b12                uart_puts
+                0x00002b1c       0x1e UART/UART.o
+                0x00002b1c                uart_puts
  .text.uart_puts_p
-                0x00002b30       0x24 UART/UART.o
-                0x00002b30                uart_puts_p
+                0x00002b3a       0x24 UART/UART.o
+                0x00002b3a                uart_puts_p
  .text.__vector_30
-                0x00002b54       0x5c UART/UART.o
-                0x00002b54                __vector_30
+                0x00002b5e       0x5c UART/UART.o
+                0x00002b5e                __vector_30
  .text.__vector_31
-                0x00002bb0       0x54 UART/UART.o
-                0x00002bb0                __vector_31
+                0x00002bba       0x54 UART/UART.o
+                0x00002bba                __vector_31
  .text.uart_puthex_nibble
-                0x00002c04       0x12 UART/UART.o
-                0x00002c04                uart_puthex_nibble
+                0x00002c0e       0x12 UART/UART.o
+                0x00002c0e                uart_puthex_nibble
  .text.uart_puti
-                0x00002c16       0x36 UART/UART.o
-                0x00002c16                uart_puti
- .text.ftoa     0x00002c4c      0x112 Utils/ftoa.o
-                0x00002c4c                ftoa
+                0x00002c20       0x36 UART/UART.o
+                0x00002c20                uart_puti
+ .text.ftoa     0x00002c56      0x112 Utils/ftoa.o
+                0x00002c56                ftoa
  .text.avr-libc.fplib
-                0x00002d5e        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(addsf3.o)
-                0x00002d5e                __subsf3
-                0x00002d60                __addsf3
+                0x00002d68        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(addsf3.o)
+                0x00002d68                __subsf3
+                0x00002d6a                __addsf3
  .text.avr-libc.fplib
-                0x00002d6c       0xcc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(addsf3x.o)
-                0x00002d8e                __addsf3x
+                0x00002d76       0xcc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(addsf3x.o)
+                0x00002d98                __addsf3x
  .text.avr-libc.fplib
-                0x00002e38        0x8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(divsf3.o)
-                0x00002e38                __divsf3
+                0x00002e42        0x8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(divsf3.o)
+                0x00002e42                __divsf3
  .text.avr-libc.fplib
-                0x00002e40       0xdc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(divsf3x.o)
-                0x00002e60                __divsf3x
-                0x00002e66                __divsf3_pse
+                0x00002e4a       0xdc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(divsf3x.o)
+                0x00002e6a                __divsf3x
+                0x00002e70                __divsf3_pse
  .text.avr-libc.fplib
-                0x00002f1c        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fixsfsi.o)
-                0x00002f1c                __fixsfsi
+                0x00002f26        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fixsfsi.o)
+                0x00002f26                __fixsfsi
  .text.avr-libc.fplib
-                0x00002f2a       0x5e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fixunssfsi.o)
-                0x00002f2a                __fixunssfsi
+                0x00002f34       0x5e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fixunssfsi.o)
+                0x00002f34                __fixunssfsi
  .text.avr-libc.fplib
-                0x00002f88       0x7a c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(floatsisf.o)
-                0x00002f88                __floatunsisf
-                0x00002f8c                __floatsisf
+                0x00002f92       0x7a c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(floatsisf.o)
+                0x00002f92                __floatunsisf
+                0x00002f96                __floatsisf
  .text.avr-libc.fplib
-                0x00003002        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_inf.o)
-                0x00003002                __fp_inf
+                0x0000300c        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_inf.o)
+                0x0000300c                __fp_inf
  .text.avr-libc.fplib
-                0x0000300e        0x6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_nan.o)
-                0x0000300e                __fp_nan
+                0x00003018        0x6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_nan.o)
+                0x00003018                __fp_nan
  .text.avr-libc.fplib
-                0x00003014        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_pscA.o)
-                0x00003014                __fp_pscA
+                0x0000301e        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_pscA.o)
+                0x0000301e                __fp_pscA
  .text.avr-libc.fplib
-                0x00003022        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_pscB.o)
-                0x00003022                __fp_pscB
+                0x0000302c        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_pscB.o)
+                0x0000302c                __fp_pscB
  .text.avr-libc.fplib
-                0x00003030       0x22 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_round.o)
-                0x00003030                __fp_round
+                0x0000303a       0x22 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_round.o)
+                0x0000303a                __fp_round
  .text.avr-libc.fplib
-                0x00003052       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_split3.o)
-                0x00003052                __fp_split3
-                0x00003062                __fp_splitA
+                0x0000305c       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_split3.o)
+                0x0000305c                __fp_split3
+                0x0000306c                __fp_splitA
  .text.avr-libc.fplib
-                0x00003096        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_zero.o)
-                0x00003096                __fp_zero
-                0x00003098                __fp_szero
+                0x000030a0        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_zero.o)
+                0x000030a0                __fp_zero
+                0x000030a2                __fp_szero
  .text.avr-libc.fplib
-                0x000030a4        0xa c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(gesf2.o)
-                0x000030a4                __gesf2
-                0x000030a4                __gtsf2
+                0x000030ae        0xa c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(gesf2.o)
+                0x000030ae                __gesf2
+                0x000030ae                __gtsf2
  .text.avr-libc.fplib
-                0x000030ae        0x8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(mulsf3.o)
-                0x000030ae                __mulsf3
+                0x000030b8        0x8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(mulsf3.o)
+                0x000030b8                __mulsf3
  .text.avr-libc.fplib
-                0x000030b6       0xd2 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(mulsf3x.o)
-                0x000030d4                __mulsf3x
-                0x000030da                __mulsf3_pse
+                0x000030c0       0xd2 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(mulsf3x.o)
+                0x000030de                __mulsf3x
+                0x000030e4                __mulsf3_pse
  .text.avr-libc.fplib
-                0x00003188       0x48 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_cmp.o)
-                0x00003188                __fp_cmp
+                0x00003192       0x48 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_cmp.o)
+                0x00003192                __fp_cmp
  .text.libgcc.mul
-                0x000031d0       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
-                0x000031d0                __mulsi3
- .text.libgcc   0x000031f0        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_tablejump2.o)
-                0x000031f0                __tablejump2__
+                0x000031da       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
+                0x000031da                __mulsi3
+ .text.libgcc   0x000031fa        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_tablejump2.o)
+                0x000031fa                __tablejump2__
  .text.libgcc.mul
-                0x000031fc       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
-                0x000031fc                __muluhisi3
+                0x00003206       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
+                0x00003206                __muluhisi3
  .text.libgcc.mul
-                0x00003212       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulshisi3.o)
-                0x00003212                __mulshisi3
-                0x00003218                __mulohisi3
+                0x0000321c       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulshisi3.o)
+                0x0000321c                __mulshisi3
+                0x00003222                __mulohisi3
  .text.libgcc.mul
-                0x00003222       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
-                0x00003222                __umulhisi3
+                0x0000322c       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
+                0x0000322c                __umulhisi3
  .text.avr-libc
-                0x00003240       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(itoa_ncheck.o)
-                0x00003240                __itoa_ncheck
+                0x0000324a       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(itoa_ncheck.o)
+                0x0000324a                __itoa_ncheck
  .text.avr-libc
-                0x00003256       0x34 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(utoa_ncheck.o)
-                0x00003256                __utoa_ncheck
-                0x00003258                __utoa_common
+                0x00003260       0x34 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(utoa_ncheck.o)
+                0x00003260                __utoa_ncheck
+                0x00003262                __utoa_common
  .text.avr-libc
-                0x0000328a       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(strrev.o)
-                0x0000328a                strrev
+                0x00003294       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(strrev.o)
+                0x00003294                strrev
  .text.avr-libc
-                0x000032aa       0x10 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
-                0x000032aa                eeprom_read_byte
+                0x000032b4       0x10 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
+                0x000032b4                eeprom_read_byte
  .text.avr-libc
-                0x000032ba       0x22 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
-                0x000032ba                eeprom_update_byte
-                0x000032bc                eeprom_update_r18
-                0x000032dc                . = ALIGN (0x2)
+                0x000032c4       0x22 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
+                0x000032c4                eeprom_update_byte
+                0x000032c6                eeprom_update_r18
+                0x000032e6                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000032dc        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
-                0x000032dc                _exit
-                0x000032dc                exit
+ .fini9         0x000032e6        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
+                0x000032e6                _exit
+                0x000032e6                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -1568,11 +1568,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000032dc        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
+ .fini0         0x000032e6        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x000032e0                _etext = .
+                0x000032ea                _etext = .
 
-.data           0x00800100      0x232 load address 0x000032e0
+.data           0x00800100      0x232 load address 0x000032ea
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -1689,8 +1689,8 @@ END GROUP
                 0x0080043b                BME280_humid
                 0x0080043f                BME280_humid_buf
                 0x00800445                PROVIDE (__bss_end, .)
-                0x000032e0                __data_load_start = LOADADDR (.data)
-                0x00003512                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x000032ea                __data_load_start = LOADADDR (.data)
+                0x0000351c                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x00800445        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
@@ -1820,7 +1820,7 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x6e2c
+.debug_info     0x00000000     0x6e2d
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x780 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
  .debug_info    0x00000780      0xb20 BME280/bme280.o
@@ -1829,17 +1829,17 @@ END GROUP
  .debug_info    0x00001ac5      0x499 DS18B20/onewire.o
  .debug_info    0x00001f5e      0x3fe I2C/i2c_master.o
  .debug_info    0x0000235c      0x89a LCD/lcd.o
- .debug_info    0x00002bf6     0x11f6 main.o
- .debug_info    0x00003dec      0x76b MENU/menu.o
- .debug_info    0x00004557     0x1c88 MENU/menu_items.o
- .debug_info    0x000061df       0x9a MENU/menu_portsio.o
- .debug_info    0x00006279       0xce SPI/spi.o
- .debug_info    0x00006347      0x753 UART/UART.o
- .debug_info    0x00006a9a      0x23b Utils/ftoa.o
- .debug_info    0x00006cd5       0xab C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
- .debug_info    0x00006d80       0xac C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
+ .debug_info    0x00002bf6     0x11f7 main.o
+ .debug_info    0x00003ded      0x76b MENU/menu.o
+ .debug_info    0x00004558     0x1c88 MENU/menu_items.o
+ .debug_info    0x000061e0       0x9a MENU/menu_portsio.o
+ .debug_info    0x0000627a       0xce SPI/spi.o
+ .debug_info    0x00006348      0x753 UART/UART.o
+ .debug_info    0x00006a9b      0x23b Utils/ftoa.o
+ .debug_info    0x00006cd6       0xab C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
+ .debug_info    0x00006d81       0xac C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
 
-.debug_abbrev   0x00000000     0x1d93
+.debug_abbrev   0x00000000     0x1da2
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x718 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
  .debug_abbrev  0x00000718      0x1fb BME280/bme280.o
@@ -1848,17 +1848,17 @@ END GROUP
  .debug_abbrev  0x00000b36      0x1b9 DS18B20/onewire.o
  .debug_abbrev  0x00000cef      0x14c I2C/i2c_master.o
  .debug_abbrev  0x00000e3b      0x24a LCD/lcd.o
- .debug_abbrev  0x00001085      0x32a main.o
- .debug_abbrev  0x000013af      0x246 MENU/menu.o
- .debug_abbrev  0x000015f5      0x329 MENU/menu_items.o
- .debug_abbrev  0x0000191e       0x6b MENU/menu_portsio.o
- .debug_abbrev  0x00001989       0x87 SPI/spi.o
- .debug_abbrev  0x00001a10      0x1e1 UART/UART.o
- .debug_abbrev  0x00001bf1      0x17a Utils/ftoa.o
- .debug_abbrev  0x00001d6b       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
- .debug_abbrev  0x00001d7f       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
+ .debug_abbrev  0x00001085      0x339 main.o
+ .debug_abbrev  0x000013be      0x246 MENU/menu.o
+ .debug_abbrev  0x00001604      0x329 MENU/menu_items.o
+ .debug_abbrev  0x0000192d       0x6b MENU/menu_portsio.o
+ .debug_abbrev  0x00001998       0x87 SPI/spi.o
+ .debug_abbrev  0x00001a1f      0x1e1 UART/UART.o
+ .debug_abbrev  0x00001c00      0x17a Utils/ftoa.o
+ .debug_abbrev  0x00001d7a       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
+ .debug_abbrev  0x00001d8e       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
 
-.debug_line     0x00000000     0x36a7
+.debug_line     0x00000000     0x36a9
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x169 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
  .debug_line    0x00000169      0x463 BME280/bme280.o
@@ -1867,15 +1867,15 @@ END GROUP
  .debug_line    0x00000aba      0x36e DS18B20/onewire.o
  .debug_line    0x00000e28      0x318 I2C/i2c_master.o
  .debug_line    0x00001140      0x6bd LCD/lcd.o
- .debug_line    0x000017fd      0x82f main.o
- .debug_line    0x0000202c      0x33a MENU/menu.o
- .debug_line    0x00002366      0xb1d MENU/menu_items.o
- .debug_line    0x00002e83       0xb2 MENU/menu_portsio.o
- .debug_line    0x00002f35      0x10c SPI/spi.o
- .debug_line    0x00003041      0x451 UART/UART.o
- .debug_line    0x00003492       0xeb Utils/ftoa.o
- .debug_line    0x0000357d       0x7a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
- .debug_line    0x000035f7       0xb0 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
+ .debug_line    0x000017fd      0x82b main.o
+ .debug_line    0x00002028      0x33a MENU/menu.o
+ .debug_line    0x00002362      0xb23 MENU/menu_items.o
+ .debug_line    0x00002e85       0xb2 MENU/menu_portsio.o
+ .debug_line    0x00002f37      0x10c SPI/spi.o
+ .debug_line    0x00003043      0x451 UART/UART.o
+ .debug_line    0x00003494       0xeb Utils/ftoa.o
+ .debug_line    0x0000357f       0x7a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
+ .debug_line    0x000035f9       0xb0 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
 
 .debug_frame    0x00000000     0x1064
  *(.debug_frame)
@@ -1923,7 +1923,7 @@ END GROUP
  .debug_str     0x000017e1       0x2a Utils/ftoa.o
                                 0x1b9 (size before relaxing)
 
-.debug_loc      0x00000000     0x51f9
+.debug_loc      0x00000000     0x522f
  *(.debug_loc)
  .debug_loc     0x00000000      0x949 BME280/bme280.o
  .debug_loc     0x00000949      0x1c0 DS18B20/crc8.o
@@ -1931,12 +1931,12 @@ END GROUP
  .debug_loc     0x0000146f      0x4cc DS18B20/onewire.o
  .debug_loc     0x0000193b      0x6b8 I2C/i2c_master.o
  .debug_loc     0x00001ff3      0x9aa LCD/lcd.o
- .debug_loc     0x0000299d      0x477 main.o
- .debug_loc     0x00002e14      0x397 MENU/menu.o
- .debug_loc     0x000031ab     0x14eb MENU/menu_items.o
- .debug_loc     0x00004696       0x21 SPI/spi.o
- .debug_loc     0x000046b7      0x770 UART/UART.o
- .debug_loc     0x00004e27      0x3d2 Utils/ftoa.o
+ .debug_loc     0x0000299d      0x4ad main.o
+ .debug_loc     0x00002e4a      0x397 MENU/menu.o
+ .debug_loc     0x000031e1     0x14eb MENU/menu_items.o
+ .debug_loc     0x000046cc       0x21 SPI/spi.o
+ .debug_loc     0x000046ed      0x770 UART/UART.o
+ .debug_loc     0x00004e5d      0x3d2 Utils/ftoa.o
 
 .debug_macinfo
  *(.debug_macinfo)

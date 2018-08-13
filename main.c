@@ -70,7 +70,7 @@ ISR(TIMER1_COMPA_vect)
 void sensor_read()
 {
 	static uint8_t timer_state = BME280_temp_state;
-	volatile uint8_t i;
+	uint8_t i;
 	uint8_t subzero, cel, cel_frac_bits;
 
 
@@ -103,14 +103,20 @@ void sensor_read()
 		case (DS18B20_state2):
 			
 			ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
-			for ( i=0; i<nSensors; i++ )
+			i = 0;
+			while (i < nSensors)
+			//for ( i=0; i<nSensors; i++ )
 			{
 				if ( DS18X20_read_meas( &gSensorIDs[i][0], &subzero, &cel, &cel_frac_bits) == DS18X20_OK )
 				{				
 					uart_puti(subzero); uart_puti(cel); uart_puts_P("."); uart_puti(cel_frac_bits); uart_puts_P("\n");
 				}
+				if (i == DHW_sensor_ID)
+				{
 					DHW_temp_actual = cel;
 					itoa(DHW_temp_actual, DHW_temp_actual_buf, 10);
+				}
+				i++;
 			}
 			
 			timer_state++;
