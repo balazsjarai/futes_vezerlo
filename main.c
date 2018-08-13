@@ -23,7 +23,7 @@
 
 volatile uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
 volatile uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10; volatile uint8_t menutimer;
-volatile uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight;
+volatile uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
 
 volatile uint8_t Initialized;
 
@@ -32,7 +32,7 @@ volatile float BME280_humid; char BME280_humid_buf[6];
 volatile uint8_t BME280_temp_min = 10; uint8_t EEMEM eeBME280_temp_min = 10;
 volatile uint8_t BME280_temp_desired = 15; uint8_t EEMEM eeBME280_temp_desired = 15;
 
-volatile uint8_t DHW_temp_actual, DHW_temp_desired, DHW_temp_max, DHW_temp_min; char DHW_temp_actual_buf[5];
+volatile uint8_t DHW_temp_actual, DHW_temp_desired, DHW_temp_max, DHW_temp_min; char DHW_temp_actual_buf[6];
 uint8_t EEMEM eeDHW_temp_desired = 60;
 uint8_t EEMEM eeDHW_temp_max = 80;
 uint8_t EEMEM eeDHW_temp_min = 50;
@@ -44,7 +44,7 @@ volatile unsigned char Pump_relays;
 volatile unsigned char Valve_relays;
 volatile unsigned char Relay_or_PWM; unsigned char EEMEM eeRelay_or_PWM;
 
-volatile uint8_t DHW_sensor_ID;
+volatile uint8_t DHW_sensor_ID = 0;
 uint8_t EEMEM eeDHW_sensor_ID = 0;
 
 uint8_t nSensors;
@@ -70,7 +70,7 @@ ISR(TIMER1_COMPA_vect)
 void sensor_read()
 {
 	static uint8_t timer_state = BME280_temp_state;
-	uint8_t i;
+	volatile uint8_t i;
 	uint8_t subzero, cel, cel_frac_bits;
 
 
@@ -106,15 +106,11 @@ void sensor_read()
 			for ( i=0; i<nSensors; i++ )
 			{
 				if ( DS18X20_read_meas( &gSensorIDs[i][0], &subzero, &cel, &cel_frac_bits) == DS18X20_OK )
-				{
-					if (i == DHW_sensor_ID)
-					{
-						uart_puts_P("DHW temperature: ");
-						DHW_temp_actual = cel;
-					}
-
+				{				
 					uart_puti(subzero); uart_puti(cel); uart_puts_P("."); uart_puti(cel_frac_bits); uart_puts_P("\n");
 				}
+					DHW_temp_actual = cel;
+					itoa(DHW_temp_actual, DHW_temp_actual_buf, 10);
 			}
 			
 			timer_state++;
@@ -146,13 +142,13 @@ void sensor_read()
 	if (menutimer == 0)
 	{
 		lcd_clrscr();
-		lcd_puts_hu(PSTR("Kazßnhßz h§m ")); lcd_puts(BME280_temp_buf); 
+		lcd_puts_hu(PSTR("Kazanhaz hom ")); lcd_puts(BME280_temp_buf); 
 		lcd_gotoxy(0,1);
-		lcd_puts_hu(PSTR("HMV h§m ")); lcd_puts(DHW_temp_actual_buf);		
+		lcd_puts_hu(PSTR("HMV hom ")); lcd_puts(DHW_temp_actual_buf);		
 		lcd_gotoxy(0,2);
 		lcd_puts_hu(PSTR("Szelepek: ")); lcd_putbyte_bin(Valve_relays);
 		lcd_gotoxy(0,3);
-		lcd_puts_hu(PSTR("Pumpßk: ")); lcd_putbyte_bin(Pump_relays);
+		lcd_puts_hu(PSTR("Pumpak: ")); lcd_putbyte_bin(Pump_relays);
 	}
 	else
 		menutimer--;
@@ -345,6 +341,7 @@ int main(void)
 	menutimer = MenuTimer;
 	
 	lcd_init(LCD_DISP_ON);
+	lcd_defc( magyar_betuk);
 	menuInit();
 	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
 
