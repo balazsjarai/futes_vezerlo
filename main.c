@@ -21,34 +21,34 @@
 #include "DS18B20/ds18x20.h"
 #include "DS18B20/onewire.h"
 
-volatile uint8_t menutimer = 10;
+volatile uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
+volatile uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10; volatile uint8_t menutimer;
+volatile uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight;
 
-volatile float BME280_temp; char BME280_temp_buf[5];
-volatile float BME280_humid; char BME280_humid_buf[5];
-volatile int BME280_temp_min = 10;
-volatile int BME280_temp_desired = 15;
+volatile uint8_t Initialized;
 
-volatile int eeBME280_temp_min = 10;
-volatile int eeBME280_temp_desired = 15;
+volatile float BME280_temp; char BME280_temp_buf[6];
+volatile float BME280_humid; char BME280_humid_buf[6];
+volatile uint8_t BME280_temp_min = 10; uint8_t EEMEM eeBME280_temp_min = 10;
+volatile uint8_t BME280_temp_desired = 15; uint8_t EEMEM eeBME280_temp_desired = 15;
 
-volatile uint16_t DHW_temp_actual, DHW_temp_desired, DHW_temp_max, DHW_temp_min; char DHW_temp_actual_buf[5];
-volatile uint16_t Solar_temp_actual, Solar_temp_desired, Solar_temp_up_threshold;
-volatile uint16_t Buffer_temp_actual, Forward_heat_temp;
+volatile uint8_t DHW_temp_actual, DHW_temp_desired, DHW_temp_max, DHW_temp_min; char DHW_temp_actual_buf[5];
+uint8_t EEMEM eeDHW_temp_desired = 60;
+uint8_t EEMEM eeDHW_temp_max = 80;
+uint8_t EEMEM eeDHW_temp_min = 50;
 
-volatile uint16_t eeDHW_temp_desired, eeDHW_temp_max, eeDHW_temp_min;
+volatile uint8_t Solar_temp_actual, Solar_temp_desired, Solar_temp_up_threshold;
+volatile uint8_t Buffer_temp_actual, Forward_heat_temp;
 
-volatile char DHW_pump, DHW_PWM, Solar_pump, Buffer_pump, RELAYED_PUMP;
-volatile char eeDHW_pump, eeDHW_PWM, eeSolar_pump, eeBuffer_pump, eeRELAYED_PUMP;
+volatile unsigned char Pump_relays;
+volatile unsigned char Valve_relays;
+volatile unsigned char Relay_or_PWM; unsigned char EEMEM eeRelay_or_PWM;
 
-
-unsigned char Pump_relays;
-unsigned char Valve_relays;
-
-unsigned int DHW_sensor_ID = 0;
-unsigned int EEMEM eeDHW_sensor_ID = 0;
+volatile uint8_t DHW_sensor_ID;
+uint8_t EEMEM eeDHW_sensor_ID = 0;
 
 uint8_t nSensors;
-uint8_t gSensorIDs[6][OW_ROMCODE_SIZE];
+uint8_t gSensorIDs[DS18B20_MAX_NO][OW_ROMCODE_SIZE];
 
 
 ISR(ADC_vect)
@@ -62,7 +62,9 @@ ISR(ADC_vect)
 ISR(TIMER1_COMPA_vect)
 {
 	sensor_read();
-	//check_conditions();
+	if (DebugMode == 0 && Initialized)
+		check_conditions();
+	wdt_reset();
 }
 
 void sensor_read()
@@ -106,7 +108,10 @@ void sensor_read()
 				if ( DS18X20_read_meas( &gSensorIDs[i][0], &subzero, &cel, &cel_frac_bits) == DS18X20_OK )
 				{
 					if (i == DHW_sensor_ID)
+					{
 						uart_puts_P("DHW temperature: ");
+						DHW_temp_actual = cel;
+					}
 
 					uart_puti(subzero); uart_puti(cel); uart_puts_P("."); uart_puti(cel_frac_bits); uart_puts_P("\n");
 				}
@@ -123,12 +128,14 @@ void sensor_read()
 			temp1 = SPIWrite(MAX31865_1_CS_PIN, READ_RTD_LSB);
 			temp2 = SPIWrite(MAX31865_1_CS_PIN, 0xFF);
 			
+			SPIClose();
+			
 			uart_puts_P("MAX1: ");
 			uart_puthex_nibble(temp1); uart_puthex_nibble(temp2);
 			uart_puts_P("\n");
 			
-			SPIClose();
 			timer_state = 0;
+			Initialized = 1;
 		break;
 
 		default:
@@ -139,14 +146,19 @@ void sensor_read()
 	if (menutimer == 0)
 	{
 		lcd_clrscr();
-		lcd_puts_hu(PSTR("BME280 hım ")); lcd_puts(BME280_temp_buf); 
+		lcd_puts_hu(PSTR("Kazﬂnhﬂz hßm ")); lcd_puts(BME280_temp_buf); 
 		lcd_gotoxy(0,1);
-		lcd_puts_hu(PSTR("HMV hım ")); lcd_puts(DHW_temp_actual_buf);		
+		lcd_puts_hu(PSTR("HMV hßm ")); lcd_puts(DHW_temp_actual_buf);		
+		lcd_gotoxy(0,2);
+		lcd_puts_hu(PSTR("Szelepek: ")); lcd_putbyte_bin(Valve_relays);
+		lcd_gotoxy(0,3);
+		lcd_puts_hu(PSTR("Pumpﬂk: ")); lcd_putbyte_bin(Pump_relays);
 	}
 	else
 		menutimer--;
 	
-	ADCSRA |= (1<<ADSC);
+	if (LCDBackLight == 0)
+		ADCSRA |= (1<<ADSC);
 	
 	return;
 }
@@ -156,7 +168,7 @@ void check_conditions()
 	// DHW felsı kˆr
 	if (DHW_temp_actual < DHW_temp_min && (Solar_temp_actual < DHW_temp_actual || Buffer_temp_actual < DHW_temp_actual))
 	{
-		if (DHW_pump == RELAYED_PUMP)
+		if (!(Relay_or_PWM & (1 << DHW)))
 		{
 			Pump_relays |= (1 << DHW_RELAY);
 		}
@@ -165,20 +177,20 @@ void check_conditions()
 			switch_on_PWM_for_DHW_pump();
 			uint16_t temp_diff = DHW_temp_desired - DHW_temp_actual;
 			if (temp_diff > 30)
-				DHW_PWM = 20;
+				DHW_PWM_OCR = 20;
 			else if (temp_diff > 20)
-				DHW_PWM = 60;
+				DHW_PWM_OCR = 60;
 			else if (temp_diff > 10)
-				DHW_PWM = 150;
+				DHW_PWM_OCR = 150;
 			else if (temp_diff > 5)
-				DHW_PWM = 220;
+				DHW_PWM_OCR = 220;
 			else if (temp_diff > 0)
-				DHW_PWM = 240;
+				DHW_PWM_OCR = 240;
 		}
 	}
 	else if (DHW_temp_actual > DHW_temp_desired || Solar_temp_actual > DHW_temp_actual || Buffer_temp_actual > DHW_temp_actual)
 	{
-		if (DHW_pump == RELAYED_PUMP)
+		if (!(Relay_or_PWM & (1 << DHW)))
 		{
 			Pump_relays &= ~(1 << DHW_RELAY);
 		}
@@ -210,19 +222,19 @@ void check_conditions()
 		}
 	}
 
-	if (Solar_pump != RELAYED_PUMP)
+	if (!(Relay_or_PWM & (1 << SOLAR)))
 	{
 		uint16_t temp_diff = Solar_temp_desired - DHW_temp_actual;
 		if (temp_diff > 30)
-			DHW_PWM = 20;
+			SOLAR_PWM_OCR = 20;
 		else if (temp_diff > 20)
-			DHW_PWM = 60;
+			SOLAR_PWM_OCR = 60;
 		else if (temp_diff > 10)
-			DHW_PWM = 150;
+			SOLAR_PWM_OCR = 150;
 		else if (temp_diff > 5)
-			DHW_PWM = 220;
+			SOLAR_PWM_OCR = 220;
 		else if (temp_diff > 0)
-			DHW_PWM = 240;
+			SOLAR_PWM_OCR = 240;
 	}
 
 	if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)) || (THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)) || BME280_temp < BME280_temp_desired)
@@ -269,8 +281,7 @@ uint8_t search_sensors(void)
 	
 	nSensors = 0;
 	
-	for( diff = OW_SEARCH_FIRST;
-	diff != OW_LAST_DEVICE && nSensors < 6 ; )
+	for( diff = OW_SEARCH_FIRST; diff != OW_LAST_DEVICE && nSensors < DS18B20_MAX_NO;)
 	{
 		DS18X20_find_sensor( &diff, &id[0] );
 		
@@ -293,7 +304,6 @@ uint8_t search_sensors(void)
 		nSensors++;
 	}
 	
-	delay_ms(1000);
 	return nSensors;
 }
 
@@ -318,10 +328,22 @@ void SwitchPump()
 void read_from_eeprom()
 {
 	DHW_sensor_ID = eeprom_read_byte(&eeDHW_sensor_ID);
+	DHW_temp_desired = eeprom_read_byte(&eeDHW_temp_desired);
+	DHW_temp_max = eeprom_read_byte(&eeDHW_temp_max);
+	DHW_temp_min = eeprom_read_byte(&eeDHW_temp_min);
+	BME280_temp_min = eeprom_read_byte(&eeBME280_temp_min);
+	BME280_temp_desired = eeprom_read_byte(&eeBME280_temp_desired);
+	Relay_or_PWM = eeprom_read_byte(&eeRelay_or_PWM);
+	DebugMode = eeprom_read_byte(&eeDebugMode);
+	MenuTimer = eeprom_read_byte(&eeMenuTimer);
+	LCDBackLight = eeprom_read_byte(&eeLCDBackLight);
 }
 
 int main(void)
 {
+	read_from_eeprom();
+	menutimer = MenuTimer;
+	
 	lcd_init(LCD_DISP_ON);
 	menuInit();
 	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
@@ -337,14 +359,13 @@ int main(void)
 	i2c_init();
 	init_BME280(); //BMP 280
 
-	uart_puts_p(PSTR("Timer initiated\n"));
 	sei();
 	uart_puts_p(PSTR("Interrupt enabled\n"));
 
 	//reset watchdog
-	//wdt_reset();
-	//WDTCR = (1<<WDE);
-	//WDTCR = (1<<WDP2)|(1<<WDP1)|(1<<WDP0);
+	wdt_reset();
+	WDTCR |= (1<<WDE) | (1 << WDCE);
+	WDTCR |= (1<<WDP2)|(1<<WDP1)|(1<<WDP0);
 	
 	ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
 	nSensors = search_sensors();
@@ -363,17 +384,15 @@ int main(void)
 	temp1 = SPIWrite(MAX31865_1_CS_PIN, READ_CONFIG);
 	temp2 = SPIWrite(MAX31865_1_CS_PIN, 0xFF);
 	
-	uart_puts_P("MAX: ");
-	uart_puthex_nibble(temp1); uart_puthex_nibble(temp2);
-	uart_puts_P("\n");	
-	
-	
 	DDRA |= (1 << PINA2);
 	_delay_us(1);
 	SPIWrite(2, 0x55);
 	
 	SPIClose();
-	
+
+	uart_puts_P("MAX: ");
+	uart_puthex_nibble(temp1); uart_puthex_nibble(temp2);
+	uart_puts_P("\n");		
 
 	TCCR3A |= (1 << WGM30)|(1<<COM3C1);
 	TCCR3B |= (1 << WGM32)|(1 << CS30)|(1 << CS31);

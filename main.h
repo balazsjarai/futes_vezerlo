@@ -29,7 +29,14 @@ typedef enum {
 #define SOLAR_VALVE			3
 #define BUFFER_VALVE		4
 
+typedef enum {
+	DHW,
+	BUFFER,
+	SOLAR
+} PUMP_RELAY_PWM;
+
 #define DHW_PWM_OCR		OCR2
+#define SOLAR_PWM_OCR	OCR3A
 
 #define BUZZER_DDR		DDRC
 #define BUZZER_PORT		PORTC
@@ -39,6 +46,8 @@ typedef enum {
 #define THERMOSTAT_DDR		DDRF
 #define FIRST_THERMO_PIN	PINF1
 #define SECOND_THERMO_PIN	PINF2
+
+#define DS18B20_MAX_NO		6
 
 void beep();
 void sensor_read();

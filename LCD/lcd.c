@@ -27,18 +27,6 @@
 #include <avr/pgmspace.h>
 #include "lcd.h"
 
-
-static const PROGMEM unsigned char poundSignChar[] = {
-	0b00011,
-	0b00100,
-	0b00100,
-	0b01111,
-	0b00100,
-	0b00100,
-	0b01111,
-	0b00000
-};
-
 static const PROGMEM uint8_t magyar_betuk[] =
 {
 	0,
@@ -734,43 +722,50 @@ void lcd_putc_hu( unsigned char c)                          // magyar betu kiira
 		case 0xD6:                                 // Ö
 		case 0xF6:                                 // ö
 		c= 0xEF;
-		goto kiir;
+			break;
+
 		case 0xDC:                                 // Ü
 		case 0xFC:                                 // ü
-		c= 0xF5;
-		goto kiir;
+			c= 0xF5;
+		break;
+
 		case 0xC1:                                 // Á
 		case 0xE1:                                 // á
-		c= 0;
-		goto kiir;
+			c= 0;
+			break;
+
 		case 0xC9:                                 // É
 		case 0xE9:                                 // é
-		c= 1;
-		goto kiir;
+			c= 1;
+			break;
+
 		case 0xCD:                                 // Í
 		case 0xED:                                 // í
-		c= 2;
-		goto kiir;
+			c= 2;
+			break;
+
 		case 0xD3:                                 // Ó
 		case 0xF3:                                 // ó
-		c= 3;
-		goto kiir;
-		case 0xD5:                                 // ?
-		case 0xF5:                                 // ?
-		c= 4;
-		goto kiir;
+			c= 3;
+			break;
+
+		case 0xD5:                                 // Õ
+		case 0xF5:                                 // õ
+			c= 4;
+			break;
+
 		case 0xDA:                                 // Ú
 		case 0xFA:                                 // ú
-		c= 5;
-		goto kiir;
-		case 0xDB:                                 // ?
-		case 0xFB:                                 // ?
-		c= 6;
-		goto kiir;
+			c= 5;
+			break;
+
+		case 0xDB:                                 // Û
+		case 0xFB:                                 // û
+			c= 6;
+			break;
 		default:;
 	}
-	kiir:
-	lcd_putc( c);
+	lcd_putc(c);
 }
 
 

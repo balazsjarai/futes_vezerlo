@@ -10,7 +10,7 @@
 #include "menu.h"
 #include "menu_items.h"
 
-extern volatile uint8_t menutimer;
+extern volatile uint8_t menutimer, MenuTimer;
 
 /*
 ** Menu main components definition
@@ -177,7 +177,7 @@ void menuPollButtons(){
 		
 		if(b->state == 0xF000){
 			b->pressed = true;
-			menutimer = 10;
+			menutimer = MenuTimer;
 			BUZZER_PORT |= (1 << BUZZER_PIN);
 			if(current_state->level != MENU_CALLBACK){
 				scrollMenu(b);
