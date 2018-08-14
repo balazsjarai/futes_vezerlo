@@ -78,6 +78,38 @@ void BME280_desired_CallbackRender(uint8_t which){
 	lcd_puts(buf);
 }
 
+bool BME280_temp_Callback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			break;
+		case MENU_DOWN:
+			break;
+		case MENU_CONFIRM:
+			break;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	BME280_temp_CallbackRender(column);
+	return false;
+}
+
+bool BME280_humidity_Callback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			break;
+		case MENU_DOWN:
+			break;
+		case MENU_CONFIRM:
+			break;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	BME280_humidity_CallbackRender(column);
+	return false;
+}
+
 bool BME280_min_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
@@ -129,8 +161,8 @@ bool BME280_desired_ActionCallback(MENU_BUTTON *button, uint8_t column){
 *************************************************************************/
 # define BME280_SUBMENU_ITEMS  4
 static MENU_ITEM BME280_submenu[BME280_SUBMENU_ITEMS] = {
-	{"BME hom",			BME280_temp_CallbackRender,			NULL, 							0, NULL},
-	{"BME para",		BME280_humidity_CallbackRender,		NULL,							0, NULL},
+	{"BME hom",			BME280_temp_CallbackRender,			BME280_temp_Callback, 	0, NULL},
+	{"BME para",		BME280_humidity_CallbackRender,		BME280_humidity_Callback,	0, NULL},
 	{"BME min hom",		BME280_min_CallbackRender, 			BME280_min_ActionCallback,  	0, NULL},
 	{"BME kivant hom", 	BME280_desired_CallbackRender, 		BME280_desired_ActionCallback, 	0, NULL},
 };
@@ -146,6 +178,22 @@ void DHW_temp_actual_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("HMV akt hom"));
 	lcd_gotoxy(0,1);
 	lcd_puts(buf);
+}
+
+bool DHW_temp_actual_Callback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			break;
+		case MENU_DOWN:
+			break;
+		case MENU_CONFIRM:
+			break;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	DHW_temp_actual_CallbackRender(column);
+	return false;
 }
 
 void DHW_temp_desired_CallbackRender(uint8_t which){
@@ -258,7 +306,7 @@ bool DHW_sensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			break;
 		case MENU_DOWN:
 			DHW_sensor_ID--;
-			if (DHW_sensor_ID >= nSensors);
+			if (DHW_sensor_ID == 255)
 				DHW_sensor_ID = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
@@ -351,7 +399,7 @@ static MENU_ITEM DHW_pump_submenu[DHW_PUMP_ITEMS] ={
 
 # define DHW_SUBMENU_ITEMS  5
 static MENU_ITEM DHW_submenu[DHW_SUBMENU_ITEMS] = {
-	{"HMV akt hom", 		DHW_temp_actual_CallbackRender, 	NULL, 								0,				NULL},
+	{"HMV akt hom", 		DHW_temp_actual_CallbackRender, 	DHW_temp_actual_Callback, 			0,				NULL},
 	{"HMV kivant hom",		DHW_temp_desired_CallbackRender,	DHW_temp_desired_ActionCallback,	0,				NULL},
 	{"HMV min hom",			DHW_temp_min_CallbackRender,  		DHW_temp_min_ActionCallback, 		0, 				NULL},
 	{"HMV szenzor",			DHW_sensor_CallbackRender, 			DHW_sensor_ActionCallback, 			0, 				NULL},
@@ -488,10 +536,10 @@ bool ThreeWayValve2_ActionCallback(MENU_BUTTON *button, uint8_t column){
 
 #define VALVES_SUBMENU_ITEMS 4
 static MENU_ITEM VALVES_submenu[VALVES_SUBMENU_ITEMS] = {
-	{"Z¡na 1", 			ZoneValve1_CallbackRender, 			ZoneValve1_ActionCallback, 		0,	NULL},
-	{"Z¡na 2", 			ZoneValve2_CallbackRender, 			ZoneValve2_ActionCallback, 		0,	NULL},
-	{"3 jßratÿ 1", 		ThreeWayValve1_CallbackRender, 		ThreeWayValve1_ActionCallback, 	0,	NULL},
-	{"3 jßratÿ 2", 		ThreeWayValve2_CallbackRender, 		ThreeWayValve2_ActionCallback, 	0,	NULL},
+	{"Zona 1", 			ZoneValve1_CallbackRender, 			ZoneValve1_ActionCallback, 		0,	NULL},
+	{"Zona 2", 			ZoneValve2_CallbackRender, 			ZoneValve2_ActionCallback, 		0,	NULL},
+	{"3 jaratu 1", 		ThreeWayValve1_CallbackRender, 		ThreeWayValve1_ActionCallback, 	0,	NULL},
+	{"3 jaratu 2", 		ThreeWayValve2_CallbackRender, 		ThreeWayValve2_ActionCallback, 	0,	NULL},
 };
 
 
@@ -608,7 +656,7 @@ static MENU_ITEM SYSPARAM_submenu[SYSPARAM_SUBMENU_ITEMS] = {
 #define MENU_HOME_ITEMS  4
 static MENU_ITEM home_items[MENU_HOME_ITEMS] = {
 	{"HMV beallitas",   	NULL,                           NULL,                     DHW_SUBMENU_ITEMS,     	DHW_submenu	  	},
-	{"Kazanhaz termosztat",	NULL,                           NULL,                     BME280_SUBMENU_ITEMS,   	BME280_submenu	},
+	{"Kazanhaz termoszt",	NULL,                           NULL,                     BME280_SUBMENU_ITEMS,   	BME280_submenu	},
 	{"Szelepek",			NULL,							NULL,					  VALVES_SUBMENU_ITEMS, 	VALVES_submenu	},
 	{"Vezerlo beallitas",	NULL,							NULL,					  SYSPARAM_SUBMENU_ITEMS, 	SYSPARAM_submenu},
 };

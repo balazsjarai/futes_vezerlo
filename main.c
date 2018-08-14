@@ -32,7 +32,7 @@ volatile float BME280_humid; char BME280_humid_buf[6];
 volatile uint8_t BME280_temp_min = 10; uint8_t EEMEM eeBME280_temp_min = 10;
 volatile uint8_t BME280_temp_desired = 15; uint8_t EEMEM eeBME280_temp_desired = 15;
 
-volatile uint8_t DHW_temp_actual, DHW_temp_desired, DHW_temp_max, DHW_temp_min; char DHW_temp_actual_buf[6];
+volatile uint8_t DHW_temp_actual, DHW_temp_desired, DHW_temp_max, DHW_temp_min; char DHW_temp_actual_buf[4], DHW_temp_actual_frac_buf[3];
 uint8_t EEMEM eeDHW_temp_desired = 60;
 uint8_t EEMEM eeDHW_temp_max = 80;
 uint8_t EEMEM eeDHW_temp_min = 50;
@@ -115,6 +115,7 @@ void sensor_read()
 				{
 					DHW_temp_actual = cel;
 					itoa(DHW_temp_actual, DHW_temp_actual_buf, 10);
+					itoa(cel_frac_bits, DHW_temp_actual_frac_buf, 10);
 				}
 				i++;
 			}
@@ -122,6 +123,7 @@ void sensor_read()
 			timer_state++;
 		break;
 		
+		#ifdef SOLAR
 		case (MAX31865_state):
 			SPIInit();
 			
@@ -139,6 +141,7 @@ void sensor_read()
 			timer_state = 0;
 			Initialized = 1;
 		break;
+		#endif
 
 		default:
 			timer_state = 0;
@@ -148,9 +151,9 @@ void sensor_read()
 	if (menutimer == 0)
 	{
 		lcd_clrscr();
-		lcd_puts_hu(PSTR("Kazanhaz hom ")); lcd_puts(BME280_temp_buf); 
+		lcd_puts_hu(PSTR("Kazanhaz hom ")); lcd_puts(BME280_temp_buf); lcd_puts(" C");
 		lcd_gotoxy(0,1);
-		lcd_puts_hu(PSTR("HMV hom ")); lcd_puts(DHW_temp_actual_buf);		
+		lcd_puts_hu(PSTR("HMV hom ")); lcd_puts(DHW_temp_actual_buf); lcd_puts("."), lcd_puts(DHW_temp_actual_frac_buf); lcd_puts(" C");
 		lcd_gotoxy(0,2);
 		lcd_puts_hu(PSTR("Szelepek: ")); lcd_putbyte_bin(Valve_relays);
 		lcd_gotoxy(0,3);
@@ -168,6 +171,7 @@ void sensor_read()
 void check_conditions()
 {
 	// DHW felsõ kör
+#ifdef SOLAR
 	if (DHW_temp_actual < DHW_temp_min && (Solar_temp_actual < DHW_temp_actual || Buffer_temp_actual < DHW_temp_actual))
 	{
 		if (!(Relay_or_PWM & (1 << DHW)))
@@ -201,7 +205,44 @@ void check_conditions()
 			switch_off_PWM_for_DHW_pump();
 		}
 	}
+#else
+	
+	if (DHW_temp_actual < DHW_temp_min)
+	{
+		if (!(Relay_or_PWM & (1 << DHW)))
+		{
+			Pump_relays |= (1 << DHW_RELAY);
+		}
+		else
+		{
+			switch_on_PWM_for_DHW_pump();
+			uint16_t temp_diff = DHW_temp_desired - DHW_temp_actual;
+			if (temp_diff > 30)
+				DHW_PWM_OCR = 20;
+			else if (temp_diff > 20)
+				DHW_PWM_OCR = 60;
+			else if (temp_diff > 10)
+				DHW_PWM_OCR = 150;
+			else if (temp_diff > 5)
+				DHW_PWM_OCR = 220;
+			else if (temp_diff > 0)
+				DHW_PWM_OCR = 240;
+		}
+	}
+	else if (DHW_temp_actual > DHW_temp_desired)
+	{
+		if (!(Relay_or_PWM & (1 << DHW)))
+		{
+			Pump_relays &= ~(1 << DHW_RELAY);
+		}
+		else
+		{
+			switch_off_PWM_for_DHW_pump();
+		}
+	}
+#endif
 
+#ifdef SOLAR
 	if (Solar_temp_actual > Solar_temp_up_threshold)
 	{
 		if (Solar_temp_actual > DHW_temp_actual && Solar_temp_actual < DHW_temp_max)
@@ -238,18 +279,23 @@ void check_conditions()
 		else if (temp_diff > 0)
 			SOLAR_PWM_OCR = 240;
 	}
+	
+#endif
 
+#ifdef BUFFER
 	if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)) || (THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)) || BME280_temp < BME280_temp_desired)
 	{
 		if (Buffer_temp_actual < Forward_heat_temp)
 		{
 			Pump_relays |= (1 << GAS_RELAY);
 			Pump_relays &= ~(1 << BUFFER_RELAY);
+			Valve_relays &= ~(1 << BUFFER_VALVE);
 		}
 		else
 		{
 			Pump_relays &= ~(1 << GAS_RELAY);
 			Pump_relays |= (1 << BUFFER_RELAY);
+			Valve_relays |= (1 << BUFFER_VALVE);
 		}
 		
 		if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)))
@@ -267,6 +313,28 @@ void check_conditions()
 		Pump_relays &= ~((1 << BUFFER_RELAY) | (1 << GAS_RELAY));
 		Valve_relays &= ~((1 << BUFFER_VALVE) | (1 << FIRST_FLOOR_VALVE) | (1 << SECOND_FLOOR_VALVE));
 	}
+#else
+	if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)) || (THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)) || BME280_temp < BME280_temp_desired)
+	{
+		Pump_relays |= (1 << GAS_RELAY);
+		Valve_relays &= ~(1 << BUFFER_VALVE);
+		
+		if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)))
+			Valve_relays |= (1 << FIRST_FLOOR_VALVE);
+		if (!(THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)))
+			Valve_relays &= ~(1 << FIRST_FLOOR_VALVE);
+		
+		if ((THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)))
+			Valve_relays |= (1 << SECOND_FLOOR_VALVE);
+		if (!(THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)))
+			Valve_relays &= ~(1 << SECOND_FLOOR_VALVE);
+	}
+	else
+	{
+		Pump_relays &= ~(1 << GAS_RELAY);
+		Valve_relays &= ~((1 << FIRST_FLOOR_VALVE) | (1 << SECOND_FLOOR_VALVE));
+	}
+#endif
 	
 	SwitchPump();
 	SwitchValve();
@@ -375,6 +443,7 @@ int main(void)
 		
 	uart_puts_P("Found "); uart_puti(nSensors); uart_puts_P(" DS18B20 sensors\n");
 
+#ifdef SOLAR
 	SPIInit();
 	
 	DDRA |= (1 << MAX31865_1_CS_PIN);
@@ -396,6 +465,7 @@ int main(void)
 	uart_puts_P("MAX: ");
 	uart_puthex_nibble(temp1); uart_puthex_nibble(temp2);
 	uart_puts_P("\n");		
+#endif
 
 	TCCR3A |= (1 << WGM30)|(1<<COM3C1);
 	TCCR3B |= (1 << WGM32)|(1 << CS30)|(1 << CS31);

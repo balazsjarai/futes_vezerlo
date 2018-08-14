@@ -11,6 +11,9 @@ typedef enum {
 	MAX31865_state
 } states;
 
+//#define SOLAR
+//#define BUFFER
+
 #define UART_BAUD_RATE      9600
 
 #define DHW_RELAY_CS_PIN	1
