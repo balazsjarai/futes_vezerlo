@@ -52,6 +52,33 @@ typedef enum {
 
 #define DS18B20_MAX_NO		6
 
+extern volatile uint8_t DebugMode; extern uint8_t eeDebugMode;
+extern volatile uint8_t MenuTimer; extern uint8_t eeMenuTimer;
+extern volatile uint8_t LCDBackLight; extern uint8_t eeLCDBackLight;
+
+extern volatile float BME280_temp, BME280_humid;
+extern volatile uint8_t BME280_temp_min, BME280_temp_desired;
+extern char BME280_temp_buf[6], BME280_humid_buf[6];
+
+extern uint8_t eeBME280_temp_min, eeBME280_temp_desired;
+
+extern volatile uint8_t DHW_temp_actual, DHW_temp_desired, DHW_temp_min;
+extern uint8_t eeDHW_temp_desired, eeDHW_temp_min;
+
+extern volatile uint8_t DHW_sensor_ID;
+extern uint8_t eeDHW_sensor_ID;
+
+extern volatile uint8_t Solar_temp_actual, Solar_temp_desired, Solar_temp_up_threshold;
+extern volatile uint8_t Buffer_temp_actual;
+
+extern volatile unsigned char Pump_relays, Valve_relays, Relay_or_PWM; 
+extern unsigned char eeRelay_or_PWM;
+
+extern uint8_t nSensors;
+
+extern void SwitchPump();
+extern void SwitchValve();
+
 void beep();
 void sensor_read();
 void check_conditions();

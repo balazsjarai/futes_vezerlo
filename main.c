@@ -21,8 +21,11 @@
 #include "DS18B20/ds18x20.h"
 #include "DS18B20/onewire.h"
 
+volatile uint8_t TimerElapsed = 0;
+volatile uint8_t timer_state = 0;
+
 volatile uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
-volatile uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10; volatile uint8_t menutimer;
+volatile uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10; volatile uint8_t menutimer = 10;
 volatile uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
 
 volatile uint8_t Initialized;
@@ -40,9 +43,9 @@ uint8_t EEMEM eeDHW_temp_min = 50;
 volatile uint8_t Solar_temp_actual, Solar_temp_desired, Solar_temp_up_threshold;
 volatile uint8_t Buffer_temp_actual, Forward_heat_temp;
 
-volatile unsigned char Pump_relays;
-volatile unsigned char Valve_relays;
-volatile unsigned char Relay_or_PWM; unsigned char EEMEM eeRelay_or_PWM;
+volatile unsigned char Pump_relays = 0;
+volatile unsigned char Valve_relays = 0;
+volatile unsigned char Relay_or_PWM = 0; unsigned char EEMEM eeRelay_or_PWM = 0;
 
 volatile uint8_t DHW_sensor_ID = 0;
 uint8_t EEMEM eeDHW_sensor_ID = 0;
@@ -61,15 +64,17 @@ ISR(ADC_vect)
 
 ISR(TIMER1_COMPA_vect)
 {
-	sensor_read();
-	if (DebugMode == 0 && Initialized)
-		check_conditions();
-	wdt_reset();
+	if (TimerElapsed == 0);
+		TimerElapsed++;
+	// sensor_read();
+	// if (DebugMode == 0 && Initialized)
+		// check_conditions();
+	// wdt_reset();
 }
 
 void sensor_read()
 {
-	static uint8_t timer_state = BME280_temp_state;
+	//static uint8_t timer_state = BME280_temp_state;
 	uint8_t i;
 	uint8_t subzero, cel, cel_frac_bits;
 
@@ -177,10 +182,12 @@ void check_conditions()
 		if (!(Relay_or_PWM & (1 << DHW)))
 		{
 			Pump_relays |= (1 << DHW_RELAY);
+			uart_puts_P("DHW relay activated");
 		}
 		else
 		{
 			switch_on_PWM_for_DHW_pump();
+			uart_puts_P("DHW PWM activated");
 			uint16_t temp_diff = DHW_temp_desired - DHW_temp_actual;
 			if (temp_diff > 30)
 				DHW_PWM_OCR = 20;
@@ -199,10 +206,12 @@ void check_conditions()
 		if (!(Relay_or_PWM & (1 << DHW)))
 		{
 			Pump_relays &= ~(1 << DHW_RELAY);
+			uart_puts_P("DHW relay deactivated");
 		}
 		else
 		{
 			switch_off_PWM_for_DHW_pump();
+			uart_puts_P("DHW PWM deactivated");
 		}
 	}
 #else
@@ -212,10 +221,12 @@ void check_conditions()
 		if (!(Relay_or_PWM & (1 << DHW)))
 		{
 			Pump_relays |= (1 << DHW_RELAY);
+			uart_puts_P("DHW relay activated");
 		}
 		else
 		{
 			switch_on_PWM_for_DHW_pump();
+			uart_puts_P("DHW PWM activated");
 			uint16_t temp_diff = DHW_temp_desired - DHW_temp_actual;
 			if (temp_diff > 30)
 				DHW_PWM_OCR = 20;
@@ -234,10 +245,12 @@ void check_conditions()
 		if (!(Relay_or_PWM & (1 << DHW)))
 		{
 			Pump_relays &= ~(1 << DHW_RELAY);
+			uart_puts_P("DHW relay deactivated");
 		}
 		else
 		{
 			switch_off_PWM_for_DHW_pump();
+			uart_puts_P("DHW PWM deactivated");
 		}
 	}
 #endif
@@ -316,23 +329,36 @@ void check_conditions()
 #else
 	if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)) || (THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)) || BME280_temp < BME280_temp_desired)
 	{
-		Pump_relays |= (1 << GAS_RELAY);
+		Pump_relays |= (1 << GAS_RELAY); 
 		Valve_relays &= ~(1 << BUFFER_VALVE);
+		uart_puts_P("GAS relay activated");
 		
 		if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)))
+		{
 			Valve_relays |= (1 << FIRST_FLOOR_VALVE);
+			uart_puts_P("FIRST_FLOOR_VALVE relay activated");
+		}
 		if (!(THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)))
+		{
+			uart_puts_P("FIRST_FLOOR_VALVE relay deactivated");
 			Valve_relays &= ~(1 << FIRST_FLOOR_VALVE);
-		
+		}
 		if ((THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)))
+		{
 			Valve_relays |= (1 << SECOND_FLOOR_VALVE);
+			uart_puts_P("SECOND_FLOOR_VALVE relay activated");
+		}
 		if (!(THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)))
+		{
 			Valve_relays &= ~(1 << SECOND_FLOOR_VALVE);
+			uart_puts_P("SECOND_FLOOR_VALVE relay deactivated");
+		}
 	}
 	else
 	{
 		Pump_relays &= ~(1 << GAS_RELAY);
 		Valve_relays &= ~((1 << FIRST_FLOOR_VALVE) | (1 << SECOND_FLOOR_VALVE));
+		uart_puts_P("GAS and FIRST_FLOOR_VALVE, SECOND_FLOOR_VALVE relay deactivated");
 	}
 #endif
 	
@@ -416,7 +442,10 @@ int main(void)
 	
 	lcd_init(LCD_DISP_ON);
 	lcd_defc( magyar_betuk);
-	menuInit();
+	
+	lcd_clrscr();
+	lcd_puts("Futes vezerles v0.5");
+	
 	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
 
 	DDRF &= ~(1 << PINF0); //ADC input
@@ -427,8 +456,26 @@ int main(void)
 	THERMOSTAT_DDR &= ~(1 << FIRST_THERMO_PIN)|(1 << SECOND_THERMO_PIN);
 	THERMOSTAT_PORT |= (1 << FIRST_THERMO_PIN)|(1 << SECOND_THERMO_PIN);
 	
+	Valve_relays = 0x00;
+	Pump_relays = 0x00;
+	
+	lcd_gotoxy(0,1);
+	lcd_puts("Alapallapotba allas");
+	lcd_gotoxy(0,2);
+	uint8_t init_counter = 0;
+	while (init_counter < 10)
+	{
+		lcd_putc('x');
+		_delay_ms(1000);
+		init_counter++;
+	}
+	
+	lcd_clrscr();
+	lcd_puts("I2C inditas");
 	i2c_init();
-	init_BME280(); //BMP 280
+	lcd_gotoxy(0,1);
+	lcd_puts("BME280 inditas");
+	init_BME280();
 
 	sei();
 	uart_puts_p(PSTR("Interrupt enabled\n"));
@@ -442,6 +489,8 @@ int main(void)
 	nSensors = search_sensors();
 		
 	uart_puts_P("Found "); uart_puti(nSensors); uart_puts_P(" DS18B20 sensors\n");
+	lcd_gotoxy(0,2);
+	lcd_puts("DS18B20: "); lcd_puti(nSensors); lcd_puts(" db");
 
 #ifdef SOLAR
 	SPIInit();
@@ -473,6 +522,17 @@ int main(void)
 	DDRE |= (1 << PINE5);	//LCD led PWM
 	PORTE |= (1 << PINE5);	//LCD led PWM
 	
+	lcd_gotoxy(0,3);
+	uint8_t timer_state_temp = 0;
+	while(Initialized)
+	{
+		if (timer_state_temp != timer_state)
+		{
+			lcd_putc('x');
+			timer_state_temp = timer_state;
+		}
+	};
+	
 	TCCR1B |= (1 << CS12);
 	TCNT1 = 0;
 	OCR1A = 62500;//14400; // 1000ms
@@ -481,8 +541,19 @@ int main(void)
 	//ADMUX |= (1<<REFS0) | (1<< REFS1);
 	ADCSRA |= (1 << ADEN)|(1<<ADIE)|(1<<ADSC)|(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2);
 	
+	menuInit();
+	
 	while(1)
 	{
+		if (TimerElapsed == 1)
+		{
+			TimerElapsed++;
+			sensor_read();
+			if (DebugMode == 0 && Initialized)
+				check_conditions();
+			wdt_reset();
+			TimerElapsed = 0;
+		}
 		menuPollButtons();
 	}
 	uart_puts_p(PSTR("Fatal error, program end\n"));

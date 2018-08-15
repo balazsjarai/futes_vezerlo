@@ -9,32 +9,7 @@
 #include "../Utils/ftoa.h"
 #include "../main.h"
 #include "avr/eeprom.h"
-
-extern uint8_t DebugMode, eeDebugMode;
-extern uint8_t MenuTimer, eeMenuTimer;
-extern uint8_t LCDBackLight, eeLCDBackLight;
-
-extern volatile float BME280_temp, BME280_humid;
-extern volatile uint8_t BME280_temp_min, BME280_temp_desired;
-extern char BME280_temp_buf[6], BME280_humid_buf[6];
-
-extern uint8_t eeBME280_temp_min, eeBME280_temp_desired;
-
-extern volatile uint8_t DHW_temp_actual, DHW_temp_desired, DHW_temp_min;
-extern uint8_t eeDHW_temp_desired, eeDHW_temp_min;
-
-extern volatile uint8_t DHW_sensor_ID;
-extern uint8_t eeDHW_sensor_ID;
-
-extern volatile uint8_t Solar_temp_actual, Solar_temp_desired, Solar_temp_up_threshold;
-extern volatile uint8_t Buffer_temp_actual;
-
-extern unsigned char Pump_relays, Valve_relays, Relay_or_PWM, eeRelay_or_PWM;
-
-extern uint8_t nSensors;
-
-extern void SwitchPump();
-extern void SwitchValve();
+#include "../main.h"
 
 void ChangeMsg()
 {
@@ -53,31 +28,6 @@ void BME280_temp_CallbackRender(uint8_t which){
 	lcd_puts(BME280_temp_buf);
 }
 
-void BME280_humidity_CallbackRender(uint8_t which){
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("BME280 para"));
-	lcd_gotoxy(0,1);
-	lcd_puts(BME280_humid_buf);
-}
-
-void BME280_min_CallbackRender(uint8_t which){
-	char buf[10];
-	itoa(BME280_temp_min, buf, 10);
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("BME280 min hom"));
-	lcd_gotoxy(0,1);
-	lcd_puts(buf);
-}
-
-void BME280_desired_CallbackRender(uint8_t which){
-	char buf[10];
-	itoa(BME280_temp_desired, buf, 10);
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("BME280 kivant hom"));
-	lcd_gotoxy(0,1);
-	lcd_puts(buf);
-}
-
 bool BME280_temp_Callback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
@@ -92,6 +42,13 @@ bool BME280_temp_Callback(MENU_BUTTON *button, uint8_t column){
 
 	BME280_temp_CallbackRender(column);
 	return false;
+}
+
+void BME280_humidity_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("BME280 para"));
+	lcd_gotoxy(0,1);
+	lcd_puts(BME280_humid_buf);
 }
 
 bool BME280_humidity_Callback(MENU_BUTTON *button, uint8_t column){
@@ -110,6 +67,15 @@ bool BME280_humidity_Callback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
+void BME280_min_CallbackRender(uint8_t which){
+	char buf[10];
+	itoa(BME280_temp_min, buf, 10);
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("BME280 min hom"));
+	lcd_gotoxy(0,1);
+	lcd_puts(buf);
+}
+
 bool BME280_min_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
@@ -125,12 +91,17 @@ bool BME280_min_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	char buf[5];
-	ChangeMsg();
-	itoa(BME280_temp_min, buf, 10);
-	lcd_puts(buf);
-
+	BME280_min_CallbackRender(column);
 	return false;
+}
+
+void BME280_desired_CallbackRender(uint8_t which){
+	char buf[10];
+	itoa(BME280_temp_desired, buf, 10);
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("BME280 kivant hom"));
+	lcd_gotoxy(0,1);
+	lcd_puts(buf);
 }
 
 bool BME280_desired_ActionCallback(MENU_BUTTON *button, uint8_t column){
@@ -148,13 +119,10 @@ bool BME280_desired_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	char buf[5];
-	ChangeMsg();
-	itoa(BME280_temp_desired, buf, 10);
-	lcd_puts(buf);
-
+	BME280_desired_CallbackRender(column);
 	return false;
 }
+
 
 /*************************************************************************
  BME 280, submenu definition
@@ -205,52 +173,6 @@ void DHW_temp_desired_CallbackRender(uint8_t which){
 	lcd_puts(buf);
 }
 
-void DHW_temp_min_CallbackRender(uint8_t which){
-	char buf[10];
-	itoa(DHW_temp_min, buf, 10);
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("HMV min hom"));
-	lcd_gotoxy(0,1);
-	lcd_puts(buf);
-}
-
-void DHW_sensor_CallbackRender(uint8_t which){
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("HMV szenzor ID"));
-	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(DHW_sensor_ID, buf, 10);
-	lcd_puts(buf);
-}
-
-void DHW_PWM_CallbackRender(uint8_t which){
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("HMV pumpa tipus"));
-	lcd_gotoxy(0,1);
-	if (!(Relay_or_PWM & (1 << DHW)))
-		lcd_puts_hu(PSTR("Rele"));
-	else
-		lcd_puts_P("PWM");
-}
-
-void DHW_switch_CallbackRender(uint8_t which){
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("HMV pumpa ßllapot"));
-	lcd_gotoxy(0,1);
-	if (!(Relay_or_PWM & (1 << DHW)))
-	{	if (Pump_relays & (1 << DHW_RELAY))
-			lcd_puts_hu(PSTR("Rele bekapcsolva"));
-		else
-			lcd_puts_hu(PSTR("Rele kikapcsolva"));
-	}
-	else
-	{
-		char buf[6];
-		lcd_puts_P("PWM: "); itoa(DHW_PWM_OCR, buf, 10);
-	}
-}
-
-
 bool DHW_temp_desired_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
@@ -265,13 +187,17 @@ bool DHW_temp_desired_ActionCallback(MENU_BUTTON *button, uint8_t column){
 		case MENU_CANCEL:
 			return true;
 	}
-
-	char buf[5];
-	ChangeMsg();
-	itoa(DHW_temp_desired, buf, 10);
-	lcd_puts(buf);
-
+	DHW_temp_desired_CallbackRender(column);
 	return false;
+}
+
+void DHW_temp_min_CallbackRender(uint8_t which){
+	char buf[10];
+	itoa(DHW_temp_min, buf, 10);
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("HMV min hom"));
+	lcd_gotoxy(0,1);
+	lcd_puts(buf);
 }
 
 bool DHW_temp_min_ActionCallback(MENU_BUTTON *button, uint8_t column){
@@ -289,12 +215,17 @@ bool DHW_temp_min_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	char buf[5];
-	ChangeMsg();
-	itoa(DHW_temp_min, buf, 10);
-	lcd_puts(buf);
-
+	DHW_temp_min_CallbackRender(column);
 	return false;
+}
+
+void DHW_sensor_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("HMV szenzor ID"));
+	lcd_gotoxy(0,1);
+	char buf[4];
+	itoa(DHW_sensor_ID, buf, 10);
+	lcd_puts(buf);
 }
 
 bool DHW_sensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
@@ -316,12 +247,18 @@ bool DHW_sensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	ChangeMsg();
-	char buf[4];
-	itoa(DHW_sensor_ID, buf, 10);
-	lcd_puts(buf);
-
+	DHW_sensor_CallbackRender(column);
 	return false;
+}
+
+void DHW_PWM_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("HMV pumpa tipus"));
+	lcd_gotoxy(0,1);
+	if (!(Relay_or_PWM & (1 << DHW)))
+		lcd_puts_hu(PSTR("Rele"));
+	else
+		lcd_puts_P("PWM");
 }
 
 bool DHW_PWM_ActionCallback(MENU_BUTTON *button, uint8_t column){
@@ -337,13 +274,25 @@ bool DHW_PWM_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	ChangeMsg();
-	if (!(Relay_or_PWM & (1 << DHW)))
-		lcd_puts_hu(PSTR("Rele"));
-	else
-		lcd_puts_P("PWM");
-
+	DHW_PWM_CallbackRender(column);
 	return false;
+}
+
+void DHW_switch_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("HMV pumpa allapot"));
+	lcd_gotoxy(0,1);
+	if (!(Relay_or_PWM & (1 << DHW)))
+	{	if (Pump_relays & (1 << DHW_RELAY))
+			lcd_puts_hu(PSTR("Rele bekapcsolva"));
+		else
+			lcd_puts_hu(PSTR("Rele kikapcsolva"));
+	}
+	else
+	{
+		char buf[6];
+		lcd_puts_P("PWM: "); itoa(DHW_PWM_OCR, buf, 10);
+	}
 }
 
 bool DHW_switch_ActionCallback(MENU_BUTTON *button, uint8_t column){
@@ -374,20 +323,7 @@ bool DHW_switch_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	ChangeMsg();
-	if (!(Relay_or_PWM & (1 << DHW)))
-	{
-		if (Pump_relays & DHW_RELAY)
-			lcd_puts_hu(PSTR("Rele bekapcsolva"));
-		else
-			lcd_puts_hu(PSTR("Rele kikapcsolva"));
-	}
-	else
-	{
-		char buf[6];
-		lcd_puts_P("PWM: "); itoa(DHW_PWM_OCR, buf, 10);
-	}
-
+	DHW_switch_CallbackRender(column);
 	return false;
 }
 
@@ -416,36 +352,6 @@ void ZoneValve1_CallbackRender(uint8_t which){
 			lcd_puts_hu(PSTR("Rele kikapcsolva"));
 }
 
-void ZoneValve2_CallbackRender(uint8_t which){
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("Zonaszelep 2 allapot"));
-	lcd_gotoxy(0,1);
-	if (Valve_relays & (1 << SECOND_FLOOR_VALVE))
-			lcd_puts_hu(PSTR("Rele bekapcsolva"));
-		else
-			lcd_puts_hu(PSTR("Rele kikapcsolva"));
-}
-
-void ThreeWayValve1_CallbackRender(uint8_t which){
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("3 jaratu 1 allapot"));
-	lcd_gotoxy(0,1);
-	if (Valve_relays & (1 << SOLAR_VALVE))
-			lcd_puts_hu(PSTR("Rele bekapcsolva"));
-		else
-			lcd_puts_hu(PSTR("Rele kikapcsolva"));
-}
-
-void ThreeWayValve2_CallbackRender(uint8_t which){
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("3 jaratu 2 allapot"));
-	lcd_gotoxy(0,1);
-	if (Valve_relays & (1 << BUFFER_VALVE))
-			lcd_puts_hu(PSTR("Rele bekapcsolva"));
-		else
-			lcd_puts_hu(PSTR("Rele kikapcsolva"));
-}
-
 bool ZoneValve1_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
@@ -459,12 +365,18 @@ bool ZoneValve1_ActionCallback(MENU_BUTTON *button, uint8_t column){
 		return true;
 	}
 
-	ChangeMsg();
-	if (Valve_relays & (1 << FIRST_FLOOR_VALVE))
+	ZoneValve1_CallbackRender(column);
+	return false;
+}
+
+void ZoneValve2_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Zonaszelep 2 allapot"));
+	lcd_gotoxy(0,1);
+	if (Valve_relays & (1 << SECOND_FLOOR_VALVE))
 			lcd_puts_hu(PSTR("Rele bekapcsolva"));
 		else
 			lcd_puts_hu(PSTR("Rele kikapcsolva"));
-	return false;
 }
 
 bool ZoneValve2_ActionCallback(MENU_BUTTON *button, uint8_t column){
@@ -480,13 +392,18 @@ bool ZoneValve2_ActionCallback(MENU_BUTTON *button, uint8_t column){
 		return true;
 	}
 
-	ChangeMsg();
-	if (Valve_relays & (1 << SECOND_FLOOR_VALVE))
+	ZoneValve2_CallbackRender(column);
+	return false;
+}
+
+void ThreeWayValve1_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("3 jaratu 1 allapot"));
+	lcd_gotoxy(0,1);
+	if (Valve_relays & (1 << SOLAR_VALVE))
 			lcd_puts_hu(PSTR("Rele bekapcsolva"));
 		else
 			lcd_puts_hu(PSTR("Rele kikapcsolva"));
-
-	return false;
 }
 
 bool ThreeWayValve1_ActionCallback(MENU_BUTTON *button, uint8_t column){
@@ -502,13 +419,18 @@ bool ThreeWayValve1_ActionCallback(MENU_BUTTON *button, uint8_t column){
 		return true;
 	}
 
-	ChangeMsg();
-	if (Valve_relays & (1 << SOLAR_VALVE))
+	ThreeWayValve1_CallbackRender(column);
+	return false;
+}
+
+void ThreeWayValve2_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("3 jaratu 2 allapot"));
+	lcd_gotoxy(0,1);
+	if (Valve_relays & (1 << BUFFER_VALVE))
 			lcd_puts_hu(PSTR("Rele bekapcsolva"));
 		else
 			lcd_puts_hu(PSTR("Rele kikapcsolva"));
-
-	return false;
 }
 
 bool ThreeWayValve2_ActionCallback(MENU_BUTTON *button, uint8_t column){
@@ -524,22 +446,161 @@ bool ThreeWayValve2_ActionCallback(MENU_BUTTON *button, uint8_t column){
 		return true;
 	}
 
-	ChangeMsg();
-	if (Valve_relays & (1 << BUFFER_VALVE))
-			lcd_puts_hu(PSTR("Rele bekapcsolva"));
-		else
-			lcd_puts_hu(PSTR("Rele kikapcsolva"));
-
+	ThreeWayValve2_CallbackRender(column);
 	return false;
 }
 
 
 #define VALVES_SUBMENU_ITEMS 4
 static MENU_ITEM VALVES_submenu[VALVES_SUBMENU_ITEMS] = {
-	{"Zona 1", 			ZoneValve1_CallbackRender, 			ZoneValve1_ActionCallback, 		0,	NULL},
-	{"Zona 2", 			ZoneValve2_CallbackRender, 			ZoneValve2_ActionCallback, 		0,	NULL},
-	{"3 jaratu 1", 		ThreeWayValve1_CallbackRender, 		ThreeWayValve1_ActionCallback, 	0,	NULL},
-	{"3 jaratu 2", 		ThreeWayValve2_CallbackRender, 		ThreeWayValve2_ActionCallback, 	0,	NULL},
+	{"Zona foldszint", 			ZoneValve1_CallbackRender, 			ZoneValve1_ActionCallback, 		0,	NULL},
+	{"Zona emelet", 			ZoneValve2_CallbackRender, 			ZoneValve2_ActionCallback, 		0,	NULL},
+	{"Solar 3 jaratu", 			ThreeWayValve1_CallbackRender, 		ThreeWayValve1_ActionCallback, 	0,	NULL},
+	{"Puffer 3 jaratu", 		ThreeWayValve2_CallbackRender, 		ThreeWayValve2_ActionCallback, 	0,	NULL},
+};
+
+void DHWPump_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("HMV pumpa allapot"));
+	lcd_gotoxy(0,1);
+	if (Pump_relays & (1 << DHW_RELAY))
+			lcd_puts_hu(PSTR("Rele bekapcsolva"));
+		else
+			lcd_puts_hu(PSTR("Rele kikapcsolva"));
+}
+
+bool DHWPump_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+			Valve_relays ^= (1 << FIRST_FLOOR_VALVE);
+			SwitchValve();
+			break;
+		case MENU_CONFIRM:
+		return true;
+		case MENU_CANCEL:
+		return true;
+	}
+
+	DHWPump_CallbackRender(column);
+	return false;
+}
+
+void SolarPump_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Zonaszelep 2 allapot"));
+	lcd_gotoxy(0,1);
+	if (Valve_relays & (1 << SECOND_FLOOR_VALVE))
+			lcd_puts_hu(PSTR("Rele bekapcsolva"));
+		else
+			lcd_puts_hu(PSTR("Rele kikapcsolva"));
+}
+
+bool SolarPump_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+			Valve_relays ^= (1 << SECOND_FLOOR_VALVE);
+			SwitchValve();
+			break;
+		case MENU_CONFIRM:
+		return true;
+		case MENU_CANCEL:
+		return true;
+	}
+
+	SolarPump_CallbackRender(column);
+	return false;
+}
+
+void BufferPump_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("3 jaratu 1 allapot"));
+	lcd_gotoxy(0,1);
+	if (Valve_relays & (1 << SOLAR_VALVE))
+			lcd_puts_hu(PSTR("Rele bekapcsolva"));
+		else
+			lcd_puts_hu(PSTR("Rele kikapcsolva"));
+}
+
+bool BufferPump_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+			Valve_relays ^= (1 << SOLAR_VALVE);
+			SwitchValve();
+			break;
+		case MENU_CONFIRM:
+		return true;
+		case MENU_CANCEL:
+		return true;
+	}
+
+	BufferPump_CallbackRender(column);
+	return false;
+}
+
+void GasRelay_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("3 jaratu 2 allapot"));
+	lcd_gotoxy(0,1);
+	if (Valve_relays & (1 << BUFFER_VALVE))
+			lcd_puts_hu(PSTR("Rele bekapcsolva"));
+		else
+			lcd_puts_hu(PSTR("Rele kikapcsolva"));
+}
+
+bool GasRelay_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+			Valve_relays ^= (1 << BUFFER_VALVE);
+			SwitchValve();
+			break;
+		case MENU_CONFIRM:
+		return true;
+		case MENU_CANCEL:
+		return true;
+	}
+
+	GasRelay_CallbackRender(column);
+	return false;
+}
+
+void SolarBack_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("3 jaratu 2 allapot"));
+	lcd_gotoxy(0,1);
+	if (Valve_relays & (1 << BUFFER_VALVE))
+			lcd_puts_hu(PSTR("Rele bekapcsolva"));
+		else
+			lcd_puts_hu(PSTR("Rele kikapcsolva"));
+}
+
+bool SolarBack_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+			Valve_relays ^= (1 << BUFFER_VALVE);
+			SwitchValve();
+			break;
+		case MENU_CONFIRM:
+		return true;
+		case MENU_CANCEL:
+		return true;
+	}
+
+	SolarBack_CallbackRender(column);
+	return false;
+}
+
+#define PUMPS_SUBMENU_ITEMS 5
+static MENU_ITEM PUMPS_submenu[PUMPS_SUBMENU_ITEMS] = {
+	{"HMV", 			DHWPump_CallbackRender, 			DHWPump_ActionCallback, 	0,	NULL},
+	{"Szolar", 			SolarPump_CallbackRender, 			SolarPump_ActionCallback, 	0,	NULL},
+	{"Puffer", 			BufferPump_CallbackRender, 			BufferPump_ActionCallback, 	0,	NULL},
+	{"Gaz termosztat", 	GasRelay_CallbackRender, 			GasRelay_ActionCallback, 	0,	NULL},
+	{"Szolar vissza", 	SolarBack_CallbackRender, 			SolarBack_ActionCallback, 	0,	NULL},
 };
 
 
@@ -568,11 +629,7 @@ bool DebugMode_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	ChangeMsg();
-	char buf[4];
-	itoa(DebugMode, buf, 10);
-	lcd_puts(buf);
-
+	DebugMode_CallbackRender(column);
 	return false;
 }
 
@@ -599,11 +656,7 @@ bool MenuTimer_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	ChangeMsg();
-	char buf[4];
-	itoa(MenuTimer, buf, 10);
-	lcd_puts(buf);
-
+	MenuTimer_CallbackRender(column);
 	return false;
 }
 
@@ -631,13 +684,9 @@ bool LCDBackLight_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 	if (LCDBackLight != 0)
-		OCR3A = LCDBackLight;
+		OCR3C = LCDBackLight;
 
-	ChangeMsg();
-	char buf[4];
-	itoa(LCDBackLight, buf, 10);
-	lcd_puts(buf);
-
+	LCDBackLight_CallbackRender(column);
 	return false;
 }
 
@@ -653,11 +702,12 @@ static MENU_ITEM SYSPARAM_submenu[SYSPARAM_SUBMENU_ITEMS] = {
 /*
 ** HOME menu items definition
 */
-#define MENU_HOME_ITEMS  4
+#define MENU_HOME_ITEMS  5
 static MENU_ITEM home_items[MENU_HOME_ITEMS] = {
 	{"HMV beallitas",   	NULL,                           NULL,                     DHW_SUBMENU_ITEMS,     	DHW_submenu	  	},
 	{"Kazanhaz termoszt",	NULL,                           NULL,                     BME280_SUBMENU_ITEMS,   	BME280_submenu	},
 	{"Szelepek",			NULL,							NULL,					  VALVES_SUBMENU_ITEMS, 	VALVES_submenu	},
+	{"Pumpak",				NULL,							NULL,					  PUMPS_SUBMENU_ITEMS, 		PUMPS_submenu},
 	{"Vezerlo beallitas",	NULL,							NULL,					  SYSPARAM_SUBMENU_ITEMS, 	SYSPARAM_submenu},
 };
 

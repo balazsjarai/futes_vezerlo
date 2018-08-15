@@ -25,6 +25,7 @@
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
+#include <stdlib.h>
 #include "lcd.h"
 
 /*
@@ -642,6 +643,13 @@ void lcd_putbyte_hex( unsigned char c)                       // 1 byte kiirasa h
 {
 	lcd_putc_hex( c >> 4);
 	lcd_putc_hex( c);
+}
+
+void lcd_puti(unsigned int i)
+{
+	char buf[4];
+	itoa(i, buf, 10);
+	lcd_puts(buf);
 }
 
 void lcd_putc_hu( unsigned char c)                          // magyar betu kiirasa LCD-re
