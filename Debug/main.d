@@ -26,9 +26,8 @@ main.d main.o: .././main.c \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\stdio.h \
  c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\gcc\avr\5.4.0\include\stdarg.h \
  .././BME280/../I2C/i2c_master.h .././BME280/../UART/UART.h \
- .././Utils/ftoa.h .././UART/UART.h .././SPI/spi.h \
- .././MAX31865/max31865.h .././DS18B20/crc8.h .././DS18B20/delay.h \
- .././DS18B20/ds18x20.h .././DS18B20/onewire.h
+ .././Utils/ftoa.h .././UART/UART.h .././SPI/spi.h .././DS18B20/crc8.h \
+ .././DS18B20/delay.h .././DS18B20/ds18x20.h .././DS18B20/onewire.h
 
 c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\avr\include\avr\io.h:
 
@@ -95,8 +94,6 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\avr8\avr8-gnu-toolchain\lib\
 .././UART/UART.h:
 
 .././SPI/spi.h:
-
-.././MAX31865/max31865.h:
 
 .././DS18B20/crc8.h:
 
