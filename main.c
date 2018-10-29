@@ -1,3 +1,10 @@
+//TODO
+
+// külsõ hõmérés
+// szivattyú utánfutás
+// kazánház min / kivánt
+// több kijelzés
+
 #include <avr/io.h>
 #include <stdlib.h>
 #include <avr/pgmspace.h>
@@ -38,7 +45,7 @@ uint8_t EEMEM eeDHW_temp_max = 80;
 uint8_t EEMEM eeDHW_temp_min = 50;
 
 volatile uint8_t Buffer_temp_actual; char Buffer_temp_actual_buf[4], Buffer_temp_actual_frac_buf[3];
-volatile uint8_t Forward_heat_temp = 35; uint8_t eeForward_heat_temp = 35;
+volatile uint8_t Forward_heat_temp = 35; uint8_t EEMEM eeForward_heat_temp = 35;
 
 volatile unsigned char Relays = 0;
 
@@ -163,81 +170,83 @@ void check_conditions()
 {
 	// DHW felsõ kör
 
-	if (DHW_temp_actual <= DHW_temp_min && DHW_temp_actual <= DHW_temp_desired) // alacsony HMV hõmérséklet
+	if (DHW_temp_actual <= DHW_temp_min) // alacsony HMV hõmérséklet
 	{
-		if (Buffer_temp_actual <= DHW_temp_actual) // Pufferben nincs elég energia
+		if (DHW_temp_actual <= DHW_temp_desired)
 		{
-			Relays |= (1 << DHW_VALVE_RELAY) | (1 << GAS_RELAY);
-			Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
-			if (DebugMode > 0)
-				uart_puts_P("DHW relay activated with gas");
-		}
-		else // Pufferben van elég energia
-		{
-			Relays |= (1 << DHW_VALVE_RELAY) | (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY);
-			Relays &= ~(1 << GAS_RELAY);
-			if (DebugMode > 0)
-				uart_puts_P("DHW relay activated with buffer");
+			if (Buffer_temp_actual < DHW_temp_desired) // Pufferben nincs elég energia
+			{
+				Relays |= (1 << DHW_VALVE_RELAY) | (1 << GAS_RELAY);
+				Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
+				if (DebugMode > 0)
+				uart_puts_P("DHW relay activated with gas\n");
+			}
+			else // Pufferben van elég energia
+			{
+				Relays |= (1 << DHW_VALVE_RELAY) | (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY);
+				Relays &= ~(1 << GAS_RELAY);
+				if (DebugMode > 0)
+				uart_puts_P("DHW relay activated with buffer\n");
+			}
 		}
 	}
-	else
+	else if (DHW_temp_actual >= DHW_temp_desired)
 	{
 		Relays &= ~((1 << GAS_RELAY) | (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY) | (1 << DHW_VALVE_RELAY));
 		if (DebugMode > 0)
-			uart_puts_P("DHW relay deactivated");
+		uart_puts_P("DHW relay deactivated\n");
 	}
 
-
-	if ((!(THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)) || BME280_temp < BME280_temp_desired) && !(Relays & (1 << DHW_VALVE_RELAY)))
+	if (((!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN))) || (!(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN))) || BME280_temp < BME280_temp_desired) && !(Relays & (1 << DHW_VALVE_RELAY)))
 	{
 		if (Buffer_temp_actual < Forward_heat_temp)
 		{
 			Relays |= (1 << GAS_RELAY);
 			Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY) | (1 << DHW_VALVE_RELAY));
 			if (DebugMode > 0)
-				uart_puts_P("GAS activated; BUFFER, DHW relay deactivated");
+				uart_puts_P("GAS activated; BUFFER, DHW relay deactivated\n");
 		}
 		else
 		{
 			Relays &= ~((1 << GAS_RELAY) | (1 << DHW_VALVE_RELAY));
 			Relays |= (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY);
 			if (DebugMode > 0)
-				uart_puts_P("GAS, DHW deactivated; BUFFER relay deactivated");
+				uart_puts_P("GAS, DHW deactivated; BUFFER relay deactivated\n");
 		}
 
-		if (!(THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)))
+		if (!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)))
 		{
 			Relays |= (1 << FIRST_FLOOR_VALVE);
 			if (DebugMode > 0)
-				uart_puts_P("FIRST FLOOR activated");
+				uart_puts_P("FIRST FLOOR activated\n");
 		}
-		if ((THERMOSTAT_PORT & (1 << FIRST_THERMO_PIN)))
+		if ((THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)))
 		{
 			Relays &= ~(1 << FIRST_FLOOR_VALVE);
 			if (DebugMode > 0)
-				uart_puts_P("FIRST FLOOR deactivated");
+				uart_puts_P("FIRST FLOOR deactivated\n");
 		}
-		if (!(THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)))
+		if (!(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
 		{
 			Relays |= (1 << SECOND_FLOOR_VALVE);
 			if (DebugMode > 0)
-				uart_puts_P("SECOND FLOOR activated");
+				uart_puts_P("SECOND FLOOR activated\n");
 		}
-		if ((THERMOSTAT_PORT & (1 << SECOND_THERMO_PIN)))
+		if ((THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
 		{
 			Relays &= ~(1 << SECOND_FLOOR_VALVE);
 			if (DebugMode > 0)
-				uart_puts_P("SECOND FLOOR deactivated");
+				uart_puts_P("SECOND FLOOR deactivated\n");
 		}
 	}
 	else
 	{
-		Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 <<BUFFER_PUMP_RELAY) | (1 << GAS_RELAY));
+		Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 <<BUFFER_PUMP_RELAY) | (1 << GAS_RELAY) | (1 << FIRST_FLOOR_VALVE) | (1 << SECOND_FLOOR_VALVE));
 		if (DebugMode > 0)
-			uart_puts_P("GAS and FIRST_FLOOR_VALVE, SECOND_FLOOR_VALVE relay deactivated");
+			uart_puts_P("GAS and FIRST_FLOOR_VALVE, SECOND_FLOOR_VALVE relay deactivated\n");
 	}
-
-	SwitchRelays();
+	if (DebugMode == 0)
+		SwitchRelays();
 }
 
 uint8_t search_sensors(void)
@@ -310,6 +319,12 @@ int main(void)
 	lcd_init(LCD_DISP_ON);
 	lcd_defc(magyar_betuk);
 
+	TCCR3A |= (1 << WGM30)|(1<<COM3C1);
+	TCCR3B |= (1 << WGM32)|(1 << CS30)|(1 << CS31);
+	OCR3C = 128;
+	DDRE |= (1 << PINE5);	//LCD led PWM
+	PORTE |= (1 << PINE5);	//LCD led PWM
+
 	lcd_clrscr();
 	lcd_puts("Futes vezerles v0.8");
 
@@ -320,8 +335,8 @@ int main(void)
 
 	BUZZER_DDR |= (1 << BUZZER_PIN);
 
-	THERMOSTAT_DDR &= ~(1 << FIRST_THERMO_PIN)|(1 << SECOND_THERMO_PIN);
-	THERMOSTAT_PORT |= (1 << FIRST_THERMO_PIN)|(1 << SECOND_THERMO_PIN);
+	THERMOSTAT_DDR &= ~((1 << FIRST_THERMO_PIN)|(1 << SECOND_THERMO_PIN));
+	//THERMOSTAT_PORT |= (1 << FIRST_THERMO_PIN)|(1 << SECOND_THERMO_PIN);
 
 	Relays = 0x00;
 	SwitchRelays();
@@ -360,14 +375,6 @@ int main(void)
 	lcd_gotoxy(0,2);
 	lcd_puts("DS18B20: "); lcd_puti(nSensors); lcd_puts(" db");
 
-	_delay_ms(3000);
-
-	TCCR3A |= (1 << WGM30)|(1<<COM3C1);
-	TCCR3B |= (1 << WGM32)|(1 << CS30)|(1 << CS31);
-	OCR3C = 128;
-	DDRE |= (1 << PINE5);	//LCD led PWM
-	PORTE |= (1 << PINE5);	//LCD led PWM
-
 	lcd_gotoxy(0,3);
 
 	TCCR1B |= (1 << CS12);
@@ -386,7 +393,7 @@ int main(void)
 		{
 			TimerElapsed++;
 			sensor_read();
-			if (DebugMode == 0)
+			//if (DebugMode == 0)
 				check_conditions();
 			wdt_reset();
 			TimerElapsed = 0;

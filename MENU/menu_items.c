@@ -289,10 +289,10 @@ void ForwardHeatTemp_CallbackRender(uint8_t which){
 bool ForwardHeatTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			++DHW_temp_min;
+			++Forward_heat_temp;
 			break;
 		case MENU_DOWN:
-			--DHW_temp_min;
+			--Forward_heat_temp;
 			break;
 		case MENU_CONFIRM:
 			eeprom_update_byte(&eeForward_heat_temp, Forward_heat_temp);
