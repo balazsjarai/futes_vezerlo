@@ -648,8 +648,8 @@ void lcd_putbyte_hex( unsigned char c)                       // 1 byte kiirasa h
 void lcd_putbit(unsigned char c, unsigned char bit)
 {
 	while (bit--)
-		c=c << 1;
-	if( c & 0x80) 
+		c=c >> 1;
+	if( c & 0x01) 
 		lcd_putc( '1');
 	else
 		lcd_putc( '0');

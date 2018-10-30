@@ -1,7 +1,7 @@
 //TODO
 
 // külsõ hõmérés, tiltás -> OK
-// szivattyú utánfutás -> OK?
+// szivattyú utánfutás -> OK
 // kazánház min / kivánt -> OK
 // min < kivánt -> OK
 // több kijelzés -> OK?
@@ -37,25 +37,25 @@ volatile uint8_t TimerState = 0;
 volatile uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
 volatile uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
 volatile uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
-volatile uint16_t PumpPlusTime = 180; uint16_t EEMEM eePumpPlusTime = 180;
+volatile uint16_t PumpPlusTime = 5; uint16_t EEMEM eePumpPlusTime = 5;
 
 volatile float BME280Temp; char BME280TempBuf[6];
 volatile float BME280Humid; char BME280HumidBuf[6];
 volatile uint16_t BME280TempUint;
 
 volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin; char DHWTempActualBuf[4], DHWTempActualFracBuf[3];
-uint8_t EEMEM eeDHWTempDesired = 60;
-uint8_t EEMEM eeDHWTempMin = 50;
+uint8_t EEMEM eeDHWTempDesired = 30;
+uint8_t EEMEM eeDHWTempMin = 25;
 
 volatile uint8_t BufferTempActual; char BufferTempActualBuf[4], BufferTempActualFracBuf[3];
-volatile uint8_t ForwardHeatTemp = 35; uint8_t EEMEM eeForwardHeatTemp = 35;
+volatile uint8_t ForwardHeatTemp = 25; uint8_t EEMEM eeForwardHeatTemp = 25;
 
 volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin; char GarageTempActualBuf[4], GarageTempActualFracBuf[3];
 uint8_t EEMEM eeGarageTempDesired = 10;
 uint8_t EEMEM eeGarageTempMin = 5;
 
 volatile uint16_t SwitchOnOutdoorTempMin; 
-uint16_t EEMEM eeSwitchOnOutdoorTempMin = 1900;
+uint16_t EEMEM eeSwitchOnOutdoorTempMin = 2300;
 
 volatile unsigned char Relays = 0;
 
@@ -206,27 +206,29 @@ void CheckConditions()
 	// DHW felsõ kör
 	static uint16_t pumpplustime = 0;
 	
-	if (!((DHWTempMin < DHWTempActual) ^ (DHWTempActual >= DHWTempDesired))) // alacsony HMV hõmérséklet
+	if (DHWTempActual < DHWTempDesired) // alacsony HMV hõmérséklet
 	{
-		if (BufferTempActual < DHWTempDesired) // Pufferben nincs elég energia
+		if (DHWTempMin >= DHWTempActual)
 		{
-			pumpplustime = PumpPlusTime;
-			Relays |= (1 << DHW_VALVE_RELAY) | (1 << GAS_RELAY);
-			Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
-			if (DebugMode > 0)
-				uart_puts_P("DHW relay activated with gas\n");
-		}
-		else // Pufferben van elég energia
-		{
-			if (!pumpplustime) // gáz megy, de átkapcsol pufferre, gáz még utókeringetne
-				Relays |= (1 << DHW_VALVE_RELAY) | (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY);
-			else
+			if (BufferTempActual < DHWTempDesired) // Pufferben nincs elég energia
+			{
+				pumpplustime = PumpPlusTime;
+				Relays |= (1 << DHW_VALVE_RELAY)|(1 << GAS_RELAY);
+				Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
+				if (DebugMode > 0)
+					uart_puts_P("DHW relay activated with gas\n");
+			}
+			else // Pufferben van elég energia
+			{
+				if (!pumpplustime) // gáz megy, de átkapcsol pufferre, gáz még utókeringetne
+					Relays |= ((1 << DHW_VALVE_RELAY) | (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
+				else
 				pumpplustime--;
-			Relays &= ~(1 << GAS_RELAY);
-			if (DebugMode > 0)
-				uart_puts_P("DHW relay activated with buffer\n");
+				Relays &= ~(1 << GAS_RELAY);
+				if (DebugMode > 0)
+					uart_puts_P("DHW relay activated with buffer\n");
+			}
 		}
-
 	}
 	else // megszûnõ hõigény esetén az utókeringetés a gépház radiátorát fûti
 	{
@@ -236,31 +238,35 @@ void CheckConditions()
 	}
 
 	// fûtési kör
-	if (!(Relays & (1 << DHW_VALVE_RELAY)) && (BME280TempUint <= SwitchOnOutdoorTempMin))
+	if (!(Relays & (1 << DHW_VALVE_RELAY)))
 	{
-		if (!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) || !((GarageTempMin < GarageTempActual) ^ (GarageTempActual >= GarageTempDesired)))		
+		if ((!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) || (GarageTempActual < GarageTempDesired))  && (BME280TempUint <= SwitchOnOutdoorTempMin))		
 		{
-			if (BufferTempActual < ForwardHeatTemp) // Pufferben nincs elég energia
+			if (GarageTempActual < GarageTempMin || !(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
 			{
-				pumpplustime = PumpPlusTime; // gáz utókeringetés
-				Relays |= (1 << GAS_RELAY);
-				Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY) | (1 << DHW_VALVE_RELAY));
-				if (DebugMode > 0)
-					uart_puts_P("GAS activated; BUFFER, DHW relay deactivated\n");
-			}
-			else // Puffer elég meleg
-			{
-				if (!pumpplustime) // ha átkapcsol gázról pufferre, a gáz még utókeringetne
+				if (BufferTempActual < ForwardHeatTemp) // Pufferben nincs elég energia
 				{
-					Relays &= ~((1 << GAS_RELAY) | (1 << DHW_VALVE_RELAY));
-					Relays |= (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY);
+					pumpplustime = PumpPlusTime; // gáz utókeringetés
+					Relays |= (1 << GAS_RELAY);
+					Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY) | (1 << DHW_VALVE_RELAY));
+					if (DebugMode > 0)
+					uart_puts_P("GAS activated; BUFFER, DHW relay deactivated\n");
 				}
-				else 
+				else // Puffer elég meleg
+				{
+					if (!pumpplustime) // ha átkapcsol gázról pufferre, a gáz még utókeringetne
+					{
+						Relays &= ~((1 << GAS_RELAY) | (1 << DHW_VALVE_RELAY));
+						Relays |= ((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
+					}
+					else
 					pumpplustime--;
-				
-				if (DebugMode > 0)
+					
+					if (DebugMode > 0)
 					uart_puts_P("GAS, DHW deactivated; BUFFER relay deactivated\n");
+				}
 			}
+			
 			
 			if (!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)))
 			{
@@ -299,16 +305,7 @@ void CheckConditions()
 				uart_puts_P("GAS and FIRST_FLOOR_VALVE, SECOND_FLOOR_VALVE relay deactivated\n");
 		}
 	}
-	else
-	{
-		Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 <<BUFFER_PUMP_RELAY) | (1 << GAS_RELAY));
-		if (!pumpplustime)
-			Relays &= ~((1 << FIRST_FLOOR_VALVE) | (1 << SECOND_FLOOR_VALVE));
-		else
-			pumpplustime--;
-		if (DebugMode > 0)
-			uart_puts_P("GAS and FIRST_FLOOR_VALVE, SECOND_FLOOR_VALVE relay deactivated\n");
-	}
+
 	if (DebugMode < 2)
 		SwitchRelays();
 }
