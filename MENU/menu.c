@@ -9,8 +9,8 @@
 #include "../LCD/lcd.h"
 #include "menu.h"
 #include "menu_items.h"
-
-extern volatile uint8_t menutimer, MenuTimer;
+#include "../main.h"
+#include <avr/eeprom.h>
 
 /*
 ** Menu main components definition
@@ -174,10 +174,10 @@ void menuPollButtons(){
 		MENU_BUTTON *b = &menu_buttons[i];
 
 		b->state = (b->state << 1) | !((MENU_PORTSIO_PIN) & (1<<(b->button_PIN))) | 0XE000;
-		
+
 		if(b->state == 0xF000){
 			b->pressed = true;
-			menutimer = MenuTimer;
+			MenuTimer = eeprom_read_byte(&eeMenuTimer);
 			BUZZER_PORT |= (1 << BUZZER_PIN);
 			if(current_state->level != MENU_CALLBACK){
 				scrollMenu(b);

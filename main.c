@@ -1,9 +1,13 @@
 //TODO
 
-// külsõ hõmérés
-// szivattyú utánfutás
-// kazánház min / kivánt
-// több kijelzés
+// külsõ hõmérés, tiltás -> OK
+// szivattyú utánfutás -> OK?
+// kazánház min / kivánt -> OK
+// min < kivánt -> OK
+// több kijelzés -> OK?
+// óra
+// külsõ hõmérõ hiba
+// elõzõ / aktuális állapot -> kevesebb frissítés
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -28,38 +32,47 @@
 #include "DS18B20/onewire.h"
 
 volatile uint8_t TimerElapsed = 0;
-volatile uint8_t timer_state = 0;
+volatile uint8_t TimerState = 0;
 
 volatile uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
-volatile uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10; volatile uint8_t menutimer = 10;
+volatile uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
 volatile uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
+volatile uint16_t PumpPlusTime = 180; uint16_t EEMEM eePumpPlusTime = 180;
 
-volatile float BME280_temp; char BME280_temp_buf[6];
-volatile float BME280_humid; char BME280_humid_buf[6];
-volatile uint8_t BME280_temp_min = 10; uint8_t EEMEM eeBME280_temp_min = 10;
-volatile uint8_t BME280_temp_desired = 15; uint8_t EEMEM eeBME280_temp_desired = 15;
+volatile float BME280Temp; char BME280TempBuf[6];
+volatile float BME280Humid; char BME280HumidBuf[6];
+volatile uint16_t BME280TempUint;
 
-volatile uint8_t DHW_temp_actual, DHW_temp_desired, DHW_temp_max, DHW_temp_min; char DHW_temp_actual_buf[4], DHW_temp_actual_frac_buf[3];
-uint8_t EEMEM eeDHW_temp_desired = 60;
-uint8_t EEMEM eeDHW_temp_max = 80;
-uint8_t EEMEM eeDHW_temp_min = 50;
+volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin; char DHWTempActualBuf[4], DHWTempActualFracBuf[3];
+uint8_t EEMEM eeDHWTempDesired = 60;
+uint8_t EEMEM eeDHWTempMin = 50;
 
-volatile uint8_t Buffer_temp_actual; char Buffer_temp_actual_buf[4], Buffer_temp_actual_frac_buf[3];
-volatile uint8_t Forward_heat_temp = 35; uint8_t EEMEM eeForward_heat_temp = 35;
+volatile uint8_t BufferTempActual; char BufferTempActualBuf[4], BufferTempActualFracBuf[3];
+volatile uint8_t ForwardHeatTemp = 35; uint8_t EEMEM eeForwardHeatTemp = 35;
+
+volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin; char GarageTempActualBuf[4], GarageTempActualFracBuf[3];
+uint8_t EEMEM eeGarageTempDesired = 10;
+uint8_t EEMEM eeGarageTempMin = 5;
+
+volatile uint16_t SwitchOnOutdoorTempMin; 
+uint16_t EEMEM eeSwitchOnOutdoorTempMin = 1900;
 
 volatile unsigned char Relays = 0;
 
-volatile uint8_t DHW_sensor_ID = 0;
-uint8_t EEMEM eeDHW_sensor_ID = 0;
+volatile uint8_t DHWSensorID = 0;
+uint8_t EEMEM eeDHWSensorID = 0;
 
-volatile uint8_t Buffer_sensor_ID = 1;
-uint8_t EEMEM eeBuffer_sensor_ID = 1;
+volatile uint8_t BufferSensorID = 1;
+uint8_t EEMEM eeBufferSensorID = 1;
+
+volatile uint8_t GarageSensorID = 2;
+uint8_t EEMEM eeGarageSensorID = 2;
 
 uint8_t nSensors;
 uint8_t gSensorIDs[DS18B20_MAX_NO][OW_ROMCODE_SIZE];
 
 
-ISR(ADC_vect)
+ISR(ADC_vect) // LCD háttérk világítás PWM
 {
 	if (ADC < 10)
 		OCR3C = 10;
@@ -67,53 +80,50 @@ ISR(ADC_vect)
 		OCR3C = ADC;
 }
 
-ISR(TIMER1_COMPA_vect)
+ISR(TIMER1_COMPA_vect) // 1 mp-es idõzítõ
 {
 	if (TimerElapsed == 0);
 		TimerElapsed++;
-	// sensor_read();
-	// if (DebugMode == 0 && Initialized)
-		// check_conditions();
-	// wdt_reset();
 }
 
-void sensor_read()
+void SensorRead()
 {
 	//static uint8_t timer_state = BME280_temp_state;
 	uint8_t i;
 	uint8_t subzero, cel, cel_frac_bits;
+	static uint8_t display = 10;
 
-
-	switch (timer_state)
+	switch (TimerState)
 	{
-		case (BME280_temp_state):
-			BME280_temp = bme280_readTemperature();
-			ftoa(BME280_temp_buf, BME280_temp, 2);
+		case (BME280TempState):
+			BME280Temp = bme280_readTemperature();
+			ftoa(BME280TempBuf, BME280Temp, 2);
+			BME280TempUint = (uint16_t)( BME280Temp * 100);
 			if (DebugMode > 0)
-				{ uart_puts_p(PSTR("BME280 Temperature: ")); uart_puts(BME280_temp_buf); uart_puts_p(PSTR("C \n")); }
-			timer_state++;
+				{ uart_puts_p(PSTR("BME280 Temperature: ")); uart_puts(BME280TempBuf); uart_puts_p(PSTR("C \n")); }
+			TimerState++;
 		break;
 
-		case (BME280_humid_state):
-			BME280_humid = bme280_readHumidity();
-			ftoa(BME280_humid_buf, BME280_humid, 2);
+		case (BME280HumidState):
+			BME280Humid = bme280_readHumidity();
+			ftoa(BME280HumidBuf, BME280Humid, 2);
 			if (DebugMode > 0)
-				{ uart_puts_p(PSTR("BME280 Humidity: "));	uart_puts(BME280_humid_buf);	uart_puts_p(PSTR("% \n")); }
-			timer_state++;
+				{ uart_puts_p(PSTR("BME280 Humidity: "));	uart_puts(BME280HumidBuf);	uart_puts_p(PSTR("% \n")); }
+			TimerState++;
 		break;
 
-		case (DS18B20_state1):
-			ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
+		case (DS18B20State1):
+			ow_set_bus(&DS18B20_PIN,&DS18B20_PORT,&DS18B20_DDR,DS18B20_PINx);
 			for ( i=0; i<nSensors; i++ )
 			{
 				DS18X20_start_meas(DS18X20_POWER_EXTERN,&gSensorIDs[i][0]);
 			}
-			timer_state++;
+			TimerState++;
 		break;
 
-		case (DS18B20_state2):
+		case (DS18B20State2):
 
-			ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
+			ow_set_bus(&DS18B20_PIN,&DS18B20_PORT,&DS18B20_DDR,DS18B20_PINx);
 			i = 0;
 			while (i < nSensors)
 			//for ( i=0; i<nSensors; i++ )
@@ -123,42 +133,67 @@ void sensor_read()
 					if (DebugMode > 0)
 						{ uart_puti(subzero); uart_puti(cel); uart_puts_P("."); uart_puti(cel_frac_bits); uart_puts_P("\n"); }
 				}
-				if (i == DHW_sensor_ID)
+				if (i == DHWSensorID)
 				{
-					DHW_temp_actual = cel;
-					itoa(DHW_temp_actual, DHW_temp_actual_buf, 10);
-					itoa(cel_frac_bits, DHW_temp_actual_frac_buf, 10);
+					DHWTempActual = cel;
+					itoa(DHWTempActual, DHWTempActualBuf, 10);
+					itoa(cel_frac_bits, DHWTempActualFracBuf, 10);
 				}
-				if (i == Buffer_sensor_ID)
+				if (i == BufferSensorID)
 				{
-					Buffer_temp_actual = cel;
-					itoa(Buffer_temp_actual, Buffer_temp_actual_buf, 10);
-					itoa(cel_frac_bits, Buffer_temp_actual_frac_buf, 10);
+					BufferTempActual = cel;
+					itoa(BufferTempActual, BufferTempActualBuf, 10);
+					itoa(cel_frac_bits, BufferTempActualFracBuf, 10);
+				}
+				if (i == GarageSensorID)
+				{
+					GarageTempActual = cel;
+					itoa(GarageTempActual, GarageTempActualBuf, 10);
+					itoa(cel_frac_bits, GarageTempActualFracBuf, 10);
 				}
 				i++;
 			}
 
-			timer_state++;
+			TimerState++;
 		break;
 
 		default:
-			timer_state = 0;
+			TimerState = 0;
 		break;
 	}
 
-	if (menutimer == 0)
+	if (MenuTimer == 0)
 	{
-		lcd_clrscr();
-		lcd_puts_hu(PSTR("HMV hom ")); lcd_puts(DHW_temp_actual_buf); lcd_puts("."), lcd_puts(DHW_temp_actual_frac_buf); lcd_puts(" C");
-		lcd_gotoxy(0,1);
-		lcd_puts_hu(PSTR("Puffer hom: ")); lcd_puts(Buffer_temp_actual_buf); lcd_puts("."), lcd_puts(Buffer_temp_actual_frac_buf); lcd_puts(" C");
-		lcd_gotoxy(0,2);
-		lcd_puts_hu(PSTR("Kazanhaz hom ")); lcd_puts(BME280_temp_buf); lcd_puts(" C");
-		lcd_gotoxy(0,3);
-		lcd_puts_hu(PSTR("Relek: ")); lcd_putbyte_bin(Relays);
+		if (display > 5)
+		{
+			lcd_clrscr();
+			lcd_puts_hu(PSTR("HMV hom ")); lcd_puts(DHWTempActualBuf); lcd_puts("."), lcd_puts(DHWTempActualFracBuf); lcd_puts(" C");
+			lcd_gotoxy(0,1);
+			lcd_puts_hu(PSTR("Puffer hom: ")); lcd_puts(BufferTempActualBuf); lcd_puts("."), lcd_puts(BufferTempActualFracBuf); lcd_puts(" C");
+			lcd_gotoxy(0,2);
+			lcd_puts_hu(PSTR("Gephaz hom ")); lcd_puts(GarageTempActualBuf); lcd_puts("."), lcd_puts(GarageTempActualFracBuf); lcd_puts(" C");
+			lcd_gotoxy(0,3);
+			lcd_puts_hu(PSTR("Kulso hom ")); lcd_puts(BME280TempBuf); lcd_puts(" C");
+		}
+		else if (display < 5)
+		{
+			lcd_clrscr();
+			lcd_puts_hu(PSTR("HMV szelep ")); lcd_putbit(Relays, DHW_VALVE_RELAY);
+			lcd_gotoxy(0,1);
+			lcd_puts_hu(PSTR("Gaz rele ")); lcd_putbit(Relays, GAS_RELAY);
+			lcd_gotoxy(0,2);
+			lcd_puts_hu(PSTR("Puffer sz/p ")); lcd_putbit(Relays, BUFFER_VALVE_RELAY); lcd_putbit(Relays, BUFFER_PUMP_RELAY);
+			lcd_gotoxy(0,3);
+			lcd_puts_hu(PSTR("Fold/Emel ")); lcd_putbit(Relays, FIRST_FLOOR_VALVE); lcd_putbit(Relays, SECOND_FLOOR_VALVE);
+			
+			if (display == 0)
+				display = 10;
+		}
+		display--;
+		//lcd_puts_hu(PSTR("Relek: ")); lcd_putbyte_bin(Relays);
 	}
 	else
-		menutimer--;
+		MenuTimer--;
 
 	if (LCDBackLight == 0)
 		ADCSRA |= (1<<ADSC);
@@ -166,86 +201,115 @@ void sensor_read()
 	return;
 }
 
-void check_conditions()
+void CheckConditions()
 {
 	// DHW felsõ kör
-
-	if (DHW_temp_actual <= DHW_temp_min) // alacsony HMV hõmérséklet
+	static uint16_t pumpplustime = 0;
+	
+	if (!((DHWTempMin < DHWTempActual) ^ (DHWTempActual >= DHWTempDesired))) // alacsony HMV hõmérséklet
 	{
-		if (DHW_temp_actual <= DHW_temp_desired)
+		if (BufferTempActual < DHWTempDesired) // Pufferben nincs elég energia
 		{
-			if (Buffer_temp_actual < DHW_temp_desired) // Pufferben nincs elég energia
-			{
-				Relays |= (1 << DHW_VALVE_RELAY) | (1 << GAS_RELAY);
-				Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
-				if (DebugMode > 0)
+			pumpplustime = PumpPlusTime;
+			Relays |= (1 << DHW_VALVE_RELAY) | (1 << GAS_RELAY);
+			Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
+			if (DebugMode > 0)
 				uart_puts_P("DHW relay activated with gas\n");
-			}
-			else // Pufferben van elég energia
-			{
-				Relays |= (1 << DHW_VALVE_RELAY) | (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY);
-				Relays &= ~(1 << GAS_RELAY);
-				if (DebugMode > 0)
-				uart_puts_P("DHW relay activated with buffer\n");
-			}
 		}
+		else // Pufferben van elég energia
+		{
+			if (!pumpplustime) // gáz megy, de átkapcsol pufferre, gáz még utókeringetne
+				Relays |= (1 << DHW_VALVE_RELAY) | (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY);
+			else
+				pumpplustime--;
+			Relays &= ~(1 << GAS_RELAY);
+			if (DebugMode > 0)
+				uart_puts_P("DHW relay activated with buffer\n");
+		}
+
 	}
-	else if (DHW_temp_actual >= DHW_temp_desired)
+	else // megszûnõ hõigény esetén az utókeringetés a gépház radiátorát fûti
 	{
 		Relays &= ~((1 << GAS_RELAY) | (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY) | (1 << DHW_VALVE_RELAY));
 		if (DebugMode > 0)
-		uart_puts_P("DHW relay deactivated\n");
+			uart_puts_P("DHW relay deactivated\n");
 	}
 
-	if (((!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN))) || (!(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN))) || BME280_temp < BME280_temp_desired) && !(Relays & (1 << DHW_VALVE_RELAY)))
+	// fûtési kör
+	if (!(Relays & (1 << DHW_VALVE_RELAY)) && (BME280TempUint <= SwitchOnOutdoorTempMin))
 	{
-		if (Buffer_temp_actual < Forward_heat_temp)
+		if (!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) || !((GarageTempMin < GarageTempActual) ^ (GarageTempActual >= GarageTempDesired)))		
 		{
-			Relays |= (1 << GAS_RELAY);
-			Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY) | (1 << DHW_VALVE_RELAY));
-			if (DebugMode > 0)
-				uart_puts_P("GAS activated; BUFFER, DHW relay deactivated\n");
+			if (BufferTempActual < ForwardHeatTemp) // Pufferben nincs elég energia
+			{
+				pumpplustime = PumpPlusTime; // gáz utókeringetés
+				Relays |= (1 << GAS_RELAY);
+				Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY) | (1 << DHW_VALVE_RELAY));
+				if (DebugMode > 0)
+					uart_puts_P("GAS activated; BUFFER, DHW relay deactivated\n");
+			}
+			else // Puffer elég meleg
+			{
+				if (!pumpplustime) // ha átkapcsol gázról pufferre, a gáz még utókeringetne
+				{
+					Relays &= ~((1 << GAS_RELAY) | (1 << DHW_VALVE_RELAY));
+					Relays |= (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY);
+				}
+				else 
+					pumpplustime--;
+				
+				if (DebugMode > 0)
+					uart_puts_P("GAS, DHW deactivated; BUFFER relay deactivated\n");
+			}
+			
+			if (!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)))
+			{
+				Relays |= (1 << FIRST_FLOOR_VALVE);
+				if (DebugMode > 0)
+					uart_puts_P("FIRST FLOOR activated\n");
+			}
+			if (THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN))
+			{
+				Relays &= ~(1 << FIRST_FLOOR_VALVE);
+				if (DebugMode > 0)
+					uart_puts_P("FIRST FLOOR deactivated\n");
+			}
+			if (!(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
+			{
+				Relays |= (1 << SECOND_FLOOR_VALVE);
+				if (DebugMode > 0)
+					uart_puts_P("SECOND FLOOR activated\n");
+			}
+			if (THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN))
+			{
+				Relays &= ~(1 << SECOND_FLOOR_VALVE);
+				if (DebugMode > 0)
+					uart_puts_P("SECOND FLOOR deactivated\n");
+			}
 		}
 		else
 		{
-			Relays &= ~((1 << GAS_RELAY) | (1 << DHW_VALVE_RELAY));
-			Relays |= (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY);
+			if (!pumpplustime)
+				Relays &= ~((1 << FIRST_FLOOR_VALVE) | (1 << SECOND_FLOOR_VALVE));
+			else
+				pumpplustime--;
+			
+			Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 <<BUFFER_PUMP_RELAY) | (1 << GAS_RELAY));
 			if (DebugMode > 0)
-				uart_puts_P("GAS, DHW deactivated; BUFFER relay deactivated\n");
-		}
-
-		if (!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)))
-		{
-			Relays |= (1 << FIRST_FLOOR_VALVE);
-			if (DebugMode > 0)
-				uart_puts_P("FIRST FLOOR activated\n");
-		}
-		if ((THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)))
-		{
-			Relays &= ~(1 << FIRST_FLOOR_VALVE);
-			if (DebugMode > 0)
-				uart_puts_P("FIRST FLOOR deactivated\n");
-		}
-		if (!(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
-		{
-			Relays |= (1 << SECOND_FLOOR_VALVE);
-			if (DebugMode > 0)
-				uart_puts_P("SECOND FLOOR activated\n");
-		}
-		if ((THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
-		{
-			Relays &= ~(1 << SECOND_FLOOR_VALVE);
-			if (DebugMode > 0)
-				uart_puts_P("SECOND FLOOR deactivated\n");
+				uart_puts_P("GAS and FIRST_FLOOR_VALVE, SECOND_FLOOR_VALVE relay deactivated\n");
 		}
 	}
 	else
 	{
-		Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 <<BUFFER_PUMP_RELAY) | (1 << GAS_RELAY) | (1 << FIRST_FLOOR_VALVE) | (1 << SECOND_FLOOR_VALVE));
+		Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 <<BUFFER_PUMP_RELAY) | (1 << GAS_RELAY));
+		if (!pumpplustime)
+			Relays &= ~((1 << FIRST_FLOOR_VALVE) | (1 << SECOND_FLOOR_VALVE));
+		else
+			pumpplustime--;
 		if (DebugMode > 0)
 			uart_puts_P("GAS and FIRST_FLOOR_VALVE, SECOND_FLOOR_VALVE relay deactivated\n");
 	}
-	if (DebugMode == 0)
+	if (DebugMode < 2)
 		SwitchRelays();
 }
 
@@ -298,23 +362,24 @@ void SwitchRelays()
 
 void read_from_eeprom()
 {
-	DHW_sensor_ID = eeprom_read_byte(&eeDHW_sensor_ID);
-	DHW_temp_desired = eeprom_read_byte(&eeDHW_temp_desired);
-	DHW_temp_max = eeprom_read_byte(&eeDHW_temp_max);
-	DHW_temp_min = eeprom_read_byte(&eeDHW_temp_min);
-	Buffer_sensor_ID = eeprom_read_byte(&eeBuffer_sensor_ID);
-	Forward_heat_temp = eeprom_read_byte(&eeForward_heat_temp);
-	BME280_temp_min = eeprom_read_byte(&eeBME280_temp_min);
-	BME280_temp_desired = eeprom_read_byte(&eeBME280_temp_desired);
+	DHWSensorID = eeprom_read_byte(&eeDHWSensorID);
+	DHWTempDesired = eeprom_read_byte(&eeDHWTempDesired);
+	DHWTempMin = eeprom_read_byte(&eeDHWTempMin);
+	BufferSensorID = eeprom_read_byte(&eeBufferSensorID);
+	ForwardHeatTemp = eeprom_read_byte(&eeForwardHeatTemp);
+	GarageSensorID = eeprom_read_byte(&eeGarageSensorID);
+	GarageTempDesired = eeprom_read_byte(&eeGarageTempDesired);
+	GarageTempMin = eeprom_read_byte(&eeGarageTempMin);
+	SwitchOnOutdoorTempMin = eeprom_read_word(&eeSwitchOnOutdoorTempMin);
 	DebugMode = eeprom_read_byte(&eeDebugMode);
 	MenuTimer = eeprom_read_byte(&eeMenuTimer);
 	LCDBackLight = eeprom_read_byte(&eeLCDBackLight);
+	PumpPlusTime = eeprom_read_word(&eePumpPlusTime);
 }
 
 int main(void)
 {
 	read_from_eeprom();
-	menutimer = MenuTimer;
 
 	lcd_init(LCD_DISP_ON);
 	lcd_defc(magyar_betuk);
@@ -392,9 +457,9 @@ int main(void)
 		if (TimerElapsed == 1)
 		{
 			TimerElapsed++;
-			sensor_read();
-			//if (DebugMode == 0)
-				check_conditions();
+			SensorRead();
+			if (DebugMode < 2)
+				CheckConditions();
 			wdt_reset();
 			TimerElapsed = 0;
 		}

@@ -4,10 +4,10 @@
 #include <stdlib.h>
 
 typedef enum {
-	BME280_temp_state,
-	BME280_humid_state,
-	DS18B20_state1,
-	DS18B20_state2
+	BME280TempState,
+	BME280HumidState,
+	DS18B20State1,
+	DS18B20State2
 } states;
 
 //#define SOLAR
@@ -35,29 +35,43 @@ typedef enum {
 #define SECOND_THERMO_PIN	PINE7
 
 #define DS18B20_MAX_NO		6
+#define DS18B20_PORT		PORTB
+#define DS18B20_DDR			DDRB
+#define DS18B20_PIN			PINB
+#define DS18B20_PINx		PINB0
 
 extern volatile uint8_t DebugMode; extern uint8_t eeDebugMode;
 extern volatile uint8_t MenuTimer; extern uint8_t eeMenuTimer;
 extern volatile uint8_t LCDBackLight; extern uint8_t eeLCDBackLight;
+extern volatile uint16_t PumpPlusTime; extern uint16_t eePumpPlusTime;
 
-extern volatile float BME280_temp, BME280_humid;
-extern volatile uint8_t BME280_temp_min, BME280_temp_desired;
-extern char BME280_temp_buf[6], BME280_humid_buf[6];
+extern volatile float BME280Temp, BME280Humid;
+extern char BME280TempBuf[6], BME280HumidBuf[6];
 
-extern uint8_t eeBME280_temp_min, eeBME280_temp_desired;
+extern volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
+extern uint8_t eeDHWTempDesired, eeDHWTempMin;
+extern char DHWTempActualBuf[4], DHWTempActualFracBuf[3];
 
-extern volatile uint8_t DHW_temp_actual, DHW_temp_desired, DHW_temp_min;
-extern uint8_t eeDHW_temp_desired, eeDHW_temp_min;
+extern volatile uint8_t BufferTempActual;
+extern volatile uint8_t ForwardHeatTemp;
+extern uint8_t eeForwardHeatTemp;
+extern char BufferTempActualBuf[4], BufferTempActualFracBuf[3];
 
-extern volatile uint8_t DHW_sensor_ID;
-extern uint8_t eeDHW_sensor_ID;
+extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
+extern uint8_t eeGarageTempDesired, eeGarageTempMin;
+extern char GarageTempActualBuf[4], GarageTempActualFracBuf[3];
 
-extern volatile uint8_t Buffer_sensor_ID;
-extern uint8_t eeBuffer_sensor_ID;
+extern volatile uint16_t SwitchOnOutdoorTempMin;
+extern uint16_t eeSwitchOnOutdoorTempMin;
 
-extern volatile uint8_t Buffer_temp_actual;
-extern volatile uint8_t Forward_heat_temp;
-extern uint8_t eeForward_heat_temp;
+extern volatile uint8_t DHWSensorID;
+extern uint8_t eeDHWSensorID;
+
+extern volatile uint8_t BufferSensorID;
+extern uint8_t eeBufferSensorID;
+
+extern volatile uint8_t GarageSensorID;
+extern uint8_t eeGarageSensorID;
 
 extern volatile unsigned char Relays;
 
@@ -66,8 +80,8 @@ extern uint8_t nSensors;
 extern void SwitchRelays();
 
 void beep();
-void sensor_read();
-void check_conditions();
+void SensorRead();
+void CheckConditions();
 void SwitchRelays();
 
 #endif /* MAIN_H_ */

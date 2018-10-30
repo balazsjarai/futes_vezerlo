@@ -14,14 +14,14 @@
 /*************************************************************************
  BME 280, submenu definitions
 *************************************************************************/
-void BME280_temp_CallbackRender(uint8_t which){
+void BME280Temp_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("BME280 hom"));
 	lcd_gotoxy(0,1);
-	lcd_puts(BME280_temp_buf);
+	lcd_puts(BME280TempBuf);
 }
 
-bool BME280_temp_Callback(MENU_BUTTON *button, uint8_t column){
+bool BME280Temp_Callback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
 			break;
@@ -33,18 +33,18 @@ bool BME280_temp_Callback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	BME280_temp_CallbackRender(column);
+	BME280Temp_CallbackRender(column);
 	return false;
 }
 
-void BME280_humidity_CallbackRender(uint8_t which){
+void BME280Humidity_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("BME280 para"));
 	lcd_gotoxy(0,1);
-	lcd_puts(BME280_humid_buf);
+	lcd_puts(BME280HumidBuf);
 }
 
-bool BME280_humidity_Callback(MENU_BUTTON *button, uint8_t column){
+bool BME280Humidity_Callback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
 			break;
@@ -56,89 +56,57 @@ bool BME280_humidity_Callback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	BME280_humidity_CallbackRender(column);
+	BME280Humidity_CallbackRender(column);
 	return false;
 }
 
-void BME280_min_CallbackRender(uint8_t which){
+void SwitchOnOutdoorTempMin_CallbackRender(uint8_t which){
 	char buf[10];
-	itoa(BME280_temp_min, buf, 10);
+	itoa(SwitchOnOutdoorTempMin, buf, 10);
 	lcd_clrscr();
-	lcd_puts_hu(PSTR("BME280 min hom"));
+	lcd_puts_hu(PSTR("Kulso min hom"));
 	lcd_gotoxy(0,1);
 	lcd_puts(buf);
 }
 
-bool BME280_min_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool SwitchOnOutdoorTempMin_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			++BME280_temp_min;
+			SwitchOnOutdoorTempMin += 10;
 			break;
 		case MENU_DOWN:
-			--BME280_temp_min;
+			SwitchOnOutdoorTempMin -= 10;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeBME280_temp_min, BME280_temp_min);
+			eeprom_update_word(&eeSwitchOnOutdoorTempMin, SwitchOnOutdoorTempMin);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
 
-	BME280_min_CallbackRender(column);
+	SwitchOnOutdoorTempMin_CallbackRender(column);
 	return false;
 }
 
-void BME280_desired_CallbackRender(uint8_t which){
-	char buf[10];
-	itoa(BME280_temp_desired, buf, 10);
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("BME280 kivant hom"));
-	lcd_gotoxy(0,1);
-	lcd_puts(buf);
-}
-
-bool BME280_desired_ActionCallback(MENU_BUTTON *button, uint8_t column){
-	switch(button->role){
-		case MENU_UP:
-			++BME280_temp_desired;
-			break;
-		case MENU_DOWN:
-			--BME280_temp_desired;
-			break;
-		case MENU_CONFIRM:
-			eeprom_update_byte(&eeBME280_temp_desired, BME280_temp_desired);
-			return true;
-		case MENU_CANCEL:
-			return true;
-	}
-
-	BME280_desired_CallbackRender(column);
-	return false;
-}
-
-
-# define BME280_SUBMENU_ITEMS  4
+# define BME280_SUBMENU_ITEMS  3
 static MENU_ITEM BME280_submenu[BME280_SUBMENU_ITEMS] = {
-	{"BME hom",			BME280_temp_CallbackRender,			BME280_temp_Callback, 	0, NULL},
-	{"BME para",		BME280_humidity_CallbackRender,		BME280_humidity_Callback,	0, NULL},
-	{"BME min hom",		BME280_min_CallbackRender, 			BME280_min_ActionCallback,  	0, NULL},
-	{"BME kivant hom", 	BME280_desired_CallbackRender, 		BME280_desired_ActionCallback, 	0, NULL},
+	{"Kulso hom",			BME280Temp_CallbackRender,				BME280Temp_Callback, 				0, NULL},
+	{"Kulso para",			BME280Humidity_CallbackRender,			BME280Humidity_Callback,			0, NULL},
+	{"Kulso hom tiltas",	SwitchOnOutdoorTempMin_CallbackRender,	SwitchOnOutdoorTempMin_ActionCallback,	0, NULL},
 };
 
 
 /*************************************************************************
  Menu DHW, submenu definitions
 *************************************************************************/
-void DHW_temp_actual_CallbackRender(uint8_t which){
-	char buf[7];
-	itoa(DHW_temp_actual, buf, 10);
+void DHWTempActual_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("HMV akt hom"));
 	lcd_gotoxy(0,1);
-	lcd_puts(buf);
+	lcd_puts(DHWTempActualBuf); lcd_puts("."), lcd_puts(DHWTempActualFracBuf); lcd_puts(" C");
 }
 
-bool DHW_temp_actual_Callback(MENU_BUTTON *button, uint8_t column){
+bool DHWTempActual_Callback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
 			break;
@@ -150,115 +118,117 @@ bool DHW_temp_actual_Callback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	DHW_temp_actual_CallbackRender(column);
+	DHWTempActual_CallbackRender(column);
 	return false;
 }
 
-void DHW_temp_desired_CallbackRender(uint8_t which){
+void DHWTempDesired_CallbackRender(uint8_t which){
 	char buf[7];
-	itoa(DHW_temp_desired, buf, 10);
+	itoa(DHWTempDesired, buf, 10);
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("HMV kivant hom"));
 	lcd_gotoxy(0,1);
 	lcd_puts(buf);
 }
 
-bool DHW_temp_desired_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool DHWTempDesired_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			++DHW_temp_desired;
+			if (DHWTempDesired != 90)
+				++DHWTempDesired;
 			break;
 		case MENU_DOWN:
-			--DHW_temp_desired;
+			if (DHWTempDesired > DHWTempMin)
+				--DHWTempDesired;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeDHW_temp_desired, DHW_temp_desired);
+			eeprom_update_byte(&eeDHWTempDesired, DHWTempDesired);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
-	DHW_temp_desired_CallbackRender(column);
+	DHWTempDesired_CallbackRender(column);
 	return false;
 }
 
-void DHW_temp_min_CallbackRender(uint8_t which){
+void DHWTempMin_CallbackRender(uint8_t which){
 	char buf[10];
-	itoa(DHW_temp_min, buf, 10);
+	itoa(DHWTempMin, buf, 10);
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("HMV min hom"));
 	lcd_gotoxy(0,1);
 	lcd_puts(buf);
 }
 
-bool DHW_temp_min_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool DHWTempMin_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			++DHW_temp_min;
+			if (DHWTempMin < DHWTempDesired)
+				++DHWTempMin;
 			break;
 		case MENU_DOWN:
-			--DHW_temp_min;
+			if (DHWTempMin > 5) 
+				--DHWTempMin;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeDHW_temp_min, DHW_temp_min);
+			eeprom_update_byte(&eeDHWTempMin, DHWTempMin);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
 
-	DHW_temp_min_CallbackRender(column);
+	DHWTempMin_CallbackRender(column);
 	return false;
 }
 
-void DHW_sensor_CallbackRender(uint8_t which){
+void DHWSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("HMV szenzor ID"));
 	lcd_gotoxy(0,1);
 	char buf[4];
-	itoa(DHW_sensor_ID, buf, 10);
+	itoa(DHWSensorID, buf, 10);
 	lcd_puts(buf);
 }
 
-bool DHW_sensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool DHWSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			DHW_sensor_ID++;
-			if (DHW_sensor_ID == nSensors)
-				DHW_sensor_ID = 0;
+			DHWSensorID++;
+			if (DHWSensorID == nSensors)
+				DHWSensorID = 0;
 			break;
 		case MENU_DOWN:
-			DHW_sensor_ID--;
-			if (DHW_sensor_ID == 255)
-				DHW_sensor_ID = nSensors - 1;
+			DHWSensorID--;
+			if (DHWSensorID == 255)
+				DHWSensorID = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeDHW_sensor_ID, DHW_sensor_ID);
+			eeprom_update_byte(&eeDHWSensorID, DHWSensorID);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
 
-	DHW_sensor_CallbackRender(column);
+	DHWSensor_CallbackRender(column);
 	return false;
 }
 
 # define DHW_SUBMENU_ITEMS  4
 static MENU_ITEM DHW_submenu[DHW_SUBMENU_ITEMS] = {
-	{"HMV akt hom", 		DHW_temp_actual_CallbackRender, 	DHW_temp_actual_Callback, 			0,				NULL},
-	{"HMV kivant hom",		DHW_temp_desired_CallbackRender,	DHW_temp_desired_ActionCallback,	0,				NULL},
-	{"HMV min hom",			DHW_temp_min_CallbackRender,  		DHW_temp_min_ActionCallback, 		0, 				NULL},
-	{"HMV szenzor",			DHW_sensor_CallbackRender, 			DHW_sensor_ActionCallback, 			0, 				NULL},
+	{"HMV akt hom", 		DHWTempActual_CallbackRender, 	DHWTempActual_Callback, 		0,				NULL},
+	{"HMV kivant hom",		DHWTempDesired_CallbackRender,	DHWTempDesired_ActionCallback,	0,				NULL},
+	{"HMV min hom",			DHWTempMin_CallbackRender,  	DHWTempMin_ActionCallback, 		0, 				NULL},
+	{"HMV szenzor",			DHWSensor_CallbackRender, 		DHWSensor_ActionCallback, 		0, 				NULL},
 };
 
 /*************************************************************************
  Menu Buffer, submenu definitions
 *************************************************************************/
 void BufferTempActual_CallbackRender(uint8_t which){
-	char buf[7];
-	itoa(Buffer_temp_actual, buf, 10);
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Puffer akt hom"));
 	lcd_gotoxy(0,1);
-	lcd_puts(buf);
+	lcd_puts(BufferTempActualBuf); lcd_puts("."), lcd_puts(BufferTempActualFracBuf); lcd_puts(" C");
 }
 
 bool BufferTempActual_Callback(MENU_BUTTON *button, uint8_t column){
@@ -279,7 +249,7 @@ bool BufferTempActual_Callback(MENU_BUTTON *button, uint8_t column){
 
 void ForwardHeatTemp_CallbackRender(uint8_t which){
 	char buf[10];
-	itoa(Forward_heat_temp, buf, 10);
+	itoa(ForwardHeatTemp, buf, 10);
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Eloremeno hom"));
 	lcd_gotoxy(0,1);
@@ -289,13 +259,15 @@ void ForwardHeatTemp_CallbackRender(uint8_t which){
 bool ForwardHeatTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			++Forward_heat_temp;
+			if (ForwardHeatTemp != 90)
+				++ForwardHeatTemp;
 			break;
 		case MENU_DOWN:
-			--Forward_heat_temp;
+			if (ForwardHeatTemp > 20)
+				--ForwardHeatTemp;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeForward_heat_temp, Forward_heat_temp);
+			eeprom_update_byte(&eeForwardHeatTemp, ForwardHeatTemp);
 			return true;
 		case MENU_CANCEL:
 			return true;
@@ -305,35 +277,35 @@ bool ForwardHeatTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-void Buffer_sensor_CallbackRender(uint8_t which){
+void BufferSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Puffer szenzor ID"));
 	lcd_gotoxy(0,1);
 	char buf[4];
-	itoa(Buffer_sensor_ID, buf, 10);
+	itoa(BufferSensorID, buf, 10);
 	lcd_puts(buf);
 }
 
-bool Buffer_sensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool BufferSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			Buffer_sensor_ID++;
-			if (Buffer_sensor_ID == nSensors)
-				Buffer_sensor_ID = 0;
+			BufferSensorID++;
+			if (BufferSensorID == nSensors)
+				BufferSensorID = 0;
 			break;
 		case MENU_DOWN:
-			Buffer_sensor_ID--;
-			if (Buffer_sensor_ID == 255)
-				Buffer_sensor_ID = nSensors - 1;
+			BufferSensorID--;
+			if (BufferSensorID == 255)
+				BufferSensorID = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeBuffer_sensor_ID, Buffer_sensor_ID);
+			eeprom_update_byte(&eeBufferSensorID, BufferSensorID);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
 
-	Buffer_sensor_CallbackRender(column);
+	BufferSensor_CallbackRender(column);
 	return false;
 }
 
@@ -341,7 +313,132 @@ bool Buffer_sensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 static MENU_ITEM BUFFER_submenu[BUFFER_SUBMENU_ITEMS] = {
 	{"Buffer akt hom", 		BufferTempActual_CallbackRender, 	BufferTempActual_Callback, 			0,				NULL},
 	{"Eloremeno hom", 		ForwardHeatTemp_CallbackRender, 	ForwardHeatTemp_ActionCallback,		0,				NULL},
-	{"Buffer szenzor",		Buffer_sensor_CallbackRender, 		Buffer_sensor_ActionCallback, 		0, 				NULL},
+	{"Buffer szenzor",		BufferSensor_CallbackRender, 		BufferSensor_ActionCallback, 		0, 				NULL},
+};
+
+/*************************************************************************
+ Menu Garage, submenu definitions
+*************************************************************************/
+void GarageTempActual_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Gephaz akt hom"));
+	lcd_gotoxy(0,1);
+	lcd_puts(GarageTempActualBuf); lcd_puts("."), lcd_puts(GarageTempActualFracBuf); lcd_puts(" C");
+}
+
+bool GarageTempActual_Callback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			break;
+		case MENU_DOWN:
+			break;
+		case MENU_CONFIRM:
+			break;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	GarageTempActual_CallbackRender(column);
+	return false;
+}
+
+void GarageTempMin_CallbackRender(uint8_t which){
+	char buf[10];
+	itoa(GarageTempMin, buf, 10);
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Gephaz min hom"));
+	lcd_gotoxy(0,1);
+	lcd_puts(buf);
+}
+
+bool GarageTempMin_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (GarageTempMin < GarageTempDesired)
+				++GarageTempMin;
+			break;
+		case MENU_DOWN:
+			if (GarageTempMin > 5)
+				--GarageTempMin;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeGarageTempMin, GarageTempMin);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	GarageTempMin_CallbackRender(column);
+	return false;
+}
+
+void GarageTempDesired_CallbackRender(uint8_t which){
+	char buf[7];
+	itoa(GarageTempDesired, buf, 10);
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Gephaz kivant hom"));
+	lcd_gotoxy(0,1);
+	lcd_puts(buf);
+}
+
+bool GarageTempDesired_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (GarageTempDesired < 35)
+				++GarageTempDesired;
+			break;
+		case MENU_DOWN:
+			if (GarageTempDesired > GarageTempMin)
+				--GarageTempDesired;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeGarageTempDesired, GarageTempDesired);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+	GarageTempDesired_CallbackRender(column);
+	return false;
+}
+
+void GarageSensor_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Gephaz szenzor ID"));
+	lcd_gotoxy(0,1);
+	char buf[4];
+	itoa(GarageSensorID, buf, 10);
+	lcd_puts(buf);
+}
+
+bool GarageSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			GarageSensorID++;
+			if (GarageSensorID == nSensors)
+				GarageSensorID = 0;
+			break;
+		case MENU_DOWN:
+			GarageSensorID--;
+			if (GarageSensorID == 255)
+				GarageSensorID = nSensors - 1;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeGarageSensorID, GarageSensorID);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	GarageSensor_CallbackRender(column);
+	return false;
+}
+
+# define GARAGE_SUBMENU_ITEMS  4
+static MENU_ITEM GARAGE_submenu[GARAGE_SUBMENU_ITEMS] = {
+	{"Gephaz akt hom", 		GarageTempActual_CallbackRender, 	GarageTempActual_Callback, 			0,				NULL},
+	{"Gephaz min hom", 		GarageTempMin_CallbackRender, 		GarageTempMin_ActionCallback,		0,				NULL},
+	{"Gephaz kivant hom", 	GarageTempDesired_CallbackRender, 	GarageTempDesired_ActionCallback,	0,				NULL},
+	{"Gephaz szenzor",		GarageSensor_CallbackRender, 		GarageSensor_ActionCallback, 		0, 				NULL},
 };
 
 /*************************************************************************
@@ -533,10 +630,9 @@ void DebugMode_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Tesztuzem"));
 	lcd_gotoxy(0,1);
-	if (DebugMode != 0)
-			lcd_puts_hu(PSTR("Bekapcsolva"));
-		else
-			lcd_puts_hu(PSTR("Kikapcsolva"));
+	char buf[4];
+	itoa(DebugMode, buf, 10);
+	lcd_puts(buf);
 }
 
 bool DebugMode_ActionCallback(MENU_BUTTON *button, uint8_t column){
@@ -615,23 +711,52 @@ bool LCDBackLight_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
+void PumpPlusTime_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Szivattyu utanfutas"));
+	lcd_gotoxy(0,1);
+	char buf[4];
+	itoa(PumpPlusTime, buf, 10);
+	lcd_puts(buf);
+}
 
-#define SYSPARAM_SUBMENU_ITEMS 3
+bool PumpPlusTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			++PumpPlusTime;
+			break;
+		case MENU_DOWN:
+			--PumpPlusTime;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_word(&eePumpPlusTime, PumpPlusTime);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	PumpPlusTime_CallbackRender(column);
+	return false;
+}
+
+
+#define SYSPARAM_SUBMENU_ITEMS 4
 static MENU_ITEM SYSPARAM_submenu[SYSPARAM_SUBMENU_ITEMS] = {
+	{"Szivattyu utan", 	PumpPlusTime_CallbackRender, 		PumpPlusTime_ActionCallback,	0,	NULL},
 	{"Tesztuzem", 		DebugMode_CallbackRender, 			DebugMode_ActionCallback, 		0,	NULL},
 	{"Menu idozito", 	MenuTimer_CallbackRender, 			MenuTimer_ActionCallback, 		0,	NULL},
 	{"LCD hatter", 		LCDBackLight_CallbackRender, 		LCDBackLight_ActionCallback,	0,	NULL},
-
 };
 
 /*
 ** HOME menu items definition
 */
-#define MENU_HOME_ITEMS  5
+#define MENU_HOME_ITEMS  6
 static MENU_ITEM home_items[MENU_HOME_ITEMS] = {
 	{"HMV beallitas",   	NULL,                           NULL,                     DHW_SUBMENU_ITEMS,     	DHW_submenu	  	},
 	{"Puffer beallitas",   	NULL,                           NULL,                     BUFFER_SUBMENU_ITEMS,     BUFFER_submenu	},
-	{"Kazanhaz termoszt",	NULL,                           NULL,                     BME280_SUBMENU_ITEMS,   	BME280_submenu	},
+	{"Kazanhaz termoszt",	NULL,                           NULL,                     GARAGE_SUBMENU_ITEMS,   	GARAGE_submenu	},
+	{"Kulso erzekelo",		NULL,                           NULL,                     BME280_SUBMENU_ITEMS,   	BME280_submenu	},
 	{"Relek",				NULL,							NULL,					  RELAYS_SUBMENU_ITEMS, 	RELAYS_submenu	},
 	{"Vezerlo beallitas",	NULL,							NULL,					  SYSPARAM_SUBMENU_ITEMS, 	SYSPARAM_submenu},
 };

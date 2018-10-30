@@ -284,6 +284,11 @@ void lcd_putc_hex( unsigned char c);
 void lcd_putbyte_hex( unsigned char c);
 
 /**
+ @brief 1 bit kiírása
+ */
+void lcd_putbit(unsigned char c, unsigned char bit);
+
+/**
  @brief magyar betu kiirasa LCD-re
  */
 void lcd_putc_hu( unsigned char c);
