@@ -71,6 +71,8 @@ uint8_t EEMEM eeGarageSensorID = 2;
 uint8_t nSensors;
 uint8_t gSensorIDs[DS18B20_MAX_NO][OW_ROMCODE_SIZE];
 
+volatile uint8_t Hour = 0, Minute = 0, Seconds = 0;
+
 
 ISR(ADC_vect) // LCD háttérk világítás PWM
 {
@@ -92,6 +94,19 @@ void SensorRead()
 	uint8_t i;
 	uint8_t subzero, cel, cel_frac_bits;
 	static uint8_t display = 10;
+	
+	if (++Seconds == 60)
+	{
+		Seconds = 0;
+		Minute++;
+		if (Minute == 60)
+		{
+			Minute = 0;
+			Hour++;
+			if (Hour == 24)
+				Hour = 0;
+		}		
+	}
 
 	switch (TimerState)
 	{
@@ -160,36 +175,34 @@ void SensorRead()
 		default:
 			TimerState = 0;
 		break;
-	}
+	}	
 
 	if (MenuTimer == 0)
 	{
+		lcd_clrscr();
 		if (display > 5)
 		{
-			lcd_clrscr();
-			lcd_puts_hu(PSTR("HMV hom ")); lcd_puts(DHWTempActualBuf); lcd_puts("."), lcd_puts(DHWTempActualFracBuf); lcd_puts(" C");
+			lcd_puts_hu(PSTR("HMV ")); lcd_puts(DHWTempActualBuf); lcd_puts("."), lcd_puts(DHWTempActualFracBuf); lcd_puts(" C "); lcd_puti(Hour); lcd_puts_hu(PSTR(":")); lcd_puti(Minute); lcd_puts_hu(PSTR(":")); lcd_puti(Seconds);
 			lcd_gotoxy(0,1);
-			lcd_puts_hu(PSTR("Puffer hom: ")); lcd_puts(BufferTempActualBuf); lcd_puts("."), lcd_puts(BufferTempActualFracBuf); lcd_puts(" C");
+			lcd_puts_hu(PSTR("Puffer ")); lcd_puts(BufferTempActualBuf); lcd_puts("."), lcd_puts(BufferTempActualFracBuf); lcd_puts(" C");
 			lcd_gotoxy(0,2);
-			lcd_puts_hu(PSTR("Gephaz hom ")); lcd_puts(GarageTempActualBuf); lcd_puts("."), lcd_puts(GarageTempActualFracBuf); lcd_puts(" C");
+			lcd_puts_hu(PSTR("Gephaz ")); lcd_puts(GarageTempActualBuf); lcd_puts("."), lcd_puts(GarageTempActualFracBuf); lcd_puts(" C");
 			lcd_gotoxy(0,3);
-			lcd_puts_hu(PSTR("Kulso hom ")); lcd_puts(BME280TempBuf); lcd_puts(" C");
+			lcd_puts_hu(PSTR("Kulso ")); lcd_puts(BME280TempBuf); lcd_puts(" C");
 		}
-		else if (display < 5)
+		else if (display <= 5)
 		{
-			lcd_clrscr();
-			lcd_puts_hu(PSTR("HMV szelep ")); lcd_putbit(Relays, DHW_VALVE_RELAY);
+			lcd_puts_hu(PSTR("HMV szelep ")); lcd_putbit(Relays, DHW_VALVE_RELAY); lcd_puts_hu(PSTR(" ")); lcd_puti(Hour); lcd_puts_hu(PSTR(":")); lcd_puti(Minute); lcd_puts_hu(PSTR(":")); lcd_puti(Seconds);
 			lcd_gotoxy(0,1);
 			lcd_puts_hu(PSTR("Gaz rele ")); lcd_putbit(Relays, GAS_RELAY);
 			lcd_gotoxy(0,2);
 			lcd_puts_hu(PSTR("Puffer sz/p ")); lcd_putbit(Relays, BUFFER_VALVE_RELAY); lcd_putbit(Relays, BUFFER_PUMP_RELAY);
 			lcd_gotoxy(0,3);
 			lcd_puts_hu(PSTR("Fold/Emel ")); lcd_putbit(Relays, FIRST_FLOOR_VALVE); lcd_putbit(Relays, SECOND_FLOOR_VALVE);
-			
-			if (display == 0)
-				display = 10;
 		}
-		display--;
+		if (--display == 0)
+			display = 10;
+		//display--;
 		//lcd_puts_hu(PSTR("Relek: ")); lcd_putbyte_bin(Relays);
 	}
 	else
