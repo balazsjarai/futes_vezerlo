@@ -43,14 +43,19 @@ volatile float BME280Temp; char BME280TempBuf[6];
 volatile float BME280Humid; char BME280HumidBuf[6];
 volatile uint16_t BME280TempUint;
 
-volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin; char DHWTempActualBuf[4], DHWTempActualFracBuf[3];
+volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin, DHWMinHour, DHWMinMinute, DHWMaxHour, DHWMaxMinute; 
+char DHWTempActualBuf[3], DHWTempActualFracBuf[3];
 uint8_t EEMEM eeDHWTempDesired = 30;
 uint8_t EEMEM eeDHWTempMin = 25;
+uint8_t EEMEM eeDHWMinHour = 6;
+uint8_t EEMEM eeDHWMinMinute = 00;
+uint8_t EEMEM eeDHWMaxHour = 22;
+uint8_t EEMEM eeDHWMaxMinute = 00;
 
-volatile uint8_t BufferTempActual; char BufferTempActualBuf[4], BufferTempActualFracBuf[3];
+volatile uint8_t BufferTempActual; char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
 volatile uint8_t ForwardHeatTemp = 25; uint8_t EEMEM eeForwardHeatTemp = 25;
 
-volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin; char GarageTempActualBuf[4], GarageTempActualFracBuf[3];
+volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin; char GarageTempActualBuf[3], GarageTempActualFracBuf[3];
 uint8_t EEMEM eeGarageTempDesired = 10;
 uint8_t EEMEM eeGarageTempMin = 5;
 
@@ -182,23 +187,23 @@ void SensorRead()
 		lcd_clrscr();
 		if (display > 5)
 		{
-			lcd_puts_hu(PSTR("HMV ")); lcd_puts(DHWTempActualBuf); lcd_puts("."), lcd_puts(DHWTempActualFracBuf); lcd_puts(" C "); lcd_puti(Hour); lcd_puts_hu(PSTR(":")); lcd_puti(Minute); lcd_puts_hu(PSTR(":")); lcd_puti(Seconds);
+			lcd_puts_p(PSTR("HMV ")); lcd_puts(DHWTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(DHWTempActualFracBuf); lcd_puts_p(PSTR(" C")); lcd_gotoxy(15,0); lcd_puti(Hour); lcd_puts_p(PSTR(":")); lcd_puti(Minute);
 			lcd_gotoxy(0,1);
-			lcd_puts_hu(PSTR("Puffer ")); lcd_puts(BufferTempActualBuf); lcd_puts("."), lcd_puts(BufferTempActualFracBuf); lcd_puts(" C");
+			lcd_puts_p(PSTR("Puffer ")); lcd_puts(BufferTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(BufferTempActualFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,2);
-			lcd_puts_hu(PSTR("Gephaz ")); lcd_puts(GarageTempActualBuf); lcd_puts("."), lcd_puts(GarageTempActualFracBuf); lcd_puts(" C");
+			lcd_puts_hu(PSTR("Gépház ")); lcd_puts(GarageTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempActualFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,3);
-			lcd_puts_hu(PSTR("Kulso ")); lcd_puts(BME280TempBuf); lcd_puts(" C");
+			lcd_puts_hu(PSTR("Külsõ ")); lcd_puts(BME280TempBuf); lcd_puts_p(PSTR(" C"));
 		}
 		else if (display <= 5)
 		{
-			lcd_puts_hu(PSTR("HMV szelep ")); lcd_putbit(Relays, DHW_VALVE_RELAY); lcd_puts_hu(PSTR(" ")); lcd_puti(Hour); lcd_puts_hu(PSTR(":")); lcd_puti(Minute); lcd_puts_hu(PSTR(":")); lcd_puti(Seconds);
+			lcd_puts_p(PSTR("HMV szelep ")); lcd_putbit(Relays, DHW_VALVE_RELAY); lcd_gotoxy(15,0); lcd_puti(Hour); lcd_puts_p(PSTR(":")); lcd_puti(Minute);
 			lcd_gotoxy(0,1);
-			lcd_puts_hu(PSTR("Gaz rele ")); lcd_putbit(Relays, GAS_RELAY);
+			lcd_puts_hu(PSTR("Gáz relé ")); lcd_putbit(Relays, GAS_RELAY);
 			lcd_gotoxy(0,2);
-			lcd_puts_hu(PSTR("Puffer sz/p ")); lcd_putbit(Relays, BUFFER_VALVE_RELAY); lcd_putbit(Relays, BUFFER_PUMP_RELAY);
+			lcd_puts_p(PSTR("Puffer sz/p ")); lcd_putbit(Relays, BUFFER_VALVE_RELAY); lcd_putbit(Relays, BUFFER_PUMP_RELAY);
 			lcd_gotoxy(0,3);
-			lcd_puts_hu(PSTR("Fold/Emel ")); lcd_putbit(Relays, FIRST_FLOOR_VALVE); lcd_putbit(Relays, SECOND_FLOOR_VALVE);
+			lcd_puts_hu(PSTR("Föld/Emel ")); lcd_putbit(Relays, FIRST_FLOOR_VALVE); lcd_putbit(Relays, SECOND_FLOOR_VALVE);
 		}
 		if (--display == 0)
 			display = 10;
@@ -219,7 +224,7 @@ void CheckConditions()
 	// DHW felsõ kör
 	static uint16_t pumpplustime = 0;
 	
-	if (DHWTempActual < DHWTempDesired) // alacsony HMV hõmérséklet
+	if (DHWTempActual < DHWTempDesired && (DHWMaxHour >= Hour && DHWMinHour <= Hour )) // alacsony HMV hõmérséklet
 	{
 		if (DHWTempMin >= DHWTempActual)
 		{
@@ -375,6 +380,10 @@ void read_from_eeprom()
 	DHWSensorID = eeprom_read_byte(&eeDHWSensorID);
 	DHWTempDesired = eeprom_read_byte(&eeDHWTempDesired);
 	DHWTempMin = eeprom_read_byte(&eeDHWTempMin);
+	DHWMinHour = eeprom_read_byte(&eeDHWMinHour);
+	DHWMinMinute = eeprom_read_byte(&eeDHWMinMinute);
+	DHWMaxHour = eeprom_read_byte(&eeDHWMaxHour);
+	DHWMaxMinute = eeprom_read_byte(&eeDHWMaxMinute);
 	BufferSensorID = eeprom_read_byte(&eeBufferSensorID);
 	ForwardHeatTemp = eeprom_read_byte(&eeForwardHeatTemp);
 	GarageSensorID = eeprom_read_byte(&eeGarageSensorID);
@@ -401,7 +410,7 @@ int main(void)
 	PORTE |= (1 << PINE5);	//LCD led PWM
 
 	lcd_clrscr();
-	lcd_puts("Futes vezerles v0.8");
+	lcd_puts_hu(PSTR("Fûtés vezérlés v0.8"));
 
 	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
 
@@ -417,7 +426,7 @@ int main(void)
 	SwitchRelays();
 
 	lcd_gotoxy(0,1);
-	lcd_puts("Alapallapotba allas");
+	lcd_puts_hu(PSTR("Alapállapotba állás"));
 	lcd_gotoxy(0,2);
 	uint8_t init_counter = 0;
 	while (init_counter < 10)
@@ -428,10 +437,10 @@ int main(void)
 	}
 
 	lcd_clrscr();
-	lcd_puts("I2C inditas");
+	lcd_puts_hu(PSTR("I2C indítás"));
 	i2c_init();
 	lcd_gotoxy(0,1);
-	lcd_puts("BME280 inditas");
+	lcd_puts_hu(PSTR("BME280 indítás"));
 	init_BME280();
 
 	sei();
@@ -448,7 +457,7 @@ int main(void)
 	if (DebugMode > 0)
 		{ uart_puts_P("Found "); uart_puti(nSensors); uart_puts_P(" DS18B20 sensors\n"); }
 	lcd_gotoxy(0,2);
-	lcd_puts("DS18B20: "); lcd_puti(nSensors); lcd_puts(" db");
+	lcd_puts_p(PSTR("DS18B20: ")); lcd_puti(nSensors); lcd_puts_p(PSTR(" db"));
 
 	lcd_gotoxy(0,3);
 

@@ -48,18 +48,18 @@ extern volatile uint16_t PumpPlusTime; extern uint16_t eePumpPlusTime;
 extern volatile float BME280Temp, BME280Humid;
 extern char BME280TempBuf[6], BME280HumidBuf[6];
 
-extern volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
-extern uint8_t eeDHWTempDesired, eeDHWTempMin;
-extern char DHWTempActualBuf[4], DHWTempActualFracBuf[3];
+extern volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin, DHWMinHour, DHWMinMinute, DHWMaxHour, DHWMaxMinute;
+extern uint8_t eeDHWTempDesired, eeDHWTempMin, eeDHWMinHour, eeDHWMinMinute, eeDHWMaxHour, eeDHWMaxMinute;
+extern char DHWTempActualBuf[3], DHWTempActualFracBuf[3];
 
 extern volatile uint8_t BufferTempActual;
 extern volatile uint8_t ForwardHeatTemp;
 extern uint8_t eeForwardHeatTemp;
-extern char BufferTempActualBuf[4], BufferTempActualFracBuf[3];
+extern char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
 
 extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
 extern uint8_t eeGarageTempDesired, eeGarageTempMin;
-extern char GarageTempActualBuf[4], GarageTempActualFracBuf[3];
+extern char GarageTempActualBuf[3], GarageTempActualFracBuf[3];
 
 extern volatile uint16_t SwitchOnOutdoorTempMin;
 extern uint16_t eeSwitchOnOutdoorTempMin;
@@ -76,6 +76,8 @@ extern uint8_t eeGarageSensorID;
 extern volatile unsigned char Relays;
 
 extern uint8_t nSensors;
+
+extern volatile uint8_t Hour, Minute, Seconds;
 
 extern void SwitchRelays();
 

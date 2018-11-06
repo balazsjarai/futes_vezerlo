@@ -487,7 +487,7 @@ void lcd_puts(const char *s)
     register char c;
 
     while ( (c = *s++) ) {
-        lcd_putc(c);
+        lcd_putc_hu(c);
     }
 
 }/* lcd_puts */
@@ -611,13 +611,12 @@ void lcd_init(uint8_t dispAttr)
 
 void lcd_defc( const uint8_t *s)                 // egyedi betu(k) beallitasa
 {
-	register unsigned char c;
-	lcd_rs_low();
-	lcd_putc( ( ( pgm_read_byte( s++) & 0B00000111) << 3) | 0B01000000);   // betu cime + parancs
-	lcd_rs_high();
-	while ( ( c= pgm_read_byte( s++)) != 0xFF) lcd_putc( c);
-	lcd_rs_low();
-	lcd_rs_high();
+	unsigned char i;
+	lcd_command(_BV(LCD_CGRAM));  /* set CG RAM start address 0 */
+	for(i=0; i<57; i++)
+	{
+		lcd_data(pgm_read_byte_near(&magyar_betuk[i]));
+	}
 }
 
 void lcd_putbyte_bin( unsigned char c)                       // 1 byte kiirasa binarisa
@@ -659,6 +658,8 @@ void lcd_puti(unsigned int i)
 {
 	char buf[4];
 	itoa(i, buf, 10);
+	if (i < 10)
+		lcd_putc('0');
 	lcd_puts(buf);
 }
 

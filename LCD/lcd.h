@@ -303,7 +303,6 @@ void lcd_puti(unsigned int i);
 
 static const PROGMEM uint8_t magyar_betuk[] =
 {
-	0,
 	// á - 0
 	0b00000010,
 	0b00000100,
@@ -321,8 +320,8 @@ static const PROGMEM uint8_t magyar_betuk[] =
 	0b00011111,
 	0b00010000,
 	0b00001110,
-	// í- 2
 	0b00000000,
+	// í- 2
 	0b00000010,
 	0b00000100,
 	0b00000000,
@@ -340,7 +339,7 @@ static const PROGMEM uint8_t magyar_betuk[] =
 	0b00010001,
 	0b00001110,
 	0b00000000,
-	// ? - 4
+	// õ - 4
 	0b00000101,
 	0b00001010,
 	0b00001110,
@@ -358,7 +357,7 @@ static const PROGMEM uint8_t magyar_betuk[] =
 	0b00010011,
 	0b00001101,
 	0b00000000,
-	// ? - 6
+	// û - 6
 	0b00000101,
 	0b00001010,
 	0b00000000,
@@ -367,8 +366,6 @@ static const PROGMEM uint8_t magyar_betuk[] =
 	0b00010011,
 	0b00001101,
 	0b00000000,
-
-	0xFF
 };
 
 #endif //LCD_H
