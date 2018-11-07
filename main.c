@@ -32,51 +32,70 @@
 #include "DS18B20/onewire.h"
 
 volatile uint8_t TimerElapsed = 0;
-volatile uint8_t TimerState = 0;
+//volatile uint8_t TimerState = 0;
 
-volatile uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
-volatile uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
-volatile uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
-volatile uint16_t PumpPlusTime = 5; uint16_t EEMEM eePumpPlusTime = 5;
+// volatile uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
+// volatile uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
+// volatile uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
+// volatile uint16_t PumpPlusTime = 5; uint16_t EEMEM eePumpPlusTime = 5;
 
-volatile float BME280Temp; char BME280TempBuf[6];
-volatile float BME280Humid; char BME280HumidBuf[6];
-volatile uint16_t BME280TempUint;
+uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
+uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
+uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
+uint16_t PumpPlusTime = 5; uint16_t EEMEM eePumpPlusTime = 5;
 
-volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin, DHWMinHour, DHWMinMinute, DHWMaxHour, DHWMaxMinute; 
+// volatile float BME280Temp; char BME280TempBuf[6];
+// volatile float BME280Humid; char BME280HumidBuf[6];
+// volatile uint16_t BME280TempUint;
+
+float BME280Temp; char BME280TempBuf[6];
+float BME280Humid; char BME280HumidBuf[6];
+uint16_t BME280TempUint;
+
+uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
+uint16_t DHWMinTime, DHWMaxTime; 
+//volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
+//volatile uint16_t DHWMinTime, DHWMaxTime; 
 char DHWTempActualBuf[3], DHWTempActualFracBuf[3];
 uint8_t EEMEM eeDHWTempDesired = 30;
 uint8_t EEMEM eeDHWTempMin = 25;
-uint8_t EEMEM eeDHWMinHour = 6;
-uint8_t EEMEM eeDHWMinMinute = 00;
-uint8_t EEMEM eeDHWMaxHour = 22;
-uint8_t EEMEM eeDHWMaxMinute = 00;
+uint16_t EEMEM eeDHWMinTime = 600;
+uint16_t EEMEM eeDHWMaxTime = 2200;
 
-volatile uint8_t BufferTempActual; char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
-volatile uint8_t ForwardHeatTemp = 25; uint8_t EEMEM eeForwardHeatTemp = 25;
+uint8_t BufferTempActual; char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
+uint8_t ForwardHeatTemp = 25; uint8_t EEMEM eeForwardHeatTemp = 25;
+//volatile uint8_t BufferTempActual; char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
+//volatile uint8_t ForwardHeatTemp = 25; uint8_t EEMEM eeForwardHeatTemp = 25;
 
-volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin; char GarageTempActualBuf[3], GarageTempActualFracBuf[3];
+uint8_t GarageTempActual, GarageTempDesired, GarageTempMin; char GarageTempActualBuf[3], GarageTempActualFracBuf[3];
+//volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin; char GarageTempActualBuf[3], GarageTempActualFracBuf[3];
 uint8_t EEMEM eeGarageTempDesired = 10;
 uint8_t EEMEM eeGarageTempMin = 5;
 
-volatile uint16_t SwitchOnOutdoorTempMin; 
+//volatile uint16_t SwitchOnOutdoorTempMin; 
+uint16_t SwitchOnOutdoorTempMin;
 uint16_t EEMEM eeSwitchOnOutdoorTempMin = 2300;
 
-volatile unsigned char Relays = 0;
+//volatile unsigned char Relays = 0;
+unsigned char Relays = 0;
 
-volatile uint8_t DHWSensorID = 0;
+//volatile uint8_t DHWSensorID = 0;
+uint8_t DHWSensorID = 0;
 uint8_t EEMEM eeDHWSensorID = 0;
 
-volatile uint8_t BufferSensorID = 1;
+//volatile uint8_t BufferSensorID = 1;
+uint8_t BufferSensorID = 1;
 uint8_t EEMEM eeBufferSensorID = 1;
 
-volatile uint8_t GarageSensorID = 2;
+//volatile uint8_t GarageSensorID = 2;
+uint8_t GarageSensorID = 2;
 uint8_t EEMEM eeGarageSensorID = 2;
 
 uint8_t nSensors;
 uint8_t gSensorIDs[DS18B20_MAX_NO][OW_ROMCODE_SIZE];
 
-volatile uint8_t Hour = 0, Minute = 0, Seconds = 0;
+//volatile uint8_t Hour = 0, Minute = 0, Seconds = 0;
+uint8_t Hour = 0, Minute = 0, Seconds = 0;
 
 
 ISR(ADC_vect) // LCD háttérk világítás PWM
@@ -99,21 +118,9 @@ void SensorRead()
 	uint8_t i;
 	uint8_t subzero, cel, cel_frac_bits;
 	static uint8_t display = 10;
+	static uint8_t timerstate = 0;
 	
-	if (++Seconds == 60)
-	{
-		Seconds = 0;
-		Minute++;
-		if (Minute == 60)
-		{
-			Minute = 0;
-			Hour++;
-			if (Hour == 24)
-				Hour = 0;
-		}		
-	}
-
-	switch (TimerState)
+	switch (timerstate)
 	{
 		case (BME280TempState):
 			BME280Temp = bme280_readTemperature();
@@ -121,7 +128,7 @@ void SensorRead()
 			BME280TempUint = (uint16_t)( BME280Temp * 100);
 			if (DebugMode > 0)
 				{ uart_puts_p(PSTR("BME280 Temperature: ")); uart_puts(BME280TempBuf); uart_puts_p(PSTR("C \n")); }
-			TimerState++;
+			timerstate++;
 		break;
 
 		case (BME280HumidState):
@@ -129,7 +136,7 @@ void SensorRead()
 			ftoa(BME280HumidBuf, BME280Humid, 2);
 			if (DebugMode > 0)
 				{ uart_puts_p(PSTR("BME280 Humidity: "));	uart_puts(BME280HumidBuf);	uart_puts_p(PSTR("% \n")); }
-			TimerState++;
+			timerstate++;
 		break;
 
 		case (DS18B20State1):
@@ -138,7 +145,7 @@ void SensorRead()
 			{
 				DS18X20_start_meas(DS18X20_POWER_EXTERN,&gSensorIDs[i][0]);
 			}
-			TimerState++;
+			timerstate++;
 		break;
 
 		case (DS18B20State2):
@@ -174,11 +181,11 @@ void SensorRead()
 				i++;
 			}
 
-			TimerState++;
+			timerstate++;
 		break;
 
 		default:
-			TimerState = 0;
+			timerstate = 0;
 		break;
 	}	
 
@@ -223,8 +230,8 @@ void CheckConditions()
 {
 	// DHW felsõ kör
 	static uint16_t pumpplustime = 0;
-	
-	if (DHWTempActual < DHWTempDesired && (DHWMaxHour >= Hour && DHWMinHour <= Hour )) // alacsony HMV hõmérséklet
+	uint16_t currTime = Hour * 100 + Minute;
+	if (DHWTempActual < DHWTempDesired && (DHWMaxTime >= currTime && DHWMinTime <= currTime )) // alacsony HMV hõmérséklet
 	{
 		if (DHWTempMin >= DHWTempActual)
 		{
@@ -380,10 +387,8 @@ void read_from_eeprom()
 	DHWSensorID = eeprom_read_byte(&eeDHWSensorID);
 	DHWTempDesired = eeprom_read_byte(&eeDHWTempDesired);
 	DHWTempMin = eeprom_read_byte(&eeDHWTempMin);
-	DHWMinHour = eeprom_read_byte(&eeDHWMinHour);
-	DHWMinMinute = eeprom_read_byte(&eeDHWMinMinute);
-	DHWMaxHour = eeprom_read_byte(&eeDHWMaxHour);
-	DHWMaxMinute = eeprom_read_byte(&eeDHWMaxMinute);
+	DHWMinTime = eeprom_read_word(&eeDHWMinTime);
+	DHWMaxTime = eeprom_read_word(&eeDHWMaxTime);
 	BufferSensorID = eeprom_read_byte(&eeBufferSensorID);
 	ForwardHeatTemp = eeprom_read_byte(&eeForwardHeatTemp);
 	GarageSensorID = eeprom_read_byte(&eeGarageSensorID);
@@ -442,15 +447,13 @@ int main(void)
 	lcd_gotoxy(0,1);
 	lcd_puts_hu(PSTR("BME280 indítás"));
 	init_BME280();
-
+	
+	
+	
 	sei();
 	uart_puts_p(PSTR("Interrupt enabled\n"));
 
-	//reset watchdog
-	wdt_reset();
-	WDTCR |= (1<<WDE) | (1 << WDCE);
-	WDTCR |= (1<<WDP2)|(1<<WDP1)|(1<<WDP0);
-
+	
 	ow_set_bus(&PINB,&PORTB,&DDRB,PINB0);
 	nSensors = search_sensors();
 
@@ -459,15 +462,21 @@ int main(void)
 	lcd_gotoxy(0,2);
 	lcd_puts_p(PSTR("DS18B20: ")); lcd_puti(nSensors); lcd_puts_p(PSTR(" db"));
 
-	lcd_gotoxy(0,3);
+	_delay_ms(3000);
 
-	TCCR1B |= (1 << CS12);
+	TCCR1B |= (1 << CS12) | (1 << WGM12);
 	TCNT1 = 0;
 	OCR1A = 62500;//14400; // 1000ms
 	TIMSK |= (1 << OCIE1A);
 
 	//ADMUX |= (1<<REFS0) | (1<< REFS1);
 	ADCSRA |= (1 << ADEN)|(1<<ADIE)|(1<<ADSC)|(1<<ADPS0)|(1<<ADPS1)|(1<<ADPS2);
+	
+	//reset watchdog
+	wdt_reset();
+	WDTCR |= (1<<WDE) | (1 << WDCE);
+	WDTCR |= (1<<WDP2)| (1<<WDP1) | (1<<WDP0);
+
 
 	menuInit();
 
@@ -475,7 +484,19 @@ int main(void)
 	{
 		if (TimerElapsed == 1)
 		{
-			TimerElapsed++;
+			if (++Seconds == 60)
+			{
+				Seconds = 0;
+				Minute++;
+				if (Minute == 60)
+				{
+					Minute = 0;
+					Hour++;
+					if (Hour == 24)
+						Hour = 0;
+				}		
+			}
+	
 			SensorRead();
 			if (DebugMode < 2)
 				CheckConditions();

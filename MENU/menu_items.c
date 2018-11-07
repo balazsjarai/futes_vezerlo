@@ -65,22 +65,24 @@ void SwitchOnOutdoorTempMin_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Külsõ min hõm"));
 	lcd_gotoxy(0,1);
-	uint8_t cel = SwitchOnOutdoorTempMin % 10;
-	char buf[3];
-	itoa(cel, buf, 10);
-	lcd_puts(buf); lcd_puts_p(PSTR("."));
-	uint8_t frac = SwitchOnOutdoorTempMin % 10;
-	itoa(frac, buf, 10);
-	lcd_puts(buf);
+	char buf[5];
+	itoa(SwitchOnOutdoorTempMin, buf, 10);
+	lcd_puts(buf); 
 }
 
 bool SwitchOnOutdoorTempMin_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			SwitchOnOutdoorTempMin += 10;
+			if (SwitchOnOutdoorTempMin > 3490)
+				SwitchOnOutdoorTempMin = 310;
+			else
+				SwitchOnOutdoorTempMin += 10;
 			break;
 		case MENU_DOWN:
-			SwitchOnOutdoorTempMin -= 10;
+			if (SwitchOnOutdoorTempMin > 310)
+				SwitchOnOutdoorTempMin -= 10;
+			else
+				SwitchOnOutdoorTempMin = 3500;
 			break;
 		case MENU_CONFIRM:
 			eeprom_update_word(&eeSwitchOnOutdoorTempMin, SwitchOnOutdoorTempMin);
@@ -218,128 +220,77 @@ bool DHWSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-void DHWMinHour_CallbackRender(uint8_t which){
+void DHWMinTime_CallbackRender(uint8_t which){
 	lcd_clrscr();
-	lcd_puts_hu(PSTR("Min óra"));
+	lcd_puts_hu(PSTR("Min idõ"));
 	lcd_gotoxy(0,1);
-	char buf[3];
-	itoa(DHWMinHour, buf, 10);
+	char buf[5];
+	itoa(DHWMinTime, buf, 10);
 	lcd_puts(buf);
 }
 
-bool DHWMinHour_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool DHWMinTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (++DHWMinHour == 24)
-				DHWMinHour = 0;
+			if (DHWMinTime < 2340)
+				DHWMinTime += 10;
+			else
+				DHWMinTime = 0;
 			break;
 		case MENU_DOWN:
-			if (--DHWMinHour == 255)
-				DHWMinHour = 23;
+			if (DHWMinTime > 65525)
+				DHWMinTime = 2350;
+			else
+				DHWMinTime -= 10;
 			break;
 		case MENU_CONFIRM:
-		eeprom_update_byte(&eeDHWMinHour, DHWMinHour);
+		eeprom_update_word(&eeDHWMinTime, DHWMinTime);
 		case MENU_CANCEL:
 		return true;
 	}
 
-	DHWMinHour_CallbackRender(column);
+	DHWMinTime_CallbackRender(column);
 	return false;
 }
 
-void DHWMinMinute_CallbackRender(uint8_t which){
+void DHWMaxTime_CallbackRender(uint8_t which){
 	lcd_clrscr();
-	lcd_puts_hu(PSTR("Min Perc"));
+	lcd_puts_hu(PSTR("Max idõ"));
 	lcd_gotoxy(0,1);
-	char buf[3];
-	itoa(DHWMinMinute, buf, 10);
+	char buf[5];
+	itoa(DHWMaxTime, buf, 10);
 	lcd_puts(buf);
 }
 
-bool DHWMinMinute_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool DHWMaxTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-		if (++DHWMinMinute == 60)
-		DHWMinMinute = 0;
-		break;
+			if (DHWMaxTime < 2340)
+				DHWMaxTime += 10;
+			else
+				DHWMaxTime = 0;
+			break;
 		case MENU_DOWN:
-		if (--DHWMinMinute == 255)
-		DHWMinMinute = 59;
-		break;
+			if (DHWMaxTime > 65525)
+				DHWMaxTime = 2350;
+			else
+				DHWMaxTime -= 10;
+			break;
 		case MENU_CONFIRM:
-		eeprom_update_byte(&eeDHWMinMinute, DHWMinMinute);
+		eeprom_update_word(&eeDHWMaxTime, DHWMaxTime);
 		case MENU_CANCEL:
 		return true;
 	}
 
-	DHWMinMinute_CallbackRender(column);
+	DHWMaxTime_CallbackRender(column);
 	return false;
 }
 
-void DHWMaxHour_CallbackRender(uint8_t which){
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("Max óra"));
-	lcd_gotoxy(0,1);
-	char buf[3];
-	itoa(DHWMaxHour, buf, 10);
-	lcd_puts(buf);
-}
 
-bool DHWMaxHour_ActionCallback(MENU_BUTTON *button, uint8_t column){
-	switch(button->role){
-		case MENU_UP:
-		if (++DHWMaxHour == 24)
-		DHWMaxHour = 0;
-		break;
-		case MENU_DOWN:
-		if (--DHWMaxHour == 255)
-		DHWMaxHour = 23;
-		break;
-		case MENU_CONFIRM:
-		eeprom_update_byte(&eeDHWMaxHour, DHWMaxHour);
-		case MENU_CANCEL:
-		return true;
-	}
-
-	DHWMaxHour_CallbackRender(column);
-	return false;
-}
-
-void DHWMaxMinute_CallbackRender(uint8_t which){
-	lcd_clrscr();
-	lcd_puts_hu(PSTR("Max Perc"));
-	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(DHWMaxMinute, buf, 10);
-	lcd_puts(buf);
-}
-
-bool DHWMaxMinute_ActionCallback(MENU_BUTTON *button, uint8_t column){
-	switch(button->role){
-		case MENU_UP:
-		if (++DHWMaxMinute == 60)
-		DHWMaxMinute = 0;
-		break;
-		case MENU_DOWN:
-		if (--DHWMaxMinute == 255)
-		DHWMaxMinute = 59;
-		break;
-		case MENU_CONFIRM:
-		eeprom_update_byte(&eeDHWMaxMinute, DHWMaxMinute);
-		case MENU_CANCEL:
-		return true;
-	}
-
-	DHWMaxMinute_CallbackRender(column);
-	return false;
-}
-
-#define DHWHOURS_SUBMENU_ITEMS 4
+#define DHWHOURS_SUBMENU_ITEMS 2
 static MENU_ITEM DHWHOURS_submenu[DHWHOURS_SUBMENU_ITEMS] = {
-	{"Min óra", 			DHWMinHour_CallbackRender, 		DHWMinHour_ActionCallback,		0,	NULL},
-	{"Min perc", 			DHWMinMinute_CallbackRender,	DHWMinMinute_ActionCallback,	0,	NULL},
-	{"Max óra", 			DHWMaxHour_CallbackRender, 		DHWMaxHour_ActionCallback,		0,	NULL},
-	{"Max perc", 			DHWMaxMinute_CallbackRender,	DHWMaxMinute_ActionCallback,	0,	NULL},
+	{"Min idõ", 			DHWMinTime_CallbackRender, 		DHWMinTime_ActionCallback,		0,	NULL},
+	{"Max idõ", 			DHWMaxTime_CallbackRender, 		DHWMaxTime_ActionCallback,		0,	NULL},
 };
 
 # define DHW_SUBMENU_ITEMS  5

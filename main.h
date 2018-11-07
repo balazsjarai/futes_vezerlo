@@ -40,44 +40,62 @@ typedef enum {
 #define DS18B20_PIN			PINB
 #define DS18B20_PINx		PINB0
 
-extern volatile uint8_t DebugMode; extern uint8_t eeDebugMode;
-extern volatile uint8_t MenuTimer; extern uint8_t eeMenuTimer;
-extern volatile uint8_t LCDBackLight; extern uint8_t eeLCDBackLight;
-extern volatile uint16_t PumpPlusTime; extern uint16_t eePumpPlusTime;
+// extern volatile uint8_t DebugMode; extern uint8_t eeDebugMode;
+// extern volatile uint8_t MenuTimer; extern uint8_t eeMenuTimer;
+// extern volatile uint8_t LCDBackLight; extern uint8_t eeLCDBackLight;
+// extern volatile uint16_t PumpPlusTime; extern uint16_t eePumpPlusTime;
+extern uint8_t DebugMode; extern uint8_t eeDebugMode;
+extern uint8_t MenuTimer; extern uint8_t eeMenuTimer;
+extern uint8_t LCDBackLight; extern uint8_t eeLCDBackLight;
+extern uint16_t PumpPlusTime; extern uint16_t eePumpPlusTime;
 
-extern volatile float BME280Temp, BME280Humid;
+//extern volatile float BME280Temp, BME280Humid;
+extern float BME280Temp, BME280Humid;
 extern char BME280TempBuf[6], BME280HumidBuf[6];
 
-extern volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin, DHWMinHour, DHWMinMinute, DHWMaxHour, DHWMaxMinute;
-extern uint8_t eeDHWTempDesired, eeDHWTempMin, eeDHWMinHour, eeDHWMinMinute, eeDHWMaxHour, eeDHWMaxMinute;
+//extern volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
+//extern volatile uint16_t DHWMinTime, DHWMaxTime;
+extern uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
+extern uint16_t DHWMinTime, DHWMaxTime;
+extern uint8_t eeDHWTempDesired, eeDHWTempMin;
+extern uint16_t eeDHWMinTime, eeDHWMaxTime;
 extern char DHWTempActualBuf[3], DHWTempActualFracBuf[3];
 
-extern volatile uint8_t BufferTempActual;
-extern volatile uint8_t ForwardHeatTemp;
+// extern volatile uint8_t BufferTempActual;
+// extern volatile uint8_t ForwardHeatTemp;
+extern uint8_t BufferTempActual;
+extern uint8_t ForwardHeatTemp;
 extern uint8_t eeForwardHeatTemp;
 extern char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
 
-extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
+//extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
+extern uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
 extern uint8_t eeGarageTempDesired, eeGarageTempMin;
 extern char GarageTempActualBuf[3], GarageTempActualFracBuf[3];
 
-extern volatile uint16_t SwitchOnOutdoorTempMin;
+//extern volatile uint16_t SwitchOnOutdoorTempMin;
+extern uint16_t SwitchOnOutdoorTempMin;
 extern uint16_t eeSwitchOnOutdoorTempMin;
 
-extern volatile uint8_t DHWSensorID;
+//extern volatile uint8_t DHWSensorID;
+extern uint8_t DHWSensorID;
 extern uint8_t eeDHWSensorID;
 
-extern volatile uint8_t BufferSensorID;
+//extern volatile uint8_t BufferSensorID;
+extern uint8_t BufferSensorID;
 extern uint8_t eeBufferSensorID;
 
-extern volatile uint8_t GarageSensorID;
+//extern volatile uint8_t GarageSensorID;
+extern uint8_t GarageSensorID;
 extern uint8_t eeGarageSensorID;
 
-extern volatile unsigned char Relays;
+//extern volatile unsigned char Relays;
+extern unsigned char Relays;
 
 extern uint8_t nSensors;
 
-extern volatile uint8_t Hour, Minute, Seconds;
+//extern volatile uint8_t Hour, Minute, Seconds;
+extern uint8_t Hour, Minute, Seconds;
 
 extern void SwitchRelays();
 
