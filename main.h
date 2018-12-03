@@ -17,6 +17,7 @@ typedef enum {
 
 #define RELAYS_CS_PIN		1
 
+#define SOLAR_PUMP_RELAY	1
 #define FIRST_FLOOR_VALVE	2
 #define SECOND_FLOOR_VALVE	3
 #define DHW_VALVE_RELAY 	4
@@ -69,9 +70,17 @@ extern uint8_t eeForwardHeatTemp;
 extern char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
 
 //extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
-extern uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
-extern uint8_t eeGarageTempDesired, eeGarageTempMin;
-extern char GarageTempActualBuf[3], GarageTempActualFracBuf[3];
+extern uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin;
+extern uint8_t eeEngineeringTempDesired, eeEngineeringTempMin;
+extern char EngineeringTempActualBuf[3], EngineeringTempActualFracBuf[3];
+
+//extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
+extern uint8_t GarageTemp;
+extern char GarageTempBuf[3], GarageTempFracBuf[3];
+
+//extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
+extern uint8_t LivingRoomTemp;
+extern char LivingRoomTempBuf[3], LivingRoomTempFracBuf[3];
 
 //extern volatile uint16_t SwitchOnOutdoorTempMin;
 extern uint16_t SwitchOnOutdoorTempMin;
@@ -86,8 +95,16 @@ extern uint8_t BufferSensorID;
 extern uint8_t eeBufferSensorID;
 
 //extern volatile uint8_t GarageSensorID;
+extern uint8_t EngineeringSensorID;
+extern uint8_t eeEngineeringSensorID;
+
+//extern volatile uint8_t GarageSensorID;
 extern uint8_t GarageSensorID;
 extern uint8_t eeGarageSensorID;
+
+//extern volatile uint8_t GarageSensorID;
+extern uint8_t LivingRoomSensorID;
+extern uint8_t eeLivingRoomSensorID;
 
 //extern volatile unsigned char Relays;
 extern unsigned char Relays;
@@ -96,6 +113,7 @@ extern uint8_t nSensors;
 
 //extern volatile uint8_t Hour, Minute, Seconds;
 extern uint8_t Hour, Minute, Seconds;
+extern uint8_t ClockInitialized;
 
 extern void SwitchRelays();
 

@@ -67,7 +67,7 @@ void SwitchOnOutdoorTempMin_CallbackRender(uint8_t which){
 	lcd_gotoxy(0,1);
 	char buf[5];
 	itoa(SwitchOnOutdoorTempMin, buf, 10);
-	lcd_puts(buf); 
+	lcd_puts(buf);
 }
 
 bool SwitchOnOutdoorTempMin_ActionCallback(MENU_BUTTON *button, uint8_t column){
@@ -174,7 +174,7 @@ bool DHWTempMin_ActionCallback(MENU_BUTTON *button, uint8_t column){
 				++DHWTempMin;
 			break;
 		case MENU_DOWN:
-			if (DHWTempMin > 5) 
+			if (DHWTempMin > 5)
 				--DHWTempMin;
 			break;
 		case MENU_CONFIRM:
@@ -400,14 +400,14 @@ static MENU_ITEM BUFFER_submenu[BUFFER_SUBMENU_ITEMS] = {
 /*************************************************************************
  Menu Garage, submenu definitions
 *************************************************************************/
-void GarageTempActual_CallbackRender(uint8_t which){
+void EngineeringTempActual_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Gépház akt hõm"));
 	lcd_gotoxy(0,1);
-	lcd_puts(GarageTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempActualFracBuf); lcd_puts_p(PSTR(" C"));
+	lcd_puts(EngineeringTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(EngineeringTempActualFracBuf); lcd_puts_p(PSTR(" C"));
 }
 
-bool GarageTempActual_Callback(MENU_BUTTON *button, uint8_t column){
+bool EngineeringTempActual_Callback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
 			break;
@@ -419,107 +419,107 @@ bool GarageTempActual_Callback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	GarageTempActual_CallbackRender(column);
+	EngineeringTempActual_CallbackRender(column);
 	return false;
 }
 
-void GarageTempMin_CallbackRender(uint8_t which){
+void EngineeringTempMin_CallbackRender(uint8_t which){
 	char buf[4];
-	itoa(GarageTempMin, buf, 10);
+	itoa(EngineeringTempMin, buf, 10);
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Gépház min hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(buf);
 }
 
-bool GarageTempMin_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool EngineeringTempMin_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (GarageTempMin < GarageTempDesired)
-				++GarageTempMin;
+			if (EngineeringTempMin < EngineeringTempDesired)
+				++EngineeringTempMin;
 			break;
 		case MENU_DOWN:
-			if (GarageTempMin > 5)
-				--GarageTempMin;
+			if (EngineeringTempMin > 5)
+				--EngineeringTempMin;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeGarageTempMin, GarageTempMin);
+			eeprom_update_byte(&eeEngineeringTempMin, EngineeringTempMin);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
 
-	GarageTempMin_CallbackRender(column);
+	EngineeringTempMin_CallbackRender(column);
 	return false;
 }
 
-void GarageTempDesired_CallbackRender(uint8_t which){
+void EngineeringTempDesired_CallbackRender(uint8_t which){
 	char buf[7];
-	itoa(GarageTempDesired, buf, 10);
+	itoa(EngineeringTempDesired, buf, 10);
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Gépház kívánt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(buf);
 }
 
-bool GarageTempDesired_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool EngineeringTempDesired_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (GarageTempDesired < 35)
-				++GarageTempDesired;
+			if (EngineeringTempDesired < 35)
+				++EngineeringTempDesired;
 			break;
 		case MENU_DOWN:
-			if (GarageTempDesired > GarageTempMin)
-				--GarageTempDesired;
+			if (EngineeringTempDesired > EngineeringTempMin)
+				--EngineeringTempDesired;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeGarageTempDesired, GarageTempDesired);
+			eeprom_update_byte(&eeEngineeringTempDesired, EngineeringTempDesired);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
-	GarageTempDesired_CallbackRender(column);
+	EngineeringTempDesired_CallbackRender(column);
 	return false;
 }
 
-void GarageSensor_CallbackRender(uint8_t which){
+void EngineeringSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Gépház szenzor ID"));
 	lcd_gotoxy(0,1);
 	char buf[4];
-	itoa(GarageSensorID, buf, 10);
+	itoa(EngineeringSensorID, buf, 10);
 	lcd_puts(buf);
 }
 
-bool GarageSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool EngineeringSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			GarageSensorID++;
-			if (GarageSensorID == nSensors)
-				GarageSensorID = 0;
+			EngineeringSensorID++;
+			if (EngineeringSensorID == nSensors)
+				EngineeringSensorID = 0;
 			break;
 		case MENU_DOWN:
-			GarageSensorID--;
-			if (GarageSensorID == 255)
-				GarageSensorID = nSensors - 1;
+			EngineeringSensorID--;
+			if (EngineeringSensorID == 255)
+				EngineeringSensorID = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeGarageSensorID, GarageSensorID);
+			eeprom_update_byte(&eeEngineeringSensorID, EngineeringSensorID);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
 
-	GarageSensor_CallbackRender(column);
+	EngineeringSensor_CallbackRender(column);
 	return false;
 }
 
-# define GARAGE_SUBMENU_ITEMS  4
-static MENU_ITEM GARAGE_submenu[GARAGE_SUBMENU_ITEMS] = {
-	{"Gépház akt hõm", 		GarageTempActual_CallbackRender, 	GarageTempActual_Callback, 			0,				NULL},
-	{"Gépház min hõm", 		GarageTempMin_CallbackRender, 		GarageTempMin_ActionCallback,		0,				NULL},
-	{"Gépház kívánt hõm", 	GarageTempDesired_CallbackRender, 	GarageTempDesired_ActionCallback,	0,				NULL},
-	{"Gépház szenzor",		GarageSensor_CallbackRender, 		GarageSensor_ActionCallback, 		0, 				NULL},
+# define ENGINEERING_SUBMENU_ITEMS  4
+static MENU_ITEM ENGINEERING_submenu[ENGINEERING_SUBMENU_ITEMS] = {
+	{"Gépház akt hõm", 		EngineeringTempActual_CallbackRender, 	EngineeringTempActual_Callback, 		0,				NULL},
+	{"Gépház min hõm", 		EngineeringTempMin_CallbackRender, 		EngineeringTempMin_ActionCallback,		0,				NULL},
+	{"Gépház kívánt hõm", 	EngineeringTempDesired_CallbackRender, 	EngineeringTempDesired_ActionCallback,	0,				NULL},
+	{"Gépház szenzor",		EngineeringSensor_CallbackRender, 		EngineeringSensor_ActionCallback, 		0, 				NULL},
 };
 
 /*************************************************************************
@@ -704,6 +704,57 @@ static MENU_ITEM RELAYS_submenu[RELAYS_SUBMENU_ITEMS] = {
 	{"Gáz relé", 				GasRelay_CallbackRender, 			GasRelay_ActionCallback, 		0,	NULL},
 };
 
+
+/*************************************************************************
+ Sensors, submenu definitions
+*************************************************************************/
+void GarageTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Garázs akt hõm"));
+	lcd_gotoxy(0,1);
+	lcd_puts(GarageTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempFracBuf); lcd_puts_p(PSTR(" C"));
+}
+
+bool GarageTemp_Callback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+		case MENU_CONFIRM:
+		case MENU_CANCEL:
+			return true;
+	}
+
+	GarageTemp_CallbackRender(column);
+	return false;
+}
+
+void LivingRoomTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Nappali akt hõm"));
+	lcd_gotoxy(0,1);
+	lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
+}
+
+bool LivingRoomTemp_Callback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+		case MENU_CONFIRM:
+		case MENU_CANCEL:
+			return true;
+	}
+
+	LivingRoomTemp_CallbackRender(column);
+	return false;
+}
+
+# define SENSORS_SUBMENU_ITEMS  2
+static MENU_ITEM SENSORS_submenu[SENSORS_SUBMENU_ITEMS] = {
+	{"Külsõ hõm",			GarageTemp_CallbackRender,				GarageTemp_Callback, 				0, NULL},
+	{"Külsõ pára",			LivingRoomTemp_CallbackRender,			LivingRoomTemp_Callback,			0, NULL},
+};
+
+
 /*************************************************************************
  Menu Settings, submenu definition
 *************************************************************************/
@@ -840,6 +891,8 @@ bool ClockHour_ActionCallback(MENU_BUTTON *button, uint8_t column){
 				Hour = 23;
 			break;
 		case MENU_CONFIRM:
+			ClockInitialized = 1;
+			return true;
 		case MENU_CANCEL:
 			return true;
 	}
@@ -868,6 +921,8 @@ bool ClockMinute_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			Minute = 59;
 			break;
 		case MENU_CONFIRM:
+			ClockInitialized = 1;
+			return true;
 		case MENU_CANCEL:
 			return true;
 	}
@@ -894,14 +949,15 @@ static MENU_ITEM SYSPARAM_submenu[SYSPARAM_SUBMENU_ITEMS] = {
 /*
 ** HOME menu items definition
 */
-#define MENU_HOME_ITEMS  6
+#define MENU_HOME_ITEMS  7
 static MENU_ITEM home_items[MENU_HOME_ITEMS] = {
-	{"HMV beállítás",   	NULL,                           NULL,                     DHW_SUBMENU_ITEMS,     	DHW_submenu	  	},
-	{"Puffer beállítás",   	NULL,                           NULL,                     BUFFER_SUBMENU_ITEMS,     BUFFER_submenu	},
-	{"Kazánház termoszt",	NULL,                           NULL,                     GARAGE_SUBMENU_ITEMS,   	GARAGE_submenu	},
-	{"Külsõ érzékelõ",		NULL,                           NULL,                     BME280_SUBMENU_ITEMS,   	BME280_submenu	},
-	{"Relék",				NULL,							NULL,					  RELAYS_SUBMENU_ITEMS, 	RELAYS_submenu	},
-	{"Vezérlõ beállítás",	NULL,							NULL,					  SYSPARAM_SUBMENU_ITEMS, 	SYSPARAM_submenu},
+	{"HMV beállítás",   	NULL,                           NULL,                     DHW_SUBMENU_ITEMS,     		DHW_submenu	  	},
+	{"Puffer beállítás",   	NULL,                           NULL,                     BUFFER_SUBMENU_ITEMS,     	BUFFER_submenu	},
+	{"Kazánház termoszt",	NULL,                           NULL,                     ENGINEERING_SUBMENU_ITEMS,	ENGINEERING_submenu	},
+	{"Külsõ érzékelõ",		NULL,                           NULL,                     BME280_SUBMENU_ITEMS,   		BME280_submenu	},
+	{"Relék",				NULL,							NULL,					  RELAYS_SUBMENU_ITEMS, 		RELAYS_submenu	},
+	{"Egyéb érzékelõ",		NULL,							NULL,					  SENSORS_SUBMENU_ITEMS, 		SENSORS_submenu	},
+	{"Vezérlõ beállítás",	NULL,							NULL,					  SYSPARAM_SUBMENU_ITEMS, 		SYSPARAM_submenu},
 };
 
 /*
