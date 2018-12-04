@@ -4,10 +4,16 @@
 // szivattyú utánfutás -> OK
 // kazánház min / kivánt -> OK
 // min < kivánt -> OK
-// több kijelzés -> OK?
+// több kijelzés -> OK
 // óra -> belsõ idõzítõvel -> OK
 // külsõ hõmérõ hiba
 // elõzõ / aktuális állapot -> kevesebb frissítés
+// dátum -> OK
+// fûtés napközben, ha elegendõ a puffer energiája, de termosztát nem kér -> teszt
+// szabadság / távollét beállítás
+// OpenTherm
+// termosztát funkció
+// osztó termoszelep vezérlés
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -43,6 +49,8 @@ uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
 uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
 uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
 uint16_t PumpPlusTime = 5; uint16_t EEMEM eePumpPlusTime = 5;
+uint8_t ComfortMode = 0; uint8_t EEMEM eeComfortMode = 0;
+uint8_t ComfortTemp = 20; uint8_t EEMEM eeComfortTemp = 20;
 
 // volatile float BME280Temp; char BME280TempBuf[6];
 // volatile float BME280Humid; char BME280HumidBuf[6];
@@ -59,7 +67,7 @@ uint16_t DHWMinTime, DHWMaxTime;
 char DHWTempActualBuf[3], DHWTempActualFracBuf[3];
 uint8_t EEMEM eeDHWTempDesired = 30;
 uint8_t EEMEM eeDHWTempMin = 25;
-uint16_t EEMEM eeDHWMinTime = 600;
+uint16_t EEMEM eeDHWMinTime = 1500;
 uint16_t EEMEM eeDHWMaxTime = 2200;
 
 uint8_t BufferTempActual; char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
@@ -81,32 +89,31 @@ char GarageTempBuf[3], GarageTempFracBuf[3];
 uint8_t LivingRoomTemp;
 char LivingRoomTempBuf[3], LivingRoomTempFracBuf[3];
 
-//volatile uint16_t SwitchOnOutdoorTempMin;
+uint8_t FloorTemp;
+char FloorTempBuf[3], FloorTempFracBuf[3];
+
 uint16_t SwitchOnOutdoorTempMin;
 uint16_t EEMEM eeSwitchOnOutdoorTempMin = 2300;
 
-//volatile unsigned char Relays = 0;
 unsigned char Relays = 0;
 
-//volatile uint8_t DHWSensorID = 0;
 uint8_t DHWSensorID = 0;
 uint8_t EEMEM eeDHWSensorID = 0;
 
-//volatile uint8_t BufferSensorID = 1;
 uint8_t BufferSensorID = 1;
 uint8_t EEMEM eeBufferSensorID = 1;
 
-//volatile uint8_t GarageSensorID = 2;
 uint8_t GarageSensorID = 2;
 uint8_t EEMEM eeGarageSensorID = 2;
 
-//extern volatile uint8_t GarageSensorID;
 uint8_t EngineeringSensorID = 3;
-uint8_t eeEngineeringSensorID = 3;
+uint8_t EEMEM eeEngineeringSensorID = 3;
 
-//extern volatile uint8_t GarageSensorID;
 uint8_t LivingRoomSensorID = 4;
-uint8_t eeLivingRoomSensorID = 4;
+uint8_t EEMEM eeLivingRoomSensorID = 4;
+
+uint8_t FloorSensorID = 5;
+uint8_t EEMEM eeFloorSensorID = 5;
 
 uint8_t nSensors;
 uint8_t gSensorIDs[DS18B20_MAX_NO][OW_ROMCODE_SIZE];
@@ -114,6 +121,9 @@ uint8_t gSensorIDs[DS18B20_MAX_NO][OW_ROMCODE_SIZE];
 //volatile uint8_t Hour = 0, Minute = 0, Seconds = 0;
 uint8_t Hour = 0, Minute = 0, Seconds = 0;
 uint8_t ClockInitialized = 0;
+
+uint16_t Year = 2018;
+uint8_t Month = 1, Day = 1, DayName = MONDAY;
 
 
 ISR(ADC_vect) // LCD háttér világítás PWM
@@ -135,7 +145,7 @@ void SensorRead()
 	//static uint8_t timer_state = BME280_temp_state;
 	uint8_t i;
 	uint8_t subzero, cel, cel_frac_bits;
-	static uint8_t display = 10;
+	static uint8_t display = 15;
 	static uint8_t timerstate = 0;
 
 	switch (timerstate)
@@ -159,10 +169,11 @@ void SensorRead()
 
 		case (DS18B20State1):
 			ow_set_bus(&DS18B20_PIN,&DS18B20_PORT,&DS18B20_DDR,DS18B20_PINx);
-			for ( i=0; i<nSensors; i++ )
-			{
-				DS18X20_start_meas(DS18X20_POWER_EXTERN,&gSensorIDs[i][0]);
-			}
+			//for ( i=0; i<nSensors; i++ )
+			//{
+			//	DS18X20_start_meas(DS18X20_POWER_EXTERN,&gSensorIDs[i][0]);
+			//}
+			DS18X20_start_meas(DS18X20_POWER_EXTERN,NULL);
 			timerstate++;
 		break;
 
@@ -184,29 +195,35 @@ void SensorRead()
 					itoa(DHWTempActual, DHWTempActualBuf, 10);
 					itoa(cel_frac_bits, DHWTempActualFracBuf, 10);
 				}
-				if (i == BufferSensorID)
+				else if (i == BufferSensorID)
 				{
 					BufferTempActual = cel;
 					itoa(BufferTempActual, BufferTempActualBuf, 10);
 					itoa(cel_frac_bits, BufferTempActualFracBuf, 10);
 				}
-				if (i == EngineeringSensorID)
+				else if (i == EngineeringSensorID)
 				{
 					EngineeringTempActual = cel;
 					itoa(EngineeringTempActual, EngineeringTempActualBuf, 10);
 					itoa(cel_frac_bits, EngineeringTempActualFracBuf, 10);
 				}
-				if (i == GarageSensorID)
+				else if (i == GarageSensorID)
 				{
 					GarageTemp = cel;
 					itoa(GarageTemp, GarageTempBuf, 10);
 					itoa(cel_frac_bits, GarageTempFracBuf, 10);
 				}
-				if (i == LivingRoomSensorID)
+				else if (i == LivingRoomSensorID)
 				{
 					LivingRoomTemp = cel;
 					itoa(LivingRoomTemp, LivingRoomTempBuf, 10);
 					itoa(cel_frac_bits, LivingRoomTempFracBuf, 10);
+				}
+				else if (i == FloorSensorID)
+				{
+					FloorTemp = cel;
+					itoa(FloorTemp, FloorTempBuf, 10);
+					itoa(cel_frac_bits, FloorTempFracBuf, 10);
 				}
 				i++;
 			}
@@ -222,7 +239,7 @@ void SensorRead()
 	if (MenuTimer == 0)
 	{
 		lcd_clrscr();
-		if (display > 3)
+		if (display > 10)
 		{
 			lcd_puts_p(PSTR("HMV ")); lcd_puts(DHWTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(DHWTempActualFracBuf); lcd_puts_p(PSTR(" C")); lcd_gotoxy(15,0); lcd_puti(Hour); lcd_puts_p(PSTR(":")); lcd_puti(Minute);
 			lcd_gotoxy(0,1);
@@ -232,7 +249,42 @@ void SensorRead()
 			lcd_gotoxy(0,3);
 			lcd_puts_hu(PSTR("Külsõ ")); lcd_puts(BME280TempBuf); lcd_puts_p(PSTR(" C"));
 		}
-		else if (display <= 3)
+		else if (display <= 10 && display > 5)
+		{
+			lcd_puts_p(PSTR("Garázs ")); lcd_puts(GarageTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempFracBuf); lcd_puts_p(PSTR(" C"));
+			lcd_gotoxy(0,1);
+			lcd_puts_p(PSTR("Nappali ")); lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
+			lcd_gotoxy(0,2);
+			lcd_puts_hu(PSTR("Padló ")); lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));
+			lcd_gotoxy(0,3);
+			lcd_puti(Year); lcd_puts_p(PSTR(".")); lcd_puti(Month); lcd_puts_p(PSTR(".")); lcd_puti(Day);
+			lcd_gotoxy(12,3);
+			switch (DayName)
+			{
+				case 1:
+					lcd_puts_hu(PSTR("hétfõ"));
+					break;
+				case 2:
+					lcd_puts_hu(PSTR("kedd"));
+					break;
+				case 3:
+					lcd_puts_hu(PSTR("szerda"));
+					break;
+				case 4:
+					lcd_puts_hu(PSTR("csüt"));
+					break;
+				case 5:
+					lcd_puts_hu(PSTR("péntek"));
+					break;
+				case 6:
+					lcd_puts_hu(PSTR("szombat"));
+					break;
+				case 7:
+					lcd_puts_hu(PSTR("vasárnap"));
+					break;
+			}
+		}
+		else if (display <= 5)
 		{
 			lcd_puts_p(PSTR("HMV szelep ")); lcd_putbit(Relays, DHW_VALVE_RELAY); lcd_gotoxy(15,0); lcd_puti(Hour); lcd_puts_p(PSTR(":")); lcd_puti(Minute);
 			lcd_gotoxy(0,1);
@@ -243,7 +295,7 @@ void SensorRead()
 			lcd_puts_hu(PSTR("Föld/Emel ")); lcd_putbit(Relays, FIRST_FLOOR_VALVE); lcd_putbit(Relays, SECOND_FLOOR_VALVE);
 		}
 		if (--display == 0)
-			display = 10;
+			display = 15;
 		//display--;
 		//lcd_puts_hu(PSTR("Relek: ")); lcd_putbyte_bin(Relays);
 	}
@@ -262,6 +314,8 @@ void CheckConditions()
 	static uint16_t pumpplustime = 0;
 	uint16_t currTime = Hour * 100 + Minute;
 	uint8_t DHW_condition;
+	uint8_t _relays = Relays;
+	
 	if (ClockInitialized)
 		DHW_condition = (DHWTempActual < DHWTempDesired && (DHWMaxTime >= currTime && DHWMinTime <= currTime )) ? 1 : 0;
 	else
@@ -281,19 +335,17 @@ void CheckConditions()
 			}
 			else // Pufferben van elég energia
 			{
-				if (!pumpplustime) // gáz megy, de átkapcsol pufferre, gáz még utókeringetne
-					Relays |= ((1 << DHW_VALVE_RELAY) | (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
-				else
-				pumpplustime--;
+				if (pumpplustime > 0)
+					pumpplustime--;
 				Relays &= ~(1 << GAS_RELAY);
 				if (DebugMode > 0)
 					uart_puts_P("DHW relay activated with buffer\n");
 			}
 		}
 	}
-	else // megszûnõ hõigény esetén az utókeringetés a gépház radiátorát fûti
+	else // megszûnõ hõigény esetén az utókeringetés a gépház radiátorát fûti, különben visszahûtené a HMV-t
 	{
-		Relays &= ~((1 << GAS_RELAY) | (1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY) | (1 << DHW_VALVE_RELAY));
+		Relays &= ~((1 << GAS_RELAY) | (1 << DHW_VALVE_RELAY));
 		if (DebugMode > 0)
 			uart_puts_P("DHW relay deactivated\n");
 	}
@@ -301,9 +353,14 @@ void CheckConditions()
 	// fûtési kör
 	if (!(Relays & (1 << DHW_VALVE_RELAY)))
 	{
-		if ((!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) || (EngineeringTempActual < EngineeringTempDesired))  && (BME280TempUint <= SwitchOnOutdoorTempMin))
+		if ((!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) 
+			|| (EngineeringTempActual < EngineeringTempDesired) 
+			|| (ComfortMode && LivingRoomTemp < ComfortTemp && BufferTempActual > ForwardHeatTemp)) 
+			&& (BME280TempUint <= SwitchOnOutdoorTempMin))
 		{
-			if (EngineeringTempActual < EngineeringTempMin || !(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
+			if (EngineeringTempActual < EngineeringTempMin 
+				|| !(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) 
+				|| (LivingRoomTemp < ComfortTemp && BufferTempActual > ForwardHeatTemp))
 			{
 				if (BufferTempActual < ForwardHeatTemp) // Pufferben nincs elég energia
 				{
@@ -311,7 +368,7 @@ void CheckConditions()
 					Relays |= (1 << GAS_RELAY);
 					Relays &= ~((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY) | (1 << DHW_VALVE_RELAY));
 					if (DebugMode > 0)
-					uart_puts_P("GAS activated; BUFFER, DHW relay deactivated\n");
+						uart_puts_P("GAS activated; BUFFER, DHW relay deactivated\n");
 				}
 				else // Puffer elég meleg
 				{
@@ -321,13 +378,12 @@ void CheckConditions()
 						Relays |= ((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
 					}
 					else
-					pumpplustime--;
+						pumpplustime--;
 
 					if (DebugMode > 0)
 					uart_puts_P("GAS, DHW deactivated; BUFFER relay deactivated\n");
 				}
 			}
-
 
 			if (!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)))
 			{
@@ -353,6 +409,15 @@ void CheckConditions()
 				if (DebugMode > 0)
 					uart_puts_P("SECOND FLOOR deactivated\n");
 			}
+			
+			if (ComfortMode)
+			{
+				if (LivingRoomTemp < ComfortTemp && BufferTempActual > ForwardHeatTemp)
+					Relays |= (1 << FIRST_FLOOR_VALVE);
+				else
+					Relays &= ~(1 << FIRST_FLOOR_VALVE);
+			}
+			
 		}
 		else
 		{
@@ -367,7 +432,7 @@ void CheckConditions()
 		}
 	}
 
-	if (DebugMode < 2)
+	if (DebugMode < 2 && _relays != Relays)
 		SwitchRelays();
 }
 
@@ -437,6 +502,8 @@ void read_from_eeprom()
 	MenuTimer = eeprom_read_byte(&eeMenuTimer);
 	LCDBackLight = eeprom_read_byte(&eeLCDBackLight);
 	PumpPlusTime = eeprom_read_word(&eePumpPlusTime);
+	ComfortMode = eeprom_read_byte(&eeComfortMode);
+	ComfortTemp = eeprom_read_byte(&eeComfortTemp);
 }
 
 int main(void)
@@ -525,13 +592,50 @@ int main(void)
 			if (++Seconds == 60)
 			{
 				Seconds = 0;
-				Minute++;
-				if (Minute == 60)
+				if (++Minute == 60)
 				{
 					Minute = 0;
-					Hour++;
-					if (Hour == 24)
+					if (++Hour == 24)
+					{
 						Hour = 0;
+						
+						if (++DayName == 8)
+							DayName = 1;
+						uint8_t xDay;
+						switch (Month)
+						{
+							case 1:
+							case 3:
+							case 5:
+							case 7:
+							case 8:
+							case 10:
+							case 12:
+								xDay = 32;
+								break;
+								
+							case 4:
+							case 6:
+							case 9:
+							case 11:
+								xDay = 31;
+								break;
+							
+							case 2:
+								xDay = 29;	
+								break;
+						}
+						if (++Day == xDay)
+						{
+							Day = 1;
+							if (++Month == 13)
+							{
+								Month = 1;
+								Year++;
+							}
+						}
+					}
+						
 				}
 			}
 

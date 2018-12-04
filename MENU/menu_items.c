@@ -748,10 +748,31 @@ bool LivingRoomTemp_Callback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-# define SENSORS_SUBMENU_ITEMS  2
+void FloorTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Padló akt hõm"));
+	lcd_gotoxy(0,1);
+	lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));
+}
+
+bool FloorTemp_Callback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+		case MENU_CONFIRM:
+		case MENU_CANCEL:
+			return true;
+	}
+
+	FloorTemp_CallbackRender(column);
+	return false;
+}
+
+# define SENSORS_SUBMENU_ITEMS  3
 static MENU_ITEM SENSORS_submenu[SENSORS_SUBMENU_ITEMS] = {
-	{"Külsõ hõm",			GarageTemp_CallbackRender,				GarageTemp_Callback, 				0, NULL},
-	{"Külsõ pára",			LivingRoomTemp_CallbackRender,			LivingRoomTemp_Callback,			0, NULL},
+	{"Garázs hõm",			GarageTemp_CallbackRender,		GarageTemp_Callback, 		0, NULL},
+	{"Nappali hõm",			LivingRoomTemp_CallbackRender,	LivingRoomTemp_Callback,	0, NULL},
+	{"Padló hõm",			FloorTemp_CallbackRender,		FloorTemp_Callback,			0, NULL},
 };
 
 
@@ -931,16 +952,219 @@ bool ClockMinute_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-#define CLOCK_SUBMENU_ITEMS 2
+void ClockYear_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("év"));
+	lcd_gotoxy(0,1);
+	char buf[5];
+	itoa(Year, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ClockYear_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			Year++;
+			break;
+		case MENU_DOWN:
+			Year--;
+			break;
+		case MENU_CONFIRM:
+		case MENU_CANCEL:
+			return true;
+	}
+
+	ClockYear_CallbackRender(column);
+	return false;
+}
+
+void ClockMonth_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("hónap"));
+	lcd_gotoxy(0,1);
+	char buf[3];
+	itoa(Month, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ClockMonth_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (++Month == 13)
+				Month = 1;
+			break;
+		case MENU_DOWN:
+			if (--Month == 0)
+			Month = 12;
+			break;
+		case MENU_CONFIRM:
+		case MENU_CANCEL:
+			return true;
+	}
+
+	ClockMonth_CallbackRender(column);
+	return false;
+}
+
+void ClockDay_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("nap"));
+	lcd_gotoxy(0,1);
+	char buf[3];
+	itoa(Day, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ClockDay_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (++Day == 32)
+				Day = 1;
+			break;
+		case MENU_DOWN:
+			if (--Day == 0)
+			Minute = 31;
+			break;
+		case MENU_CONFIRM:
+		case MENU_CANCEL:
+			return true;
+	}
+
+	ClockDay_CallbackRender(column);
+	return false;
+}
+
+void ClockDayName_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("nap név"));
+	lcd_gotoxy(0,1);
+	switch (DayName)
+	{
+		case 1:
+			lcd_puts_hu(PSTR("hétfõ"));
+			break;
+		case 2:
+			lcd_puts_hu(PSTR("kedd"));
+			break;
+		case 3:
+			lcd_puts_hu(PSTR("szerda"));
+			break;
+		case 4:
+			lcd_puts_hu(PSTR("csütörtök"));
+			break;
+		case 5:
+			lcd_puts_hu(PSTR("péntek"));
+			break;
+		case 6:
+			lcd_puts_hu(PSTR("szombat"));
+			break;
+		case 7:
+			lcd_puts_hu(PSTR("vasárnap"));
+			break;
+	}
+}
+
+bool ClockDayName_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (++DayName == 8)
+				DayName = 1;
+			break;
+		case MENU_DOWN:
+			if (--DayName == 0)
+			DayName = 7;
+			break;
+		case MENU_CONFIRM:
+		case MENU_CANCEL:
+			return true;
+	}
+
+	ClockDayName_CallbackRender(column);
+	return false;
+}
+
+#define CLOCK_SUBMENU_ITEMS 6
 static MENU_ITEM CLOCK_submenu[CLOCK_SUBMENU_ITEMS] = {
 	{"óra", 			ClockHour_CallbackRender, 		ClockHour_ActionCallback,		0,	NULL},
 	{"perc", 			ClockMinute_CallbackRender,		ClockMinute_ActionCallback,		0,	NULL},
+	{"év", 				ClockYear_CallbackRender,		ClockYear_ActionCallback,		0,	NULL},
+	{"hónap", 			ClockMonth_CallbackRender,		ClockMonth_ActionCallback,		0,	NULL},
+	{"nap", 			ClockDay_CallbackRender,		ClockDay_ActionCallback,		0,	NULL},
+	{"nap neve", 		ClockDayName_CallbackRender,	ClockDayName_ActionCallback,	0,	NULL},
 };
 
-#define SYSPARAM_SUBMENU_ITEMS 5
+
+void ComfortMode_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Komfort mód"));
+	lcd_gotoxy(0,1);
+	char buf[2];
+	itoa(ComfortMode, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ComfortMode_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (++ComfortMode == 2)
+				ComfortMode = 0;
+			break;
+		case MENU_DOWN:
+			if (--ComfortMode == 255)
+				ComfortMode = 1;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeComfortMode, ComfortMode);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	ComfortMode_CallbackRender(column);
+	return false;
+}
+
+void ComfortTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Komfort hõm"));
+	lcd_gotoxy(0,1);
+	char buf[4];
+	itoa(ComfortTemp, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ComfortTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (++ComfortTemp == 35)
+				ComfortTemp = 15;
+			break;
+		case MENU_DOWN:
+			if (--ComfortTemp == 255)
+				ComfortTemp = 35;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeComfortTemp, ComfortTemp);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	ComfortTemp_CallbackRender(column);
+	return false;
+}
+
+#define COMFORT_SUBMENU_ITEMS 2
+static MENU_ITEM COMFORT_submenu[COMFORT_SUBMENU_ITEMS] = {
+	{"Komfort mód", 			ComfortMode_CallbackRender, 	ComfortMode_ActionCallback,		0,	NULL},
+	{"Komfort hõm", 			ComfortTemp_CallbackRender,		ComfortTemp_ActionCallback,		0,	NULL}
+};
+
+#define SYSPARAM_SUBMENU_ITEMS 6
 static MENU_ITEM SYSPARAM_submenu[SYSPARAM_SUBMENU_ITEMS] = {
 	{"Szivattyú után", 	PumpPlusTime_CallbackRender, 		PumpPlusTime_ActionCallback,	0,						NULL},
-	{"óra", 			NULL,				 				NULL,							CLOCK_SUBMENU_ITEMS,	CLOCK_submenu},
+	{"Komfort mód", 	NULL,						 		NULL,							COMFORT_SUBMENU_ITEMS,	COMFORT_submenu},
+	{"óra, dátum", 		NULL,				 				NULL,							CLOCK_SUBMENU_ITEMS,	CLOCK_submenu},
 	{"Tesztüzem", 		DebugMode_CallbackRender, 			DebugMode_ActionCallback, 		0,						NULL},
 	{"Menü idõzítõ", 	MenuTimer_CallbackRender, 			MenuTimer_ActionCallback, 		0,						NULL},
 	{"LCD háttér", 		LCDBackLight_CallbackRender, 		LCDBackLight_ActionCallback,	0,						NULL},

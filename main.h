@@ -10,6 +10,16 @@ typedef enum {
 	DS18B20State2
 } states;
 
+typedef enum {
+	MONDAY,
+	TUESDAY,
+	WEDNESDAY,
+	THURSDAY,
+	FRIDAY,
+	SATURDAY,
+	SUNDAY
+} daynames;
+
 //#define SOLAR
 //#define BUFFER
 
@@ -17,7 +27,6 @@ typedef enum {
 
 #define RELAYS_CS_PIN		1
 
-#define SOLAR_PUMP_RELAY	1
 #define FIRST_FLOOR_VALVE	2
 #define SECOND_FLOOR_VALVE	3
 #define DHW_VALVE_RELAY 	4
@@ -49,6 +58,8 @@ extern uint8_t DebugMode; extern uint8_t eeDebugMode;
 extern uint8_t MenuTimer; extern uint8_t eeMenuTimer;
 extern uint8_t LCDBackLight; extern uint8_t eeLCDBackLight;
 extern uint16_t PumpPlusTime; extern uint16_t eePumpPlusTime;
+extern uint8_t ComfortMode; extern uint8_t eeComfortMode;
+extern uint8_t ComfortTemp; extern uint8_t eeComfortTemp;
 
 //extern volatile float BME280Temp, BME280Humid;
 extern float BME280Temp, BME280Humid;
@@ -82,6 +93,9 @@ extern char GarageTempBuf[3], GarageTempFracBuf[3];
 extern uint8_t LivingRoomTemp;
 extern char LivingRoomTempBuf[3], LivingRoomTempFracBuf[3];
 
+extern uint8_t FloorTemp;
+extern char FloorTempBuf[3], FloorTempFracBuf[3];
+
 //extern volatile uint16_t SwitchOnOutdoorTempMin;
 extern uint16_t SwitchOnOutdoorTempMin;
 extern uint16_t eeSwitchOnOutdoorTempMin;
@@ -106,6 +120,9 @@ extern uint8_t eeGarageSensorID;
 extern uint8_t LivingRoomSensorID;
 extern uint8_t eeLivingRoomSensorID;
 
+extern uint8_t FloorSensorID;
+extern uint8_t eeFloorSensorID;
+
 //extern volatile unsigned char Relays;
 extern unsigned char Relays;
 
@@ -114,6 +131,9 @@ extern uint8_t nSensors;
 //extern volatile uint8_t Hour, Minute, Seconds;
 extern uint8_t Hour, Minute, Seconds;
 extern uint8_t ClockInitialized;
+
+extern uint16_t Year;
+extern uint8_t Month, Day, DayName;
 
 extern void SwitchRelays();
 
