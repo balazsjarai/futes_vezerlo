@@ -1154,10 +1154,41 @@ bool ComfortTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-#define COMFORT_SUBMENU_ITEMS 2
+void ComfortForwardTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Komfort elõremenõ"));
+	lcd_gotoxy(0,1);
+	char buf[4];
+	itoa(ComfortTemp, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ComfortForwardTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (++ComfortForwardTemp == ForwardHeatTemp)
+				ComfortForwardTemp -= 1;
+			break;
+		case MENU_DOWN:
+			if (--ComfortForwardTemp == 255)
+				ComfortForwardTemp = ForwardHeatTemp;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeComfortForwardTemp, ComfortForwardTemp);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	ComfortTemp_CallbackRender(column);
+	return false;
+}
+
+#define COMFORT_SUBMENU_ITEMS 3
 static MENU_ITEM COMFORT_submenu[COMFORT_SUBMENU_ITEMS] = {
-	{"Komfort mód", 			ComfortMode_CallbackRender, 	ComfortMode_ActionCallback,		0,	NULL},
-	{"Komfort hõm", 			ComfortTemp_CallbackRender,		ComfortTemp_ActionCallback,		0,	NULL}
+	{"Komfort mód", 			ComfortMode_CallbackRender, 		ComfortMode_ActionCallback,			0,	NULL},
+	{"Komfort hõm", 			ComfortTemp_CallbackRender,			ComfortTemp_ActionCallback,			0,	NULL},
+	{"Komfort elõremenõ", 		ComfortForwardTemp_CallbackRender,	ComfortForwardTemp_ActionCallback,	0,	NULL}
 };
 
 #define SYSPARAM_SUBMENU_ITEMS 6

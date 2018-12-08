@@ -51,6 +51,7 @@ uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
 uint16_t PumpPlusTime = 5; uint16_t EEMEM eePumpPlusTime = 5;
 uint8_t ComfortMode = 0; uint8_t EEMEM eeComfortMode = 0;
 uint8_t ComfortTemp = 20; uint8_t EEMEM eeComfortTemp = 20;
+uint8_t ComfortForwardTemp = 30; uint8_t EEMEM eeComfortForwardTemp = 30;
 
 // volatile float BME280Temp; char BME280TempBuf[6];
 // volatile float BME280Humid; char BME280HumidBuf[6];
@@ -251,7 +252,7 @@ void SensorRead()
 		}
 		else if (display <= 10 && display > 5)
 		{
-			lcd_puts_p(PSTR("Garázs ")); lcd_puts(GarageTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempFracBuf); lcd_puts_p(PSTR(" C"));
+			lcd_puts_hu(PSTR("Garázs ")); lcd_puts(GarageTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,1);
 			lcd_puts_p(PSTR("Nappali ")); lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,2);
@@ -355,12 +356,11 @@ void CheckConditions()
 	{
 		if ((!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) 
 			|| (EngineeringTempActual < EngineeringTempDesired) 
-			|| (ComfortMode && LivingRoomTemp < ComfortTemp && BufferTempActual > ForwardHeatTemp)) 
+			|| (ComfortMode && LivingRoomTemp < ComfortTemp && BufferTempActual > ComfortForwardTemp)) 
 			&& (BME280TempUint <= SwitchOnOutdoorTempMin))
 		{
 			if (EngineeringTempActual < EngineeringTempMin 
-				|| !(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) 
-				|| (LivingRoomTemp < ComfortTemp && BufferTempActual > ForwardHeatTemp))
+				|| !(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
 			{
 				if (BufferTempActual < ForwardHeatTemp) // Pufferben nincs elég energia
 				{
@@ -383,6 +383,16 @@ void CheckConditions()
 					if (DebugMode > 0)
 					uart_puts_P("GAS, DHW deactivated; BUFFER relay deactivated\n");
 				}
+			}
+			else if (LivingRoomTemp < ComfortTemp && BufferTempActual > ComfortForwardTemp && (THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) && (THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
+			{
+				if (!pumpplustime) // ha átkapcsol gázról pufferre, a gáz még utókeringetne
+					{
+						Relays &= ~((1 << GAS_RELAY) | (1 << DHW_VALVE_RELAY));
+						Relays |= ((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
+					}
+					else
+						pumpplustime--;
 			}
 
 			if (!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)))
@@ -412,7 +422,7 @@ void CheckConditions()
 			
 			if (ComfortMode)
 			{
-				if (LivingRoomTemp < ComfortTemp && BufferTempActual > ForwardHeatTemp)
+				if (LivingRoomTemp < ComfortTemp && BufferTempActual > ComfortForwardTemp)
 					Relays |= (1 << FIRST_FLOOR_VALVE);
 				else
 					Relays &= ~(1 << FIRST_FLOOR_VALVE);
@@ -504,6 +514,7 @@ void read_from_eeprom()
 	PumpPlusTime = eeprom_read_word(&eePumpPlusTime);
 	ComfortMode = eeprom_read_byte(&eeComfortMode);
 	ComfortTemp = eeprom_read_byte(&eeComfortTemp);
+	ComfortForwardTemp = eeprom_read_byte(&eeComfortForwardTemp);
 }
 
 int main(void)

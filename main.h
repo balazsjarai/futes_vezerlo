@@ -60,6 +60,7 @@ extern uint8_t LCDBackLight; extern uint8_t eeLCDBackLight;
 extern uint16_t PumpPlusTime; extern uint16_t eePumpPlusTime;
 extern uint8_t ComfortMode; extern uint8_t eeComfortMode;
 extern uint8_t ComfortTemp; extern uint8_t eeComfortTemp;
+extern uint8_t ComfortForwardTemp; extern uint8_t eeComfortForwardTemp;
 
 //extern volatile float BME280Temp, BME280Humid;
 extern float BME280Temp, BME280Humid;
