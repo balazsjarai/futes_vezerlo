@@ -728,6 +728,38 @@ bool GarageTemp_Callback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
+void GarageSensor_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Garázs szenzor ID"));
+	lcd_gotoxy(0,1);
+	char buf[4];
+	itoa(GarageSensorID, buf, 10);
+	lcd_puts(buf);
+}
+
+bool GarageSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			GarageSensorID++;
+			if (GarageSensorID == nSensors)
+				GarageSensorID = 0;
+			break;
+		case MENU_DOWN:
+			GarageSensorID--;
+			if (GarageSensorID == 255)
+				GarageSensorID = nSensors - 1;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeGarageSensorID, GarageSensorID);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	GarageSensor_CallbackRender(column);
+	return false;
+}
+
 void LivingRoomTemp_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Nappali akt hõm"));
@@ -745,6 +777,38 @@ bool LivingRoomTemp_Callback(MENU_BUTTON *button, uint8_t column){
 	}
 
 	LivingRoomTemp_CallbackRender(column);
+	return false;
+}
+
+void LivingRoomSensor_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Nappali szenzor ID"));
+	lcd_gotoxy(0,1);
+	char buf[4];
+	itoa(LivingRoomSensorID, buf, 10);
+	lcd_puts(buf);
+}
+
+bool LivingRoomSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			LivingRoomSensorID++;
+			if (LivingRoomSensorID == nSensors)
+				LivingRoomSensorID = 0;
+			break;
+		case MENU_DOWN:
+			LivingRoomSensorID--;
+			if (LivingRoomSensorID == 255)
+				LivingRoomSensorID = nSensors - 1;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeLivingRoomSensorID, LivingRoomSensorID);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	LivingRoomSensor_CallbackRender(column);
 	return false;
 }
 
@@ -768,11 +832,47 @@ bool FloorTemp_Callback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-# define SENSORS_SUBMENU_ITEMS  3
+void FloorSensor_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Padló szenzor ID"));
+	lcd_gotoxy(0,1);
+	char buf[4];
+	itoa(FloorSensorID, buf, 10);
+	lcd_puts(buf);
+}
+
+bool FloorSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			FloorSensorID++;
+			if (FloorSensorID == nSensors)
+				FloorSensorID = 0;
+			break;
+		case MENU_DOWN:
+			FloorSensorID--;
+			if (FloorSensorID == 255)
+				FloorSensorID = nSensors - 1;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeFloorSensorID, FloorSensorID);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	FloorSensor_CallbackRender(column);
+	return false;
+}
+
+
+# define SENSORS_SUBMENU_ITEMS  6
 static MENU_ITEM SENSORS_submenu[SENSORS_SUBMENU_ITEMS] = {
-	{"Garázs hõm",			GarageTemp_CallbackRender,		GarageTemp_Callback, 		0, NULL},
-	{"Nappali hõm",			LivingRoomTemp_CallbackRender,	LivingRoomTemp_Callback,	0, NULL},
-	{"Padló hõm",			FloorTemp_CallbackRender,		FloorTemp_Callback,			0, NULL},
+	{"Garázs hõm",			GarageTemp_CallbackRender,			GarageTemp_Callback, 				0, NULL},
+	{"Garázs szenzor ID",	GarageSensor_CallbackRender,		GarageSensor_ActionCallback,		0, NULL},
+	{"Nappali hõm",			LivingRoomTemp_CallbackRender,		LivingRoomTemp_Callback,			0, NULL},
+	{"Nappali szenzor ID",	LivingRoomSensor_CallbackRender,	LivingRoomSensor_ActionCallback,	0, NULL},
+	{"Padló hõm",			FloorTemp_CallbackRender,			FloorTemp_Callback,					0, NULL},
+	{"Padló szenzor ID",	FloorSensor_CallbackRender,			FloorSensor_ActionCallback,	0, NULL},
 };
 
 

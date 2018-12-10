@@ -531,7 +531,7 @@ int main(void)
 	PORTE |= (1 << PINE5);	//LCD led PWM
 
 	lcd_clrscr();
-	lcd_puts_hu(PSTR("Fûtés vezérlés v0.8"));
+	lcd_puts_hu(PSTR("Fûtés vezérlés v0.9"));
 
 	uart_init( UART_BAUD_SELECT(UART_BAUD_RATE,F_CPU) );
 
