@@ -197,7 +197,7 @@ Discarded input sections
                 0x00000000       0x20 DS18B20/delay.o
  .debug_ranges  0x00000000       0x10 DS18B20/delay.o
  .debug_line    0x00000000       0xa8 DS18B20/delay.o
- .debug_str     0x00000000      0x161 DS18B20/delay.o
+ .debug_str     0x00000000      0x175 DS18B20/delay.o
  .comment       0x00000000       0x31 DS18B20/delay.o
  .debug_frame   0x00000000       0x24 DS18B20/delay.o
  .text          0x00000000        0x0 DS18B20/ds18x20.o
@@ -269,7 +269,7 @@ Discarded input sections
                 0x00000000       0x40 MAX31865/max31865.o
  .debug_ranges  0x00000000       0x30 MAX31865/max31865.o
  .debug_line    0x00000000      0x344 MAX31865/max31865.o
- .debug_str     0x00000000      0x219 MAX31865/max31865.o
+ .debug_str     0x00000000      0x22d MAX31865/max31865.o
  .comment       0x00000000       0x31 MAX31865/max31865.o
  .debug_frame   0x00000000       0xd0 MAX31865/max31865.o
  .text          0x00000000        0x0 MENU/menu.o
@@ -2305,35 +2305,35 @@ END GROUP
  .debug_frame   0x00001168      0x1f4 UART/UART.o
  .debug_frame   0x0000135c       0x84 Utils/ftoa.o
 
-.debug_str      0x00000000     0x1fad
+.debug_str      0x00000000     0x1fc1
  *(.debug_str)
  .debug_str     0x00000000      0x27e C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
- .debug_str     0x0000027e      0x5ae BME280/bme280.o
-                                0x5fe (size before relaxing)
- .debug_str     0x0000082c       0x5b DS18B20/crc8.o
-                                0x1a4 (size before relaxing)
- .debug_str     0x00000887      0x19d DS18B20/ds18x20.o
-                                0x2ff (size before relaxing)
- .debug_str     0x00000a24       0x7a DS18B20/onewire.o
-                                0x22e (size before relaxing)
- .debug_str     0x00000a9e       0x6c I2C/i2c_master.o
-                                0x1f4 (size before relaxing)
- .debug_str     0x00000b0a      0x18e LCD/lcd.o
-                                0x2ea (size before relaxing)
- .debug_str     0x00000c98      0x53e main.o
-                                0x9d8 (size before relaxing)
- .debug_str     0x000011d6      0x218 MENU/menu.o
-                                0x43c (size before relaxing)
- .debug_str     0x000013ee      0x9ce MENU/menu_items.o
-                               0x106b (size before relaxing)
- .debug_str     0x00001dbc       0x33 MENU/menu_portsio.o
-                                0x17e (size before relaxing)
- .debug_str     0x00001def        0xd SPI/spi.o
-                                0x16f (size before relaxing)
- .debug_str     0x00001dfc      0x187 UART/UART.o
-                                0x356 (size before relaxing)
- .debug_str     0x00001f83       0x2a Utils/ftoa.o
-                                0x1a5 (size before relaxing)
+ .debug_str     0x0000027e      0x5c2 BME280/bme280.o
+                                0x612 (size before relaxing)
+ .debug_str     0x00000840       0x5b DS18B20/crc8.o
+                                0x1b8 (size before relaxing)
+ .debug_str     0x0000089b      0x19d DS18B20/ds18x20.o
+                                0x313 (size before relaxing)
+ .debug_str     0x00000a38       0x7a DS18B20/onewire.o
+                                0x242 (size before relaxing)
+ .debug_str     0x00000ab2       0x6c I2C/i2c_master.o
+                                0x208 (size before relaxing)
+ .debug_str     0x00000b1e      0x18e LCD/lcd.o
+                                0x2fe (size before relaxing)
+ .debug_str     0x00000cac      0x53e main.o
+                                0x9ec (size before relaxing)
+ .debug_str     0x000011ea      0x218 MENU/menu.o
+                                0x450 (size before relaxing)
+ .debug_str     0x00001402      0x9ce MENU/menu_items.o
+                               0x107f (size before relaxing)
+ .debug_str     0x00001dd0       0x33 MENU/menu_portsio.o
+                                0x192 (size before relaxing)
+ .debug_str     0x00001e03        0xd SPI/spi.o
+                                0x183 (size before relaxing)
+ .debug_str     0x00001e10      0x187 UART/UART.o
+                                0x36a (size before relaxing)
+ .debug_str     0x00001f97       0x2a Utils/ftoa.o
+                                0x1b9 (size before relaxing)
 
 .debug_loc      0x00000000     0x6ee6
  *(.debug_loc)

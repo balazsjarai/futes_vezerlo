@@ -25,11 +25,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  10 .debug_frame  000013e0  00000000  00000000  00014f54  2**2
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_str    00001fad  00000000  00000000  00016334  2**0
+ 11 .debug_str    00001fc1  00000000  00000000  00016334  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_loc    00006ee6  00000000  00000000  000182e1  2**0
+ 12 .debug_loc    00006ee6  00000000  00000000  000182f5  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_ranges 00000750  00000000  00000000  0001f1c7  2**0
+ 13 .debug_ranges 00000750  00000000  00000000  0001f1db  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -9452,9 +9452,9 @@ bool ComfortForwardTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	ComfortTemp_CallbackRender(column);
+	ComfortForwardTemp_CallbackRender(column);
     3be0:	86 2f       	mov	r24, r22
-    3be2:	0e 94 e9 17 	call	0x2fd2	; 0x2fd2 <ComfortTemp_CallbackRender>
+    3be2:	0e 94 0d 18 	call	0x301a	; 0x301a <ComfortForwardTemp_CallbackRender>
 	return false;
     3be6:	80 e0       	ldi	r24, 0x00	; 0
     3be8:	08 95       	ret
@@ -9467,7 +9467,7 @@ bool ComfortForwardTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
     3bea:	81 e0       	ldi	r24, 0x01	; 1
 	}
 
-	ComfortTemp_CallbackRender(column);
+	ComfortForwardTemp_CallbackRender(column);
 	return false;
 }
     3bec:	08 95       	ret

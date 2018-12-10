@@ -1280,7 +1280,7 @@ bool ComfortForwardTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 
-	ComfortTemp_CallbackRender(column);
+	ComfortForwardTemp_CallbackRender(column);
 	return false;
 }
 
