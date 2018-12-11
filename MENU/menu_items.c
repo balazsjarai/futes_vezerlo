@@ -19,7 +19,13 @@ void BME280Temp_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("BME280 hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(BME280TempBuf);
-
+	
+	char buffer[7];
+	lcd_gotoxy(0,2);
+	ftoa(buffer, BME280TempMin, 2);
+	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	ftoa(buffer, BME280TempMax, 2);
+	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
 bool BME280Temp_Callback(MENU_BUTTON *button, uint8_t column){
@@ -111,6 +117,13 @@ void DHWTempActual_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("HMV akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(DHWTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(DHWTempActualFracBuf); lcd_puts_p(PSTR(" C"));
+	
+	char buffer[7];
+	lcd_gotoxy(0,2);
+	itoa(DHWTempMin, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	itoa(DHWTempMax, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
 bool DHWTempActual_Callback(MENU_BUTTON *button, uint8_t column){
@@ -310,6 +323,13 @@ void BufferTempActual_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Puffer akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(BufferTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(BufferTempActualFracBuf); lcd_puts_p(PSTR(" C"));
+	
+	char buffer[7];
+	lcd_gotoxy(0,2);
+	itoa(BufferTempMin, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	itoa(BufferTempMax, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
 bool BufferTempActual_Callback(MENU_BUTTON *button, uint8_t column){
@@ -405,6 +425,13 @@ void EngineeringTempActual_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Gépház akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(EngineeringTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(EngineeringTempActualFracBuf); lcd_puts_p(PSTR(" C"));
+	
+	char buffer[7];
+	lcd_gotoxy(0,2);
+	itoa(EngineeringTempMin, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	itoa(EngineeringTempMax, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
 bool EngineeringTempActual_Callback(MENU_BUTTON *button, uint8_t column){
@@ -713,6 +740,13 @@ void GarageTemp_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Garázs akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(GarageTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempFracBuf); lcd_puts_p(PSTR(" C"));
+	
+	char buffer[7];
+	lcd_gotoxy(0,2);
+	itoa(GarageTempMin, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	itoa(GarageTempMax, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
 bool GarageTemp_Callback(MENU_BUTTON *button, uint8_t column){
@@ -765,6 +799,13 @@ void LivingRoomTemp_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Nappali akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
+	
+	char buffer[7];
+	lcd_gotoxy(0,2);
+	itoa(LivingRoomTempMin, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	itoa(LivingRoomTempMax, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
 bool LivingRoomTemp_Callback(MENU_BUTTON *button, uint8_t column){
@@ -817,6 +858,13 @@ void FloorTemp_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Padló akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));
+	
+	char buffer[7];
+	lcd_gotoxy(0,2);
+	itoa(FloorTempMin, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	itoa(FloorTempMax, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
 bool FloorTemp_Callback(MENU_BUTTON *button, uint8_t column){
@@ -1300,6 +1348,7 @@ static MENU_ITEM SYSPARAM_submenu[SYSPARAM_SUBMENU_ITEMS] = {
 	{"Menü idõzítõ", 	MenuTimer_CallbackRender, 			MenuTimer_ActionCallback, 		0,						NULL},
 	{"LCD háttér", 		LCDBackLight_CallbackRender, 		LCDBackLight_ActionCallback,	0,						NULL},
 };
+
 
 /*
 ** HOME menu items definition

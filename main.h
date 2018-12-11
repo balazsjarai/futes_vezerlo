@@ -62,74 +62,61 @@ extern uint8_t ComfortMode; extern uint8_t eeComfortMode;
 extern uint8_t ComfortTemp; extern uint8_t eeComfortTemp;
 extern uint8_t ComfortForwardTemp; extern uint8_t eeComfortForwardTemp;
 
-//extern volatile float BME280Temp, BME280Humid;
 extern float BME280Temp, BME280Humid;
-extern char BME280TempBuf[6], BME280HumidBuf[6];
+extern char BME280TempBuf[7], BME280HumidBuf[6];
 
-//extern volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
-//extern volatile uint16_t DHWMinTime, DHWMaxTime;
 extern uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
 extern uint16_t DHWMinTime, DHWMaxTime;
 extern uint8_t eeDHWTempDesired, eeDHWTempMin;
 extern uint16_t eeDHWMinTime, eeDHWMaxTime;
 extern char DHWTempActualBuf[3], DHWTempActualFracBuf[3];
 
-// extern volatile uint8_t BufferTempActual;
-// extern volatile uint8_t ForwardHeatTemp;
 extern uint8_t BufferTempActual;
 extern uint8_t ForwardHeatTemp;
 extern uint8_t eeForwardHeatTemp;
 extern char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
 
-//extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
 extern uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin;
 extern uint8_t eeEngineeringTempDesired, eeEngineeringTempMin;
 extern char EngineeringTempActualBuf[3], EngineeringTempActualFracBuf[3];
 
-//extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
 extern uint8_t GarageTemp;
 extern char GarageTempBuf[3], GarageTempFracBuf[3];
 
-//extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
 extern uint8_t LivingRoomTemp;
 extern char LivingRoomTempBuf[3], LivingRoomTempFracBuf[3];
 
 extern uint8_t FloorTemp;
 extern char FloorTempBuf[3], FloorTempFracBuf[3];
 
-//extern volatile uint16_t SwitchOnOutdoorTempMin;
+extern float BME280TempMin, BME280TempMax;
+extern uint8_t DHWTempMin, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMin, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
+
 extern uint16_t SwitchOnOutdoorTempMin;
 extern uint16_t eeSwitchOnOutdoorTempMin;
 
-//extern volatile uint8_t DHWSensorID;
 extern uint8_t DHWSensorID;
 extern uint8_t eeDHWSensorID;
 
-//extern volatile uint8_t BufferSensorID;
 extern uint8_t BufferSensorID;
 extern uint8_t eeBufferSensorID;
 
-//extern volatile uint8_t GarageSensorID;
 extern uint8_t EngineeringSensorID;
 extern uint8_t eeEngineeringSensorID;
 
-//extern volatile uint8_t GarageSensorID;
 extern uint8_t GarageSensorID;
 extern uint8_t eeGarageSensorID;
 
-//extern volatile uint8_t GarageSensorID;
 extern uint8_t LivingRoomSensorID;
 extern uint8_t eeLivingRoomSensorID;
 
 extern uint8_t FloorSensorID;
 extern uint8_t eeFloorSensorID;
 
-//extern volatile unsigned char Relays;
 extern unsigned char Relays;
 
 extern uint8_t nSensors;
 
-//extern volatile uint8_t Hour, Minute, Seconds;
 extern uint8_t Hour, Minute, Seconds;
 extern uint8_t ClockInitialized;
 

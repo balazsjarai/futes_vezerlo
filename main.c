@@ -9,11 +9,12 @@
 // külsõ hõmérõ hiba
 // elõzõ / aktuális állapot -> kevesebb frissítés
 // dátum -> OK
-// fûtés napközben, ha elegendõ a puffer energiája, de termosztát nem kér -> teszt
+// fûtés napközben, ha elegendõ a puffer energiája, de termosztát nem kér -> OK
 // szabadság / távollét beállítás
 // OpenTherm
 // termosztát funkció
 // osztó termoszelep vezérlés
+// min/max hõmérséklet regisztrálás -> OK
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -38,12 +39,6 @@
 #include "DS18B20/onewire.h"
 
 volatile uint8_t TimerElapsed = 0;
-//volatile uint8_t TimerState = 0;
-
-// volatile uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
-// volatile uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
-// volatile uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
-// volatile uint16_t PumpPlusTime = 5; uint16_t EEMEM eePumpPlusTime = 5;
 
 uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
 uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
@@ -53,18 +48,13 @@ uint8_t ComfortMode = 0; uint8_t EEMEM eeComfortMode = 0;
 uint8_t ComfortTemp = 20; uint8_t EEMEM eeComfortTemp = 20;
 uint8_t ComfortForwardTemp = 30; uint8_t EEMEM eeComfortForwardTemp = 30;
 
-// volatile float BME280Temp; char BME280TempBuf[6];
-// volatile float BME280Humid; char BME280HumidBuf[6];
-// volatile uint16_t BME280TempUint;
-
-float BME280Temp; char BME280TempBuf[6];
+float BME280Temp; char BME280TempBuf[7];
 float BME280Humid; char BME280HumidBuf[6];
 uint16_t BME280TempUint;
 
 uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
 uint16_t DHWMinTime, DHWMaxTime;
-//volatile uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
-//volatile uint16_t DHWMinTime, DHWMaxTime;
+
 char DHWTempActualBuf[3], DHWTempActualFracBuf[3];
 uint8_t EEMEM eeDHWTempDesired = 30;
 uint8_t EEMEM eeDHWTempMin = 25;
@@ -74,24 +64,22 @@ uint16_t EEMEM eeDHWMaxTime = 2200;
 uint8_t BufferTempActual; char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
 uint8_t ForwardHeatTemp = 25;
 uint8_t EEMEM eeForwardHeatTemp = 25;
-//volatile uint8_t BufferTempActual; char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
-//volatile uint8_t ForwardHeatTemp = 25; uint8_t EEMEM eeForwardHeatTemp = 25;
 
 uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin; char EngineeringTempActualBuf[3], EngineeringTempActualFracBuf[3];
-//volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin; char GarageTempActualBuf[3], GarageTempActualFracBuf[3];
 uint8_t EEMEM eeEngineeringTempDesired = 10;
 uint8_t EEMEM eeEngineeringTempMin = 5;
 
-//extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
 uint8_t GarageTemp;
 char GarageTempBuf[3], GarageTempFracBuf[3];
 
-//extern volatile uint8_t GarageTempActual, GarageTempDesired, GarageTempMin;
 uint8_t LivingRoomTemp;
 char LivingRoomTempBuf[3], LivingRoomTempFracBuf[3];
 
 uint8_t FloorTemp;
 char FloorTempBuf[3], FloorTempFracBuf[3];
+
+float BME280TempMin, BME280TempMax;
+uint8_t DHWTempMin, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMin, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
 
 uint16_t SwitchOnOutdoorTempMin;
 uint16_t EEMEM eeSwitchOnOutdoorTempMin = 2300;
@@ -119,7 +107,6 @@ uint8_t EEMEM eeFloorSensorID = 5;
 uint8_t nSensors;
 uint8_t gSensorIDs[DS18B20_MAX_NO][OW_ROMCODE_SIZE];
 
-//volatile uint8_t Hour = 0, Minute = 0, Seconds = 0;
 uint8_t Hour = 0, Minute = 0, Seconds = 0;
 uint8_t ClockInitialized = 0;
 
@@ -158,6 +145,10 @@ void SensorRead()
 			if (DebugMode > 0)
 				{ uart_puts_p(PSTR("BME280 Temperature: ")); uart_puts(BME280TempBuf); uart_puts_p(PSTR("C \n")); }
 			timerstate++;
+			if (BME280Temp > BME280TempMax)
+				BME280TempMax = BME280Temp;
+			if (BME280Temp < BME280TempMin)
+				BME280TempMin = BME280Temp;
 		break;
 
 		case (BME280HumidState):
@@ -195,36 +186,60 @@ void SensorRead()
 					DHWTempActual = cel;
 					itoa(DHWTempActual, DHWTempActualBuf, 10);
 					itoa(cel_frac_bits, DHWTempActualFracBuf, 10);
+					if (DHWTempActual > DHWTempMax)
+						DHWTempActual = DHWTempMax;
+					if (DHWTempActual < DHWTempMin)
+						DHWTempActual = DHWTempMin;
 				}
 				else if (i == BufferSensorID)
 				{
 					BufferTempActual = cel;
 					itoa(BufferTempActual, BufferTempActualBuf, 10);
 					itoa(cel_frac_bits, BufferTempActualFracBuf, 10);
+					if (BufferTempActual > BufferTempMax)
+						BufferTempActual = BufferTempMax;
+					if (BufferTempActual < BufferTempMin)
+						BufferTempActual = BufferTempMin;
 				}
 				else if (i == EngineeringSensorID)
 				{
 					EngineeringTempActual = cel;
 					itoa(EngineeringTempActual, EngineeringTempActualBuf, 10);
 					itoa(cel_frac_bits, EngineeringTempActualFracBuf, 10);
+					if (EngineeringTempActual > EngineeringTempMax)
+						EngineeringTempActual = EngineeringTempMax;
+					if (EngineeringTempActual < EngineeringTempMin)
+						EngineeringTempActual = EngineeringTempMin;
 				}
 				else if (i == GarageSensorID)
 				{
 					GarageTemp = cel;
 					itoa(GarageTemp, GarageTempBuf, 10);
 					itoa(cel_frac_bits, GarageTempFracBuf, 10);
+					if (GarageTemp > GarageTempMax)
+						GarageTemp = GarageTempMax;
+					if (GarageTemp < GarageTempMin)
+						GarageTemp = GarageTempMin;
 				}
 				else if (i == LivingRoomSensorID)
 				{
 					LivingRoomTemp = cel;
 					itoa(LivingRoomTemp, LivingRoomTempBuf, 10);
 					itoa(cel_frac_bits, LivingRoomTempFracBuf, 10);
+					if (LivingRoomTemp > LivingRoomTempMax)
+						LivingRoomTemp = LivingRoomTempMax;
+					if (LivingRoomTemp < LivingRoomTempMin)
+						LivingRoomTemp = LivingRoomTempMin;
 				}
 				else if (i == FloorSensorID)
 				{
 					FloorTemp = cel;
 					itoa(FloorTemp, FloorTempBuf, 10);
 					itoa(cel_frac_bits, FloorTempFracBuf, 10);
+					if (FloorTemp > FloorTempMax)
+						FloorTemp = FloorTempMax;
+					if (FloorTemp < FloorTempMin)
+						FloorTemp = FloorTempMin;
 				}
 				i++;
 			}
@@ -387,12 +402,12 @@ void CheckConditions()
 			else if (LivingRoomTemp < ComfortTemp && BufferTempActual > ComfortForwardTemp && (THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) && (THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
 			{
 				if (!pumpplustime) // ha átkapcsol gázról pufferre, a gáz még utókeringetne
-					{
-						Relays &= ~((1 << GAS_RELAY) | (1 << DHW_VALVE_RELAY));
-						Relays |= ((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
-					}
-					else
-						pumpplustime--;
+				{
+					Relays &= ~((1 << GAS_RELAY) | (1 << DHW_VALVE_RELAY));
+					Relays |= ((1 << BUFFER_VALVE_RELAY) | (1 << BUFFER_PUMP_RELAY));
+				}
+				else
+					pumpplustime--;
 			}
 
 			if (!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)))
@@ -563,8 +578,6 @@ int main(void)
 	lcd_gotoxy(0,1);
 	lcd_puts_hu(PSTR("BME280 indítás"));
 	init_BME280();
-
-
 
 	sei();
 	uart_puts_p(PSTR("Interrupt enabled\n"));
