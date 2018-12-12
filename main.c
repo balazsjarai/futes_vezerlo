@@ -43,7 +43,7 @@ volatile uint8_t TimerElapsed = 0;
 uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
 uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
 uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
-uint16_t PumpPlusTime = 5; uint16_t EEMEM eePumpPlusTime = 5;
+uint16_t PumpPlusTime = 2; uint16_t EEMEM eePumpPlusTime = 2;
 uint8_t ComfortMode = 0; uint8_t EEMEM eeComfortMode = 0;
 uint8_t ComfortTemp = 20; uint8_t EEMEM eeComfortTemp = 20;
 uint8_t ComfortForwardTemp = 30; uint8_t EEMEM eeComfortForwardTemp = 30;
@@ -56,14 +56,14 @@ uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
 uint16_t DHWMinTime, DHWMaxTime;
 
 char DHWTempActualBuf[3], DHWTempActualFracBuf[3];
-uint8_t EEMEM eeDHWTempDesired = 30;
-uint8_t EEMEM eeDHWTempMin = 25;
+uint8_t EEMEM eeDHWTempDesired = 50;
+uint8_t EEMEM eeDHWTempMin = 40;
 uint16_t EEMEM eeDHWMinTime = 1500;
 uint16_t EEMEM eeDHWMaxTime = 2200;
 
 uint8_t BufferTempActual; char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
-uint8_t ForwardHeatTemp = 25;
-uint8_t EEMEM eeForwardHeatTemp = 25;
+uint8_t ForwardHeatTemp = 45;
+uint8_t EEMEM eeForwardHeatTemp = 45;
 
 uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin; char EngineeringTempActualBuf[3], EngineeringTempActualFracBuf[3];
 uint8_t EEMEM eeEngineeringTempDesired = 10;
