@@ -962,7 +962,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x4b04
+.text           0x00000000     0x49f2
  *(.vectors)
  .vectors       0x00000000       0x8c C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
                 0x00000000                __vector_default
@@ -1118,207 +1118,199 @@ END GROUP
                 0x00000466       0x15 main.o
  .progmem.data.magyar_betuk
                 0x0000047b       0x38 main.o
- .progmem.data.__c.3053
+ .progmem.data.__c.3024
                 0x000004b3       0x12 MENU/menu_items.o
- .progmem.data.__c.3038
+ .progmem.data.__c.3009
                 0x000004c5        0xc MENU/menu_items.o
- .progmem.data.__c.3023
+ .progmem.data.__c.2994
                 0x000004d1        0xc MENU/menu_items.o
- .progmem.data.__c.3008
+ .progmem.data.__c.2979
                 0x000004dd        0x9 MENU/menu_items.o
- .progmem.data.__c.3005
+ .progmem.data.__c.2976
                 0x000004e6        0x8 MENU/menu_items.o
- .progmem.data.__c.3002
+ .progmem.data.__c.2973
                 0x000004ee        0x7 MENU/menu_items.o
- .progmem.data.__c.2999
+ .progmem.data.__c.2970
                 0x000004f5        0xa MENU/menu_items.o
- .progmem.data.__c.2996
+ .progmem.data.__c.2967
                 0x000004ff        0x7 MENU/menu_items.o
- .progmem.data.__c.2993
+ .progmem.data.__c.2964
                 0x00000506        0x5 MENU/menu_items.o
- .progmem.data.__c.2989
+ .progmem.data.__c.2960
                 0x0000050b        0x6 MENU/menu_items.o
- .progmem.data.__c.2986
+ .progmem.data.__c.2957
                 0x00000511        0x8 MENU/menu_items.o
- .progmem.data.__c.2971
+ .progmem.data.__c.2942
                 0x00000519        0x4 MENU/menu_items.o
- .progmem.data.__c.2956
+ .progmem.data.__c.2927
                 0x0000051d        0x6 MENU/menu_items.o
- .progmem.data.__c.2941
+ .progmem.data.__c.2912
                 0x00000523        0x3 MENU/menu_items.o
- .progmem.data.__c.2926
+ .progmem.data.__c.2897
                 0x00000526        0x5 MENU/menu_items.o
- .progmem.data.__c.2911
+ .progmem.data.__c.2882
                 0x0000052b        0x4 MENU/menu_items.o
- .progmem.data.__c.2896
+ .progmem.data.__c.2867
                 0x0000052f       0x14 MENU/menu_items.o
- .progmem.data.__c.2881
+ .progmem.data.__c.2852
                 0x00000543        0xb MENU/menu_items.o
- .progmem.data.__c.2866
+ .progmem.data.__c.2837
                 0x0000054e       0x12 MENU/menu_items.o
- .progmem.data.__c.2851
-                0x00000560        0xa MENU/menu_items.o
- .progmem.data.__c.2835
-                0x0000056a       0x11 MENU/menu_items.o
  .progmem.data.__c.2822
-                0x0000057b        0x3 MENU/menu_items.o
- .progmem.data.__c.2820
-                0x0000057e        0x2 MENU/menu_items.o
- .progmem.data.__c.2817
-                0x00000580        0x3 MENU/menu_items.o
- .progmem.data.__c.2815
-                0x00000583        0x2 MENU/menu_items.o
- .progmem.data.__c.2813
-                0x00000585        0xe MENU/menu_items.o
- .progmem.data.__c.2798
-                0x00000593       0x13 MENU/menu_items.o
- .progmem.data.__c.2785
-                0x000005a6        0x3 MENU/menu_items.o
- .progmem.data.__c.2783
-                0x000005a9        0x2 MENU/menu_items.o
- .progmem.data.__c.2780
-                0x000005ab        0x3 MENU/menu_items.o
- .progmem.data.__c.2778
-                0x000005ae        0x2 MENU/menu_items.o
+                0x00000560        0xa MENU/menu_items.o
+ .progmem.data.__c.2806
+                0x0000056a       0x11 MENU/menu_items.o
+ .progmem.data.__c.2791
+                0x0000057b       0x13 MENU/menu_items.o
  .progmem.data.__c.2776
-                0x000005b0       0x10 MENU/menu_items.o
+                0x0000058e       0x12 MENU/menu_items.o
+ .progmem.data.__c.2763
+                0x000005a0        0x3 MENU/menu_items.o
  .progmem.data.__c.2761
-                0x000005c0       0x12 MENU/menu_items.o
+                0x000005a3        0x2 MENU/menu_items.o
+ .progmem.data.__c.2759
+                0x000005a5        0xe MENU/menu_items.o
+ .progmem.data.__c.2756
+                0x000005b3        0x3 MENU/menu_items.o
+ .progmem.data.__c.2754
+                0x000005b6        0x2 MENU/menu_items.o
+ .progmem.data.__c.2752
+                0x000005b8       0x10 MENU/menu_items.o
  .progmem.data.__c.2748
-                0x000005d2        0x3 MENU/menu_items.o
+                0x000005c8        0x3 MENU/menu_items.o
  .progmem.data.__c.2746
-                0x000005d5        0x2 MENU/menu_items.o
- .progmem.data.__c.2743
-                0x000005d7        0x3 MENU/menu_items.o
- .progmem.data.__c.2741
-                0x000005da        0x2 MENU/menu_items.o
- .progmem.data.__c.2739
-                0x000005dc        0xf MENU/menu_items.o
- .progmem.data.__c.2724
-                0x000005eb        0x3 MENU/menu_items.o
- .progmem.data.__c.2722
-                0x000005ee        0x3 MENU/menu_items.o
- .progmem.data.__c.2720
-                0x000005f1        0xc MENU/menu_items.o
- .progmem.data.__c.2706
-                0x000005fd        0x3 MENU/menu_items.o
- .progmem.data.__c.2704
-                0x00000600        0x3 MENU/menu_items.o
- .progmem.data.__c.2702
-                0x00000603       0x11 MENU/menu_items.o
- .progmem.data.__c.2688
-                0x00000614        0x4 MENU/menu_items.o
- .progmem.data.__c.2686
-                0x00000618        0x7 MENU/menu_items.o
- .progmem.data.__c.2684
-                0x0000061f       0x14 MENU/menu_items.o
- .progmem.data.__c.2670
-                0x00000633        0x3 MENU/menu_items.o
- .progmem.data.__c.2668
-                0x00000636        0x3 MENU/menu_items.o
- .progmem.data.__c.2666
-                0x00000639        0xf MENU/menu_items.o
- .progmem.data.__c.2652
-                0x00000648        0x3 MENU/menu_items.o
- .progmem.data.__c.2650
-                0x0000064b        0x3 MENU/menu_items.o
- .progmem.data.__c.2648
-                0x0000064e       0x12 MENU/menu_items.o
- .progmem.data.__c.2634
-                0x00000660        0x3 MENU/menu_items.o
- .progmem.data.__c.2632
-                0x00000663        0x3 MENU/menu_items.o
- .progmem.data.__c.2630
-                0x00000666       0x13 MENU/menu_items.o
- .progmem.data.__c.2614
-                0x00000679       0x12 MENU/menu_items.o
- .progmem.data.__c.2600
-                0x0000068b       0x12 MENU/menu_items.o
- .progmem.data.__c.2585
-                0x0000069d        0xf MENU/menu_items.o
- .progmem.data.__c.2570
-                0x000006ac        0x3 MENU/menu_items.o
- .progmem.data.__c.2568
-                0x000006af        0x2 MENU/menu_items.o
- .progmem.data.__c.2565
-                0x000006b1        0x3 MENU/menu_items.o
- .progmem.data.__c.2563
-                0x000006b4        0x2 MENU/menu_items.o
+                0x000005cb        0x2 MENU/menu_items.o
+ .progmem.data.__c.2744
+                0x000005cd        0xf MENU/menu_items.o
+ .progmem.data.__c.2738
+                0x000005dc        0x3 MENU/menu_items.o
+ .progmem.data.__c.2736
+                0x000005df        0x2 MENU/menu_items.o
+ .progmem.data.__c.2719
+                0x000005e1        0x3 MENU/menu_items.o
+ .progmem.data.__c.2717
+                0x000005e4        0x3 MENU/menu_items.o
+ .progmem.data.__c.2715
+                0x000005e7        0xc MENU/menu_items.o
+ .progmem.data.__c.2701
+                0x000005f3        0x3 MENU/menu_items.o
+ .progmem.data.__c.2699
+                0x000005f6        0x3 MENU/menu_items.o
+ .progmem.data.__c.2697
+                0x000005f9       0x11 MENU/menu_items.o
+ .progmem.data.__c.2683
+                0x0000060a        0x4 MENU/menu_items.o
+ .progmem.data.__c.2681
+                0x0000060e        0x7 MENU/menu_items.o
+ .progmem.data.__c.2679
+                0x00000615       0x14 MENU/menu_items.o
+ .progmem.data.__c.2665
+                0x00000629        0x3 MENU/menu_items.o
+ .progmem.data.__c.2663
+                0x0000062c        0x3 MENU/menu_items.o
+ .progmem.data.__c.2661
+                0x0000062f        0xf MENU/menu_items.o
+ .progmem.data.__c.2647
+                0x0000063e        0x3 MENU/menu_items.o
+ .progmem.data.__c.2645
+                0x00000641        0x3 MENU/menu_items.o
+ .progmem.data.__c.2643
+                0x00000644       0x12 MENU/menu_items.o
+ .progmem.data.__c.2629
+                0x00000656        0x3 MENU/menu_items.o
+ .progmem.data.__c.2627
+                0x00000659        0x3 MENU/menu_items.o
+ .progmem.data.__c.2625
+                0x0000065c       0x13 MENU/menu_items.o
+ .progmem.data.__c.2609
+                0x0000066f       0x12 MENU/menu_items.o
+ .progmem.data.__c.2595
+                0x00000681       0x12 MENU/menu_items.o
+ .progmem.data.__c.2580
+                0x00000693        0xf MENU/menu_items.o
+ .progmem.data.__c.2566
+                0x000006a2        0x3 MENU/menu_items.o
+ .progmem.data.__c.2564
+                0x000006a5        0x2 MENU/menu_items.o
  .progmem.data.__c.2561
-                0x000006b6        0xf MENU/menu_items.o
- .progmem.data.__c.2545
-                0x000006c5       0x12 MENU/menu_items.o
- .progmem.data.__c.2531
-                0x000006d7        0xe MENU/menu_items.o
- .progmem.data.__c.2516
-                0x000006e5        0x3 MENU/menu_items.o
- .progmem.data.__c.2514
-                0x000006e8        0x2 MENU/menu_items.o
+                0x000006a7        0x3 MENU/menu_items.o
+ .progmem.data.__c.2559
+                0x000006aa        0x2 MENU/menu_items.o
+ .progmem.data.__c.2557
+                0x000006ac        0xf MENU/menu_items.o
+ .progmem.data.__c.2541
+                0x000006bb       0x12 MENU/menu_items.o
+ .progmem.data.__c.2527
+                0x000006cd        0xe MENU/menu_items.o
+ .progmem.data.__c.2513
+                0x000006db        0x3 MENU/menu_items.o
  .progmem.data.__c.2511
-                0x000006ea        0x3 MENU/menu_items.o
- .progmem.data.__c.2509
-                0x000006ed        0x2 MENU/menu_items.o
- .progmem.data.__c.2507
-                0x000006ef        0xf MENU/menu_items.o
- .progmem.data.__c.2490
-                0x000006fe        0x8 MENU/menu_items.o
- .progmem.data.__c.2475
-                0x00000706        0x8 MENU/menu_items.o
- .progmem.data.__c.2460
-                0x0000070e        0xf MENU/menu_items.o
- .progmem.data.__c.2446
-                0x0000071d        0xc MENU/menu_items.o
- .progmem.data.__c.2431
-                0x00000729        0xf MENU/menu_items.o
- .progmem.data.__c.2416
-                0x00000738        0x3 MENU/menu_items.o
+                0x000006de        0x2 MENU/menu_items.o
+ .progmem.data.__c.2508
+                0x000006e0        0x3 MENU/menu_items.o
+ .progmem.data.__c.2506
+                0x000006e3        0x2 MENU/menu_items.o
+ .progmem.data.__c.2504
+                0x000006e5        0xf MENU/menu_items.o
+ .progmem.data.__c.2487
+                0x000006f4        0x8 MENU/menu_items.o
+ .progmem.data.__c.2472
+                0x000006fc        0x8 MENU/menu_items.o
+ .progmem.data.__c.2457
+                0x00000704        0xf MENU/menu_items.o
+ .progmem.data.__c.2443
+                0x00000713        0xc MENU/menu_items.o
+ .progmem.data.__c.2428
+                0x0000071f        0xf MENU/menu_items.o
  .progmem.data.__c.2414
-                0x0000073b        0x2 MENU/menu_items.o
- .progmem.data.__c.2411
-                0x0000073d        0x3 MENU/menu_items.o
+                0x0000072e        0x3 MENU/menu_items.o
+ .progmem.data.__c.2412
+                0x00000731        0x2 MENU/menu_items.o
  .progmem.data.__c.2409
-                0x00000740        0x2 MENU/menu_items.o
+                0x00000733        0x3 MENU/menu_items.o
  .progmem.data.__c.2407
-                0x00000742        0xc MENU/menu_items.o
- .progmem.data.__c.2391
-                0x0000074e        0xe MENU/menu_items.o
- .progmem.data.__c.2377
-                0x0000075c        0xc MENU/menu_items.o
+                0x00000736        0x2 MENU/menu_items.o
+ .progmem.data.__c.2405
+                0x00000738        0xc MENU/menu_items.o
+ .progmem.data.__c.2389
+                0x00000744        0xe MENU/menu_items.o
+ .progmem.data.__c.2376
+                0x00000752        0xc MENU/menu_items.o
  .progmem.data.__c.2363
-                0x00000768        0x3 MENU/menu_items.o
+                0x0000075e        0x3 MENU/menu_items.o
  .progmem.data.__c.2361
-                0x0000076b        0x2 MENU/menu_items.o
+                0x00000761        0x2 MENU/menu_items.o
  .progmem.data.__c.2358
-                0x0000076d        0xb MENU/menu_items.o
-                0x00000778                . = ALIGN (0x2)
+                0x00000763        0xb MENU/menu_items.o
+                0x0000076e                . = ALIGN (0x2)
  *(.jumptables)
  *(.jumptables*)
  *(.lowtext)
  *(.lowtext*)
-                0x00000778                __ctors_start = .
+                0x0000076e                __ctors_start = .
  *(.ctors)
-                0x00000778                __ctors_end = .
-                0x00000778                __dtors_start = .
+                0x0000076e                __ctors_end = .
+                0x0000076e                __dtors_start = .
  *(.dtors)
-                0x00000778                __dtors_end = .
+                0x0000076e                __dtors_end = .
  SORT(*)(.ctors)
  SORT(*)(.dtors)
  *(.init0)
- .init0         0x00000778        0x0 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
-                0x00000778                __init
+ .init0         0x0000076e        0x0 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
+                0x0000076e                __init
  *(.init0)
  *(.init1)
  *(.init1)
  *(.init2)
- .init2         0x00000778        0xc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
+ .init2         0x0000076e        0xc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
  *(.init2)
  *(.init3)
  *(.init3)
  *(.init4)
- .init4         0x00000784       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_copy_data.o)
-                0x00000784                __do_copy_data
- .init4         0x0000079a       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_clear_bss.o)
-                0x0000079a                __do_clear_bss
+ .init4         0x0000077a       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_copy_data.o)
+                0x0000077a                __do_copy_data
+ .init4         0x00000790       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_clear_bss.o)
+                0x00000790                __do_clear_bss
  *(.init4)
  *(.init5)
  *(.init5)
@@ -1329,609 +1321,599 @@ END GROUP
  *(.init8)
  *(.init8)
  *(.init9)
- .init9         0x000007aa        0x8 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
+ .init9         0x000007a0        0x8 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
  *(.init9)
  *(.text)
- .text          0x000007b2        0x4 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
-                0x000007b2                __vector_22
-                0x000007b2                __vector_28
-                0x000007b2                __vector_1
-                0x000007b2                __vector_32
-                0x000007b2                __vector_34
-                0x000007b2                __vector_24
-                0x000007b2                __bad_interrupt
-                0x000007b2                __vector_6
-                0x000007b2                __vector_3
-                0x000007b2                __vector_23
-                0x000007b2                __vector_25
-                0x000007b2                __vector_11
-                0x000007b2                __vector_13
-                0x000007b2                __vector_17
-                0x000007b2                __vector_7
-                0x000007b2                __vector_27
-                0x000007b2                __vector_5
-                0x000007b2                __vector_33
-                0x000007b2                __vector_4
-                0x000007b2                __vector_9
-                0x000007b2                __vector_2
-                0x000007b2                __vector_15
-                0x000007b2                __vector_29
-                0x000007b2                __vector_8
-                0x000007b2                __vector_26
-                0x000007b2                __vector_14
-                0x000007b2                __vector_10
-                0x000007b2                __vector_16
-                0x000007b2                __vector_20
-                0x000007b6                . = ALIGN (0x2)
+ .text          0x000007a8        0x4 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
+                0x000007a8                __vector_22
+                0x000007a8                __vector_28
+                0x000007a8                __vector_1
+                0x000007a8                __vector_32
+                0x000007a8                __vector_34
+                0x000007a8                __vector_24
+                0x000007a8                __bad_interrupt
+                0x000007a8                __vector_6
+                0x000007a8                __vector_3
+                0x000007a8                __vector_23
+                0x000007a8                __vector_25
+                0x000007a8                __vector_11
+                0x000007a8                __vector_13
+                0x000007a8                __vector_17
+                0x000007a8                __vector_7
+                0x000007a8                __vector_27
+                0x000007a8                __vector_5
+                0x000007a8                __vector_33
+                0x000007a8                __vector_4
+                0x000007a8                __vector_9
+                0x000007a8                __vector_2
+                0x000007a8                __vector_15
+                0x000007a8                __vector_29
+                0x000007a8                __vector_8
+                0x000007a8                __vector_26
+                0x000007a8                __vector_14
+                0x000007a8                __vector_10
+                0x000007a8                __vector_16
+                0x000007a8                __vector_20
+                0x000007ac                . = ALIGN (0x2)
  *(.text.*)
- .text.read8    0x000007b6       0x44 BME280/bme280.o
-                0x000007b6                read8
- .text.read16   0x000007fa       0x50 BME280/bme280.o
-                0x000007fa                read16
+ .text.read8    0x000007ac       0x44 BME280/bme280.o
+                0x000007ac                read8
+ .text.read16   0x000007f0       0x50 BME280/bme280.o
+                0x000007f0                read16
  .text.read16_LE
-                0x0000084a        0xc BME280/bme280.o
-                0x0000084a                read16_LE
- .text.read24   0x00000856       0x82 BME280/bme280.o
-                0x00000856                read24
+                0x00000840        0xc BME280/bme280.o
+                0x00000840                read16_LE
+ .text.read24   0x0000084c       0x82 BME280/bme280.o
+                0x0000084c                read24
  .text.bme280_readCoefficients
-                0x000008d8      0x104 BME280/bme280.o
-                0x000008d8                bme280_readCoefficients
+                0x000008ce      0x104 BME280/bme280.o
+                0x000008ce                bme280_readCoefficients
  .text.init_BME280
-                0x000009dc       0x48 BME280/bme280.o
-                0x000009dc                init_BME280
+                0x000009d2       0x48 BME280/bme280.o
+                0x000009d2                init_BME280
  .text.bme280_readTemperature
-                0x00000a24      0x12e BME280/bme280.o
-                0x00000a24                bme280_readTemperature
+                0x00000a1a      0x12e BME280/bme280.o
+                0x00000a1a                bme280_readTemperature
  .text.bme280_readHumidity
-                0x00000b52      0x208 BME280/bme280.o
-                0x00000b52                bme280_readHumidity
- .text.crc8     0x00000d5a       0x38 DS18B20/crc8.o
-                0x00000d5a                crc8
+                0x00000b48      0x208 BME280/bme280.o
+                0x00000b48                bme280_readHumidity
+ .text.crc8     0x00000d50       0x38 DS18B20/crc8.o
+                0x00000d50                crc8
  .text.DS18X20_meas_to_cel
-                0x00000d92       0x96 DS18B20/ds18x20.o
-                0x00000d92                DS18X20_meas_to_cel
+                0x00000d88       0x96 DS18B20/ds18x20.o
+                0x00000d88                DS18X20_meas_to_cel
  .text.DS18X20_find_sensor
-                0x00000e28       0x32 DS18B20/ds18x20.o
-                0x00000e28                DS18X20_find_sensor
+                0x00000e1e       0x32 DS18B20/ds18x20.o
+                0x00000e1e                DS18X20_find_sensor
  .text.DS18X20_start_meas
-                0x00000e5a       0x38 DS18B20/ds18x20.o
-                0x00000e5a                DS18X20_start_meas
+                0x00000e50       0x38 DS18B20/ds18x20.o
+                0x00000e50                DS18X20_start_meas
  .text.DS18X20_read_meas
-                0x00000e92       0xba DS18B20/ds18x20.o
-                0x00000e92                DS18X20_read_meas
+                0x00000e88       0xba DS18B20/ds18x20.o
+                0x00000e88                DS18X20_read_meas
  .text.ow_input_pin_state
-                0x00000f4c       0x12 DS18B20/onewire.o
-                0x00000f4c                ow_input_pin_state
+                0x00000f42       0x12 DS18B20/onewire.o
+                0x00000f42                ow_input_pin_state
  .text.ow_parasite_enable
-                0x00000f5e       0x26 DS18B20/onewire.o
-                0x00000f5e                ow_parasite_enable
+                0x00000f54       0x26 DS18B20/onewire.o
+                0x00000f54                ow_parasite_enable
  .text.ow_reset
-                0x00000f84       0x92 DS18B20/onewire.o
-                0x00000f84                ow_reset
+                0x00000f7a       0x92 DS18B20/onewire.o
+                0x00000f7a                ow_reset
  .text.ow_set_bus
-                0x00001016       0x2c DS18B20/onewire.o
-                0x00001016                ow_set_bus
+                0x0000100c       0x2c DS18B20/onewire.o
+                0x0000100c                ow_set_bus
  .text.ow_bit_io
-                0x00001042       0x80 DS18B20/onewire.o
-                0x00001042                ow_bit_io
+                0x00001038       0x80 DS18B20/onewire.o
+                0x00001038                ow_bit_io
  .text.ow_byte_wr
-                0x000010c2       0x22 DS18B20/onewire.o
-                0x000010c2                ow_byte_wr
+                0x000010b8       0x22 DS18B20/onewire.o
+                0x000010b8                ow_byte_wr
  .text.ow_byte_rd
-                0x000010e4        0x8 DS18B20/onewire.o
-                0x000010e4                ow_byte_rd
+                0x000010da        0x8 DS18B20/onewire.o
+                0x000010da                ow_byte_rd
  .text.ow_rom_search
-                0x000010ec       0xb4 DS18B20/onewire.o
-                0x000010ec                ow_rom_search
+                0x000010e2       0xb4 DS18B20/onewire.o
+                0x000010e2                ow_rom_search
  .text.ow_command
-                0x000011a0       0x48 DS18B20/onewire.o
-                0x000011a0                ow_command
+                0x00001196       0x48 DS18B20/onewire.o
+                0x00001196                ow_command
  .text.i2c_init
-                0x000011e8        0x8 I2C/i2c_master.o
-                0x000011e8                i2c_init
+                0x000011de        0x8 I2C/i2c_master.o
+                0x000011de                i2c_init
  .text.i2c_start
-                0x000011f0       0x4a I2C/i2c_master.o
-                0x000011f0                i2c_start
+                0x000011e6       0x4a I2C/i2c_master.o
+                0x000011e6                i2c_start
  .text.i2c_write
-                0x0000123a       0x24 I2C/i2c_master.o
-                0x0000123a                i2c_write
+                0x00001230       0x24 I2C/i2c_master.o
+                0x00001230                i2c_write
  .text.i2c_read_ack
-                0x0000125e       0x16 I2C/i2c_master.o
-                0x0000125e                i2c_read_ack
+                0x00001254       0x16 I2C/i2c_master.o
+                0x00001254                i2c_read_ack
  .text.i2c_read_nack
-                0x00001274       0x16 I2C/i2c_master.o
-                0x00001274                i2c_read_nack
+                0x0000126a       0x16 I2C/i2c_master.o
+                0x0000126a                i2c_read_nack
  .text.i2c_stop
-                0x0000128a        0x8 I2C/i2c_master.o
-                0x0000128a                i2c_stop
+                0x00001280        0x8 I2C/i2c_master.o
+                0x00001280                i2c_stop
  .text.toggle_e
-                0x00001292        0xa LCD/lcd.o
+                0x00001288        0xa LCD/lcd.o
  .text.lcd_write
-                0x0000129c       0x5e LCD/lcd.o
+                0x00001292       0x5e LCD/lcd.o
  .text.lcd_read
-                0x000012fa       0x50 LCD/lcd.o
+                0x000012f0       0x50 LCD/lcd.o
  .text.lcd_waitbusy
-                0x0000134a       0x1a LCD/lcd.o
+                0x00001340       0x1a LCD/lcd.o
  .text.lcd_command
-                0x00001364       0x14 LCD/lcd.o
-                0x00001364                lcd_command
+                0x0000135a       0x14 LCD/lcd.o
+                0x0000135a                lcd_command
  .text.lcd_data
-                0x00001378       0x14 LCD/lcd.o
-                0x00001378                lcd_data
+                0x0000136e       0x14 LCD/lcd.o
+                0x0000136e                lcd_data
  .text.lcd_gotoxy
-                0x0000138c       0x2c LCD/lcd.o
-                0x0000138c                lcd_gotoxy
+                0x00001382       0x2c LCD/lcd.o
+                0x00001382                lcd_gotoxy
  .text.lcd_clrscr
-                0x000013b8        0x8 LCD/lcd.o
-                0x000013b8                lcd_clrscr
+                0x000013ae        0x8 LCD/lcd.o
+                0x000013ae                lcd_clrscr
  .text.lcd_putc
-                0x000013c0       0x40 LCD/lcd.o
-                0x000013c0                lcd_putc
+                0x000013b6       0x40 LCD/lcd.o
+                0x000013b6                lcd_putc
  .text.lcd_puts_p
-                0x00001400       0x24 LCD/lcd.o
-                0x00001400                lcd_puts_p
+                0x000013f6       0x24 LCD/lcd.o
+                0x000013f6                lcd_puts_p
  .text.lcd_init
-                0x00001424       0x74 LCD/lcd.o
-                0x00001424                lcd_init
+                0x0000141a       0x74 LCD/lcd.o
+                0x0000141a                lcd_init
  .text.lcd_defc
-                0x00001498       0x30 LCD/lcd.o
-                0x00001498                lcd_defc
+                0x0000148e       0x30 LCD/lcd.o
+                0x0000148e                lcd_defc
  .text.lcd_putbit
-                0x000014c8       0x22 LCD/lcd.o
-                0x000014c8                lcd_putbit
+                0x000014be       0x22 LCD/lcd.o
+                0x000014be                lcd_putbit
  .text.lcd_putc_hu
-                0x000014ea       0x40 LCD/lcd.o
-                0x000014ea                lcd_putc_hu
+                0x000014e0       0x40 LCD/lcd.o
+                0x000014e0                lcd_putc_hu
  .text.lcd_puts
-                0x0000152a       0x20 LCD/lcd.o
-                0x0000152a                lcd_puts
+                0x00001520       0x20 LCD/lcd.o
+                0x00001520                lcd_puts
  .text.lcd_puti
-                0x0000154a       0x44 LCD/lcd.o
-                0x0000154a                lcd_puti
+                0x00001540       0x44 LCD/lcd.o
+                0x00001540                lcd_puti
  .text.lcd_puts_hu
-                0x0000158e       0x24 LCD/lcd.o
-                0x0000158e                lcd_puts_hu
+                0x00001584       0x24 LCD/lcd.o
+                0x00001584                lcd_puts_hu
  .text.__vector_21
-                0x000015b2       0x3e main.o
-                0x000015b2                __vector_21
+                0x000015a8       0x3e main.o
+                0x000015a8                __vector_21
  .text.__vector_12
-                0x000015f0       0x26 main.o
-                0x000015f0                __vector_12
+                0x000015e6       0x26 main.o
+                0x000015e6                __vector_12
  .text.SensorRead
-                0x00001616      0x6d6 main.o
-                0x00001616                SensorRead
+                0x0000160c      0x6d6 main.o
+                0x0000160c                SensorRead
  .text.search_sensors
-                0x00001cec       0xca main.o
-                0x00001cec                search_sensors
+                0x00001ce2       0xca main.o
+                0x00001ce2                search_sensors
  .text.SwitchRelays
-                0x00001db6       0x14 main.o
-                0x00001db6                SwitchRelays
+                0x00001dac       0x14 main.o
+                0x00001dac                SwitchRelays
  .text.CheckConditions
-                0x00001dca      0x33c main.o
-                0x00001dca                CheckConditions
+                0x00001dc0      0x33c main.o
+                0x00001dc0                CheckConditions
  .text.read_from_eeprom
-                0x00002106      0x102 main.o
-                0x00002106                read_from_eeprom
- .text.main     0x00002208      0x25c main.o
-                0x00002208                main
+                0x000020fc      0x102 main.o
+                0x000020fc                read_from_eeprom
+ .text.main     0x000021fe      0x25c main.o
+                0x000021fe                main
  .text.renderMenu
-                0x00002464       0xd6 MENU/menu.o
+                0x0000245a       0xd6 MENU/menu.o
  .text.menuReset
-                0x0000253a       0x1e MENU/menu.o
-                0x0000253a                menuReset
+                0x00002530       0x1e MENU/menu.o
+                0x00002530                menuReset
  .text.menuInit
-                0x00002558        0xa MENU/menu.o
-                0x00002558                menuInit
+                0x0000254e        0xa MENU/menu.o
+                0x0000254e                menuInit
  .text.menuPollButtons
-                0x00002562      0x2f6 MENU/menu.o
-                0x00002562                menuPollButtons
- .text.ClockDayName_CallbackRender
-                0x00002858       0x74 MENU/menu_items.o
-                0x00002858                ClockDayName_CallbackRender
- .text.ClockDayName_ActionCallback
-                0x000028cc       0x4a MENU/menu_items.o
-                0x000028cc                ClockDayName_ActionCallback
- .text.BME280Humidity_CallbackRender
-                0x00002916       0x1e MENU/menu_items.o
-                0x00002916                BME280Humidity_CallbackRender
- .text.BME280Humidity_Callback
-                0x00002934       0x16 MENU/menu_items.o
-                0x00002934                BME280Humidity_Callback
- .text.BME280Temp_CallbackRender
-                0x0000294a       0xa2 MENU/menu_items.o
-                0x0000294a                BME280Temp_CallbackRender
+                0x00002558      0x2f6 MENU/menu.o
+                0x00002558                menuPollButtons
  .text.BME280Temp_Callback
-                0x000029ec       0x16 MENU/menu_items.o
-                0x000029ec                BME280Temp_Callback
- .text.DHWRelay_CallbackRender
-                0x00002a02       0x30 MENU/menu_items.o
-                0x00002a02                DHWRelay_CallbackRender
- .text.ZoneValve1_CallbackRender
-                0x00002a32       0x30 MENU/menu_items.o
-                0x00002a32                ZoneValve1_CallbackRender
- .text.ZoneValve2_CallbackRender
-                0x00002a62       0x30 MENU/menu_items.o
-                0x00002a62                ZoneValve2_CallbackRender
- .text.BufferValve_CallbackRender
-                0x00002a92       0x30 MENU/menu_items.o
-                0x00002a92                BufferValve_CallbackRender
- .text.BufferPump_CallbackRender
-                0x00002ac2       0x30 MENU/menu_items.o
-                0x00002ac2                BufferPump_CallbackRender
- .text.GasRelay_CallbackRender
-                0x00002af2       0x30 MENU/menu_items.o
-                0x00002af2                GasRelay_CallbackRender
- .text.SwitchOnOutdoorTempMin_CallbackRender
-                0x00002b22       0x4e MENU/menu_items.o
-                0x00002b22                SwitchOnOutdoorTempMin_CallbackRender
- .text.DHWTempDesired_CallbackRender
-                0x00002b70       0x48 MENU/menu_items.o
-                0x00002b70                DHWTempDesired_CallbackRender
- .text.DHWTempMin_CallbackRender
-                0x00002bb8       0x48 MENU/menu_items.o
-                0x00002bb8                DHWTempMin_CallbackRender
- .text.DHWSensor_CallbackRender
-                0x00002c00       0x48 MENU/menu_items.o
-                0x00002c00                DHWSensor_CallbackRender
- .text.DHWMinTime_CallbackRender
-                0x00002c48       0x4e MENU/menu_items.o
-                0x00002c48                DHWMinTime_CallbackRender
- .text.DHWMaxTime_CallbackRender
-                0x00002c96       0x4e MENU/menu_items.o
-                0x00002c96                DHWMaxTime_CallbackRender
- .text.ForwardHeatTemp_CallbackRender
-                0x00002ce4       0x48 MENU/menu_items.o
-                0x00002ce4                ForwardHeatTemp_CallbackRender
- .text.BufferSensor_CallbackRender
-                0x00002d2c       0x48 MENU/menu_items.o
-                0x00002d2c                BufferSensor_CallbackRender
- .text.EngineeringTempMin_CallbackRender
-                0x00002d74       0x48 MENU/menu_items.o
-                0x00002d74                EngineeringTempMin_CallbackRender
- .text.EngineeringTempDesired_CallbackRender
-                0x00002dbc       0x54 MENU/menu_items.o
-                0x00002dbc                EngineeringTempDesired_CallbackRender
- .text.EngineeringSensor_CallbackRender
-                0x00002e10       0x48 MENU/menu_items.o
-                0x00002e10                EngineeringSensor_CallbackRender
- .text.GarageSensor_CallbackRender
-                0x00002e58       0x48 MENU/menu_items.o
-                0x00002e58                GarageSensor_CallbackRender
- .text.LivingRoomSensor_CallbackRender
-                0x00002ea0       0x48 MENU/menu_items.o
-                0x00002ea0                LivingRoomSensor_CallbackRender
- .text.FloorSensor_CallbackRender
-                0x00002ee8       0x48 MENU/menu_items.o
-                0x00002ee8                FloorSensor_CallbackRender
- .text.DebugMode_CallbackRender
-                0x00002f30       0x48 MENU/menu_items.o
-                0x00002f30                DebugMode_CallbackRender
- .text.MenuTimer_CallbackRender
-                0x00002f78       0x40 MENU/menu_items.o
-                0x00002f78                MenuTimer_CallbackRender
- .text.LCDBackLight_CallbackRender
-                0x00002fb8       0x48 MENU/menu_items.o
-                0x00002fb8                LCDBackLight_CallbackRender
- .text.PumpPlusTime_CallbackRender
-                0x00003000       0x4a MENU/menu_items.o
-                0x00003000                PumpPlusTime_CallbackRender
- .text.ClockHour_CallbackRender
-                0x0000304a       0x46 MENU/menu_items.o
-                0x0000304a                ClockHour_CallbackRender
- .text.ClockHour_ActionCallback
-                0x00003090       0x56 MENU/menu_items.o
-                0x00003090                ClockHour_ActionCallback
- .text.ClockYear_CallbackRender
-                0x000030e6       0x4e MENU/menu_items.o
-                0x000030e6                ClockYear_CallbackRender
- .text.ClockYear_ActionCallback
-                0x00003134       0x44 MENU/menu_items.o
-                0x00003134                ClockYear_ActionCallback
- .text.ClockMonth_CallbackRender
-                0x00003178       0x46 MENU/menu_items.o
-                0x00003178                ClockMonth_CallbackRender
- .text.ClockMonth_ActionCallback
-                0x000031be       0x4a MENU/menu_items.o
-                0x000031be                ClockMonth_ActionCallback
- .text.ClockDay_CallbackRender
-                0x00003208       0x46 MENU/menu_items.o
-                0x00003208                ClockDay_CallbackRender
- .text.ClockDay_ActionCallback
-                0x0000324e       0x4a MENU/menu_items.o
-                0x0000324e                ClockDay_ActionCallback
- .text.ComfortMode_CallbackRender
-                0x00003298       0x42 MENU/menu_items.o
-                0x00003298                ComfortMode_CallbackRender
- .text.ComfortTemp_CallbackRender
-                0x000032da       0x48 MENU/menu_items.o
-                0x000032da                ComfortTemp_CallbackRender
- .text.ComfortForwardTemp_CallbackRender
-                0x00003322       0x48 MENU/menu_items.o
-                0x00003322                ComfortForwardTemp_CallbackRender
- .text.DHWTempActual_CallbackRender
-                0x0000336a       0xa6 MENU/menu_items.o
-                0x0000336a                DHWTempActual_CallbackRender
+                0x0000284e        0xe MENU/menu_items.o
+                0x0000284e                BME280Temp_Callback
+ .text.BME280Humidity_Callback
+                0x0000285c        0xe MENU/menu_items.o
+                0x0000285c                BME280Humidity_Callback
  .text.DHWTempActual_Callback
-                0x00003410       0x16 MENU/menu_items.o
-                0x00003410                DHWTempActual_Callback
- .text.BufferTempActual_CallbackRender
-                0x00003426       0xa6 MENU/menu_items.o
-                0x00003426                BufferTempActual_CallbackRender
+                0x0000286a        0xe MENU/menu_items.o
+                0x0000286a                DHWTempActual_Callback
  .text.BufferTempActual_Callback
-                0x000034cc       0x16 MENU/menu_items.o
-                0x000034cc                BufferTempActual_Callback
- .text.EngineeringTempActual_CallbackRender
-                0x000034e2       0xa6 MENU/menu_items.o
-                0x000034e2                EngineeringTempActual_CallbackRender
+                0x00002878        0xe MENU/menu_items.o
+                0x00002878                BufferTempActual_Callback
  .text.EngineeringTempActual_Callback
-                0x00003588       0x16 MENU/menu_items.o
-                0x00003588                EngineeringTempActual_Callback
- .text.GarageTemp_CallbackRender
-                0x0000359e       0xa6 MENU/menu_items.o
-                0x0000359e                GarageTemp_CallbackRender
- .text.GarageTemp_Callback
-                0x00003644       0x16 MENU/menu_items.o
-                0x00003644                GarageTemp_Callback
- .text.LivingRoomTemp_CallbackRender
-                0x0000365a       0xa6 MENU/menu_items.o
-                0x0000365a                LivingRoomTemp_CallbackRender
- .text.LivingRoomTemp_Callback
-                0x00003700       0x16 MENU/menu_items.o
-                0x00003700                LivingRoomTemp_Callback
- .text.FloorTemp_CallbackRender
-                0x00003716       0xa6 MENU/menu_items.o
-                0x00003716                FloorTemp_CallbackRender
- .text.FloorTemp_Callback
-                0x000037bc       0x16 MENU/menu_items.o
-                0x000037bc                FloorTemp_Callback
+                0x00002886        0xe MENU/menu_items.o
+                0x00002886                EngineeringTempActual_Callback
+ .text.SensorTemp_Callback
+                0x00002894        0x2 MENU/menu_items.o
+                0x00002894                SensorTemp_Callback
+ .text.ClockDayName_CallbackRender
+                0x00002896       0x74 MENU/menu_items.o
+                0x00002896                ClockDayName_CallbackRender
+ .text.ClockDayName_ActionCallback
+                0x0000290a       0x4a MENU/menu_items.o
+                0x0000290a                ClockDayName_ActionCallback
+ .text.BME280Humidity_CallbackRender
+                0x00002954       0x1e MENU/menu_items.o
+                0x00002954                BME280Humidity_CallbackRender
+ .text.BME280Temp_CallbackRender
+                0x00002972       0xa2 MENU/menu_items.o
+                0x00002972                BME280Temp_CallbackRender
+ .text.DHWRelay_CallbackRender
+                0x00002a14       0x30 MENU/menu_items.o
+                0x00002a14                DHWRelay_CallbackRender
+ .text.ZoneValve1_CallbackRender
+                0x00002a44       0x30 MENU/menu_items.o
+                0x00002a44                ZoneValve1_CallbackRender
+ .text.ZoneValve2_CallbackRender
+                0x00002a74       0x30 MENU/menu_items.o
+                0x00002a74                ZoneValve2_CallbackRender
+ .text.BufferValve_CallbackRender
+                0x00002aa4       0x30 MENU/menu_items.o
+                0x00002aa4                BufferValve_CallbackRender
+ .text.BufferPump_CallbackRender
+                0x00002ad4       0x30 MENU/menu_items.o
+                0x00002ad4                BufferPump_CallbackRender
+ .text.GasRelay_CallbackRender
+                0x00002b04       0x30 MENU/menu_items.o
+                0x00002b04                GasRelay_CallbackRender
+ .text.SwitchOnOutdoorTempMin_CallbackRender
+                0x00002b34       0x4e MENU/menu_items.o
+                0x00002b34                SwitchOnOutdoorTempMin_CallbackRender
+ .text.DHWTempDesired_CallbackRender
+                0x00002b82       0x48 MENU/menu_items.o
+                0x00002b82                DHWTempDesired_CallbackRender
+ .text.DHWTempMin_CallbackRender
+                0x00002bca       0x48 MENU/menu_items.o
+                0x00002bca                DHWTempMin_CallbackRender
+ .text.DHWSensor_CallbackRender
+                0x00002c12       0x48 MENU/menu_items.o
+                0x00002c12                DHWSensor_CallbackRender
+ .text.DHWMinTime_CallbackRender
+                0x00002c5a       0x4e MENU/menu_items.o
+                0x00002c5a                DHWMinTime_CallbackRender
+ .text.DHWMaxTime_CallbackRender
+                0x00002ca8       0x4e MENU/menu_items.o
+                0x00002ca8                DHWMaxTime_CallbackRender
+ .text.ForwardHeatTemp_CallbackRender
+                0x00002cf6       0x48 MENU/menu_items.o
+                0x00002cf6                ForwardHeatTemp_CallbackRender
+ .text.BufferSensor_CallbackRender
+                0x00002d3e       0x48 MENU/menu_items.o
+                0x00002d3e                BufferSensor_CallbackRender
+ .text.EngineeringTempMin_CallbackRender
+                0x00002d86       0x48 MENU/menu_items.o
+                0x00002d86                EngineeringTempMin_CallbackRender
+ .text.EngineeringTempDesired_CallbackRender
+                0x00002dce       0x54 MENU/menu_items.o
+                0x00002dce                EngineeringTempDesired_CallbackRender
+ .text.EngineeringSensor_CallbackRender
+                0x00002e22       0x48 MENU/menu_items.o
+                0x00002e22                EngineeringSensor_CallbackRender
+ .text.GarageSensor_CallbackRender
+                0x00002e6a       0x48 MENU/menu_items.o
+                0x00002e6a                GarageSensor_CallbackRender
+ .text.LivingRoomSensor_CallbackRender
+                0x00002eb2       0x48 MENU/menu_items.o
+                0x00002eb2                LivingRoomSensor_CallbackRender
+ .text.FloorSensor_CallbackRender
+                0x00002efa       0x48 MENU/menu_items.o
+                0x00002efa                FloorSensor_CallbackRender
+ .text.DebugMode_CallbackRender
+                0x00002f42       0x48 MENU/menu_items.o
+                0x00002f42                DebugMode_CallbackRender
+ .text.MenuTimer_CallbackRender
+                0x00002f8a       0x40 MENU/menu_items.o
+                0x00002f8a                MenuTimer_CallbackRender
+ .text.LCDBackLight_CallbackRender
+                0x00002fca       0x48 MENU/menu_items.o
+                0x00002fca                LCDBackLight_CallbackRender
+ .text.PumpPlusTime_CallbackRender
+                0x00003012       0x4a MENU/menu_items.o
+                0x00003012                PumpPlusTime_CallbackRender
+ .text.ClockHour_CallbackRender
+                0x0000305c       0x46 MENU/menu_items.o
+                0x0000305c                ClockHour_CallbackRender
+ .text.ClockHour_ActionCallback
+                0x000030a2       0x56 MENU/menu_items.o
+                0x000030a2                ClockHour_ActionCallback
+ .text.ClockYear_CallbackRender
+                0x000030f8       0x4e MENU/menu_items.o
+                0x000030f8                ClockYear_CallbackRender
+ .text.ClockYear_ActionCallback
+                0x00003146       0x44 MENU/menu_items.o
+                0x00003146                ClockYear_ActionCallback
+ .text.ClockMonth_CallbackRender
+                0x0000318a       0x46 MENU/menu_items.o
+                0x0000318a                ClockMonth_CallbackRender
+ .text.ClockMonth_ActionCallback
+                0x000031d0       0x4a MENU/menu_items.o
+                0x000031d0                ClockMonth_ActionCallback
+ .text.ClockDay_CallbackRender
+                0x0000321a       0x46 MENU/menu_items.o
+                0x0000321a                ClockDay_CallbackRender
+ .text.ClockDay_ActionCallback
+                0x00003260       0x4a MENU/menu_items.o
+                0x00003260                ClockDay_ActionCallback
+ .text.ComfortMode_CallbackRender
+                0x000032aa       0x42 MENU/menu_items.o
+                0x000032aa                ComfortMode_CallbackRender
+ .text.ComfortTemp_CallbackRender
+                0x000032ec       0x48 MENU/menu_items.o
+                0x000032ec                ComfortTemp_CallbackRender
+ .text.ComfortForwardTemp_CallbackRender
+                0x00003334       0x48 MENU/menu_items.o
+                0x00003334                ComfortForwardTemp_CallbackRender
+ .text.DHWTempActual_CallbackRender
+                0x0000337c       0xa6 MENU/menu_items.o
+                0x0000337c                DHWTempActual_CallbackRender
+ .text.BufferTempActual_CallbackRender
+                0x00003422       0xa6 MENU/menu_items.o
+                0x00003422                BufferTempActual_CallbackRender
+ .text.EngineeringTempActual_CallbackRender
+                0x000034c8       0xa6 MENU/menu_items.o
+                0x000034c8                EngineeringTempActual_CallbackRender
  .text.ClockMinute_CallbackRender
-                0x000037d2       0x46 MENU/menu_items.o
-                0x000037d2                ClockMinute_CallbackRender
+                0x0000356e       0x46 MENU/menu_items.o
+                0x0000356e                ClockMinute_CallbackRender
  .text.ClockMinute_ActionCallback
-                0x00003818       0x56 MENU/menu_items.o
-                0x00003818                ClockMinute_ActionCallback
+                0x000035b4       0x56 MENU/menu_items.o
+                0x000035b4                ClockMinute_ActionCallback
  .text.SwitchOnOutdoorTempMin_ActionCallback
-                0x0000386e       0x8a MENU/menu_items.o
-                0x0000386e                SwitchOnOutdoorTempMin_ActionCallback
+                0x0000360a       0x8a MENU/menu_items.o
+                0x0000360a                SwitchOnOutdoorTempMin_ActionCallback
  .text.DHWMinTime_ActionCallback
-                0x000038f8       0x86 MENU/menu_items.o
-                0x000038f8                DHWMinTime_ActionCallback
+                0x00003694       0x86 MENU/menu_items.o
+                0x00003694                DHWMinTime_ActionCallback
  .text.DHWMaxTime_ActionCallback
-                0x0000397e       0x86 MENU/menu_items.o
-                0x0000397e                DHWMaxTime_ActionCallback
+                0x0000371a       0x86 MENU/menu_items.o
+                0x0000371a                DHWMaxTime_ActionCallback
  .text.PumpPlusTime_ActionCallback
-                0x00003a04       0x5e MENU/menu_items.o
-                0x00003a04                PumpPlusTime_ActionCallback
+                0x000037a0       0x5e MENU/menu_items.o
+                0x000037a0                PumpPlusTime_ActionCallback
  .text.DHWTempDesired_ActionCallback
-                0x00003a62       0x56 MENU/menu_items.o
-                0x00003a62                DHWTempDesired_ActionCallback
+                0x000037fe       0x56 MENU/menu_items.o
+                0x000037fe                DHWTempDesired_ActionCallback
  .text.DHWTempMin_ActionCallback
-                0x00003ab8       0x56 MENU/menu_items.o
-                0x00003ab8                DHWTempMin_ActionCallback
+                0x00003854       0x56 MENU/menu_items.o
+                0x00003854                DHWTempMin_ActionCallback
  .text.DHWSensor_ActionCallback
-                0x00003b0e       0x64 MENU/menu_items.o
-                0x00003b0e                DHWSensor_ActionCallback
+                0x000038aa       0x64 MENU/menu_items.o
+                0x000038aa                DHWSensor_ActionCallback
  .text.ForwardHeatTemp_ActionCallback
-                0x00003b72       0x52 MENU/menu_items.o
-                0x00003b72                ForwardHeatTemp_ActionCallback
+                0x0000390e       0x52 MENU/menu_items.o
+                0x0000390e                ForwardHeatTemp_ActionCallback
  .text.BufferSensor_ActionCallback
-                0x00003bc4       0x64 MENU/menu_items.o
-                0x00003bc4                BufferSensor_ActionCallback
+                0x00003960       0x64 MENU/menu_items.o
+                0x00003960                BufferSensor_ActionCallback
  .text.EngineeringTempMin_ActionCallback
-                0x00003c28       0x56 MENU/menu_items.o
-                0x00003c28                EngineeringTempMin_ActionCallback
+                0x000039c4       0x56 MENU/menu_items.o
+                0x000039c4                EngineeringTempMin_ActionCallback
  .text.EngineeringTempDesired_ActionCallback
-                0x00003c7e       0x56 MENU/menu_items.o
-                0x00003c7e                EngineeringTempDesired_ActionCallback
+                0x00003a1a       0x56 MENU/menu_items.o
+                0x00003a1a                EngineeringTempDesired_ActionCallback
  .text.EngineeringSensor_ActionCallback
-                0x00003cd4       0x64 MENU/menu_items.o
-                0x00003cd4                EngineeringSensor_ActionCallback
+                0x00003a70       0x64 MENU/menu_items.o
+                0x00003a70                EngineeringSensor_ActionCallback
  .text.GarageSensor_ActionCallback
-                0x00003d38       0x64 MENU/menu_items.o
-                0x00003d38                GarageSensor_ActionCallback
+                0x00003ad4       0x64 MENU/menu_items.o
+                0x00003ad4                GarageSensor_ActionCallback
  .text.LivingRoomSensor_ActionCallback
-                0x00003d9c       0x64 MENU/menu_items.o
-                0x00003d9c                LivingRoomSensor_ActionCallback
+                0x00003b38       0x64 MENU/menu_items.o
+                0x00003b38                LivingRoomSensor_ActionCallback
  .text.FloorSensor_ActionCallback
-                0x00003e00       0x64 MENU/menu_items.o
-                0x00003e00                FloorSensor_ActionCallback
+                0x00003b9c       0x64 MENU/menu_items.o
+                0x00003b9c                FloorSensor_ActionCallback
  .text.DebugMode_ActionCallback
-                0x00003e64       0x4a MENU/menu_items.o
-                0x00003e64                DebugMode_ActionCallback
+                0x00003c00       0x4a MENU/menu_items.o
+                0x00003c00                DebugMode_ActionCallback
  .text.MenuTimer_ActionCallback
-                0x00003eae       0x4a MENU/menu_items.o
-                0x00003eae                MenuTimer_ActionCallback
+                0x00003c4a       0x4a MENU/menu_items.o
+                0x00003c4a                MenuTimer_ActionCallback
  .text.LCDBackLight_ActionCallback
-                0x00003ef8       0x5c MENU/menu_items.o
-                0x00003ef8                LCDBackLight_ActionCallback
+                0x00003c94       0x5c MENU/menu_items.o
+                0x00003c94                LCDBackLight_ActionCallback
  .text.ComfortMode_ActionCallback
-                0x00003f54       0x5e MENU/menu_items.o
-                0x00003f54                ComfortMode_ActionCallback
+                0x00003cf0       0x5e MENU/menu_items.o
+                0x00003cf0                ComfortMode_ActionCallback
  .text.ComfortTemp_ActionCallback
-                0x00003fb2       0x60 MENU/menu_items.o
-                0x00003fb2                ComfortTemp_ActionCallback
+                0x00003d4e       0x60 MENU/menu_items.o
+                0x00003d4e                ComfortTemp_ActionCallback
  .text.ComfortForwardTemp_ActionCallback
-                0x00004012       0x64 MENU/menu_items.o
-                0x00004012                ComfortForwardTemp_ActionCallback
+                0x00003dae       0x64 MENU/menu_items.o
+                0x00003dae                ComfortForwardTemp_ActionCallback
  .text.DHWRelay_ActionCallback
-                0x00004076       0x3c MENU/menu_items.o
-                0x00004076                DHWRelay_ActionCallback
+                0x00003e12       0x3c MENU/menu_items.o
+                0x00003e12                DHWRelay_ActionCallback
  .text.ZoneValve1_ActionCallback
-                0x000040b2       0x32 MENU/menu_items.o
-                0x000040b2                ZoneValve1_ActionCallback
+                0x00003e4e       0x32 MENU/menu_items.o
+                0x00003e4e                ZoneValve1_ActionCallback
  .text.ZoneValve2_ActionCallback
-                0x000040e4       0x32 MENU/menu_items.o
-                0x000040e4                ZoneValve2_ActionCallback
+                0x00003e80       0x32 MENU/menu_items.o
+                0x00003e80                ZoneValve2_ActionCallback
  .text.BufferValve_ActionCallback
-                0x00004116       0x32 MENU/menu_items.o
-                0x00004116                BufferValve_ActionCallback
+                0x00003eb2       0x32 MENU/menu_items.o
+                0x00003eb2                BufferValve_ActionCallback
  .text.BufferPump_ActionCallback
-                0x00004148       0x32 MENU/menu_items.o
-                0x00004148                BufferPump_ActionCallback
+                0x00003ee4       0x32 MENU/menu_items.o
+                0x00003ee4                BufferPump_ActionCallback
  .text.GasRelay_ActionCallback
-                0x0000417a       0x30 MENU/menu_items.o
-                0x0000417a                GasRelay_ActionCallback
+                0x00003f16       0x30 MENU/menu_items.o
+                0x00003f16                GasRelay_ActionCallback
+ .text.lcd      0x00003f46       0x7e MENU/menu_items.o
+                0x00003f46                lcd
+ .text.SensorTemp_CallbackRender
+                0x00003fc4       0xd4 MENU/menu_items.o
+                0x00003fc4                SensorTemp_CallbackRender
  .text.menuItemsGetHomeMenu
-                0x000041aa        0x6 MENU/menu_items.o
-                0x000041aa                menuItemsGetHomeMenu
+                0x00004098        0x6 MENU/menu_items.o
+                0x00004098                menuItemsGetHomeMenu
  .text.menuItemsGetHomeMenuSize
-                0x000041b0        0x4 MENU/menu_items.o
-                0x000041b0                menuItemsGetHomeMenuSize
+                0x0000409e        0x4 MENU/menu_items.o
+                0x0000409e                menuItemsGetHomeMenuSize
  .text.menuPortsioInit
-                0x000041b4        0xe MENU/menu_portsio.o
-                0x000041b4                menuPortsioInit
- .text.SPIInit  0x000041c2       0x1e SPI/spi.o
-                0x000041c2                SPIInit
+                0x000040a2        0xe MENU/menu_portsio.o
+                0x000040a2                menuPortsioInit
+ .text.SPIInit  0x000040b0       0x1e SPI/spi.o
+                0x000040b0                SPIInit
  .text.SPIClose
-                0x000041e0        0xa SPI/spi.o
-                0x000041e0                SPIClose
+                0x000040ce        0xa SPI/spi.o
+                0x000040ce                SPIClose
  .text.SPIWrite
-                0x000041ea       0x2c SPI/spi.o
-                0x000041ea                SPIWrite
+                0x000040d8       0x2c SPI/spi.o
+                0x000040d8                SPIWrite
  .text.__vector_18
-                0x00004216       0x58 UART/UART.o
-                0x00004216                __vector_18
+                0x00004104       0x58 UART/UART.o
+                0x00004104                __vector_18
  .text.__vector_19
-                0x0000426e       0x4a UART/UART.o
-                0x0000426e                __vector_19
+                0x0000415c       0x4a UART/UART.o
+                0x0000415c                __vector_19
  .text.uart_init
-                0x000042b8       0x2c UART/UART.o
-                0x000042b8                uart_init
+                0x000041a6       0x2c UART/UART.o
+                0x000041a6                uart_init
  .text.uart_putc
-                0x000042e4       0x22 UART/UART.o
-                0x000042e4                uart_putc
+                0x000041d2       0x22 UART/UART.o
+                0x000041d2                uart_putc
  .text.uart_puts
-                0x00004306       0x1e UART/UART.o
-                0x00004306                uart_puts
+                0x000041f4       0x1e UART/UART.o
+                0x000041f4                uart_puts
  .text.uart_puts_p
-                0x00004324       0x24 UART/UART.o
-                0x00004324                uart_puts_p
+                0x00004212       0x24 UART/UART.o
+                0x00004212                uart_puts_p
  .text.__vector_30
-                0x00004348       0x5c UART/UART.o
-                0x00004348                __vector_30
+                0x00004236       0x5c UART/UART.o
+                0x00004236                __vector_30
  .text.__vector_31
-                0x000043a4       0x54 UART/UART.o
-                0x000043a4                __vector_31
+                0x00004292       0x54 UART/UART.o
+                0x00004292                __vector_31
  .text.uart_puti
-                0x000043f8       0x36 UART/UART.o
-                0x000043f8                uart_puti
- .text.ftoa     0x0000442e      0x112 Utils/ftoa.o
-                0x0000442e                ftoa
+                0x000042e6       0x36 UART/UART.o
+                0x000042e6                uart_puti
+ .text.ftoa     0x0000431c      0x112 Utils/ftoa.o
+                0x0000431c                ftoa
  .text.avr-libc.fplib
-                0x00004540        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(addsf3.o)
-                0x00004540                __subsf3
-                0x00004542                __addsf3
+                0x0000442e        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(addsf3.o)
+                0x0000442e                __subsf3
+                0x00004430                __addsf3
  .text.avr-libc.fplib
-                0x0000454e       0xcc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(addsf3x.o)
-                0x00004570                __addsf3x
+                0x0000443c       0xcc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(addsf3x.o)
+                0x0000445e                __addsf3x
  .text.avr-libc.fplib
-                0x0000461a        0xa c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(cmpsf2.o)
-                0x0000461a                __nesf2
-                0x0000461a                __eqsf2
-                0x0000461a                __cmpsf2
-                0x0000461a                __ltsf2
-                0x0000461a                __lesf2
+                0x00004508        0xa c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(cmpsf2.o)
+                0x00004508                __nesf2
+                0x00004508                __eqsf2
+                0x00004508                __cmpsf2
+                0x00004508                __ltsf2
+                0x00004508                __lesf2
  .text.avr-libc.fplib
-                0x00004624        0x8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(divsf3.o)
-                0x00004624                __divsf3
+                0x00004512        0x8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(divsf3.o)
+                0x00004512                __divsf3
  .text.avr-libc.fplib
-                0x0000462c       0xdc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(divsf3x.o)
-                0x0000464c                __divsf3x
-                0x00004652                __divsf3_pse
+                0x0000451a       0xdc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(divsf3x.o)
+                0x0000453a                __divsf3x
+                0x00004540                __divsf3_pse
  .text.avr-libc.fplib
-                0x00004708        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fixsfsi.o)
-                0x00004708                __fixsfsi
+                0x000045f6        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fixsfsi.o)
+                0x000045f6                __fixsfsi
  .text.avr-libc.fplib
-                0x00004716       0x5e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fixunssfsi.o)
-                0x00004716                __fixunssfsi
+                0x00004604       0x5e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fixunssfsi.o)
+                0x00004604                __fixunssfsi
  .text.avr-libc.fplib
-                0x00004774       0x7a c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(floatsisf.o)
-                0x00004774                __floatunsisf
-                0x00004778                __floatsisf
+                0x00004662       0x7a c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(floatsisf.o)
+                0x00004662                __floatunsisf
+                0x00004666                __floatsisf
  .text.avr-libc.fplib
-                0x000047ee       0x48 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_cmp.o)
-                0x000047ee                __fp_cmp
+                0x000046dc       0x48 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_cmp.o)
+                0x000046dc                __fp_cmp
  .text.avr-libc.fplib
-                0x00004836        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_inf.o)
-                0x00004836                __fp_inf
+                0x00004724        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_inf.o)
+                0x00004724                __fp_inf
  .text.avr-libc.fplib
-                0x00004842        0x6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_nan.o)
-                0x00004842                __fp_nan
+                0x00004730        0x6 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_nan.o)
+                0x00004730                __fp_nan
  .text.avr-libc.fplib
-                0x00004848        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_pscA.o)
-                0x00004848                __fp_pscA
+                0x00004736        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_pscA.o)
+                0x00004736                __fp_pscA
  .text.avr-libc.fplib
-                0x00004856        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_pscB.o)
-                0x00004856                __fp_pscB
+                0x00004744        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_pscB.o)
+                0x00004744                __fp_pscB
  .text.avr-libc.fplib
-                0x00004864       0x22 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_round.o)
-                0x00004864                __fp_round
+                0x00004752       0x22 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_round.o)
+                0x00004752                __fp_round
  .text.avr-libc.fplib
-                0x00004886       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_split3.o)
-                0x00004886                __fp_split3
-                0x00004896                __fp_splitA
+                0x00004774       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_split3.o)
+                0x00004774                __fp_split3
+                0x00004784                __fp_splitA
  .text.avr-libc.fplib
-                0x000048ca        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_zero.o)
-                0x000048ca                __fp_zero
-                0x000048cc                __fp_szero
+                0x000047b8        0xe c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(fp_zero.o)
+                0x000047b8                __fp_zero
+                0x000047ba                __fp_szero
  .text.avr-libc.fplib
-                0x000048d8        0xa c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(gesf2.o)
-                0x000048d8                __gesf2
-                0x000048d8                __gtsf2
+                0x000047c6        0xa c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(gesf2.o)
+                0x000047c6                __gesf2
+                0x000047c6                __gtsf2
  .text.avr-libc.fplib
-                0x000048e2        0x8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(mulsf3.o)
-                0x000048e2                __mulsf3
+                0x000047d0        0x8 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(mulsf3.o)
+                0x000047d0                __mulsf3
  .text.avr-libc.fplib
-                0x000048ea       0xd2 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(mulsf3x.o)
-                0x00004908                __mulsf3x
-                0x0000490e                __mulsf3_pse
+                0x000047d8       0xd2 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libm.a(mulsf3x.o)
+                0x000047f6                __mulsf3x
+                0x000047fc                __mulsf3_pse
  .text.libgcc.mul
-                0x000049bc       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
-                0x000049bc                __mulsi3
- .text.libgcc   0x000049dc        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_tablejump2.o)
-                0x000049dc                __tablejump2__
+                0x000048aa       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulsi3.o)
+                0x000048aa                __mulsi3
+ .text.libgcc   0x000048ca        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_tablejump2.o)
+                0x000048ca                __tablejump2__
  .text.libgcc.mul
-                0x000049e8       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
-                0x000049e8                __muluhisi3
+                0x000048d6       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_muluhisi3.o)
+                0x000048d6                __muluhisi3
  .text.libgcc.mul
-                0x000049fe       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulshisi3.o)
-                0x000049fe                __mulshisi3
-                0x00004a04                __mulohisi3
+                0x000048ec       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_mulshisi3.o)
+                0x000048ec                __mulshisi3
+                0x000048f2                __mulohisi3
  .text.libgcc.mul
-                0x00004a0e       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
-                0x00004a0e                __umulhisi3
+                0x000048fc       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_umulhisi3.o)
+                0x000048fc                __umulhisi3
  .text.avr-libc
-                0x00004a2c       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(itoa_ncheck.o)
-                0x00004a2c                __itoa_ncheck
+                0x0000491a       0x16 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(itoa_ncheck.o)
+                0x0000491a                __itoa_ncheck
  .text.avr-libc
-                0x00004a42       0x34 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(utoa_ncheck.o)
-                0x00004a42                __utoa_ncheck
-                0x00004a44                __utoa_common
+                0x00004930       0x34 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(utoa_ncheck.o)
+                0x00004930                __utoa_ncheck
+                0x00004932                __utoa_common
  .text.avr-libc
-                0x00004a76       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(strrev.o)
-                0x00004a76                strrev
+                0x00004964       0x20 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/../../../../avr/lib/avr5\libc.a(strrev.o)
+                0x00004964                strrev
  .text.avr-libc
-                0x00004a96       0x10 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
-                0x00004a96                eeprom_read_byte
+                0x00004984       0x10 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
+                0x00004984                eeprom_read_byte
  .text.avr-libc
-                0x00004aa6        0xc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_word.o)
-                0x00004aa6                eeprom_read_word
+                0x00004994        0xc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_word.o)
+                0x00004994                eeprom_read_word
  .text.avr-libc
-                0x00004ab2       0x22 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
-                0x00004ab2                eeprom_update_byte
-                0x00004ab4                eeprom_update_r18
+                0x000049a0       0x22 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
+                0x000049a0                eeprom_update_byte
+                0x000049a2                eeprom_update_r18
  .text.avr-libc
-                0x00004ad4        0xc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_word.o)
-                0x00004ad4                eeprom_update_word
+                0x000049c2        0xc C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_word.o)
+                0x000049c2                eeprom_update_word
  .text.avr-libc
-                0x00004ae0       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_block.o)
-                0x00004ae0                eeprom_read_block
-                0x00004ae4                eeprom_read_blraw
-                0x00004b00                . = ALIGN (0x2)
+                0x000049ce       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_block.o)
+                0x000049ce                eeprom_read_block
+                0x000049d2                eeprom_read_blraw
+                0x000049ee                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00004b00        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
-                0x00004b00                _exit
-                0x00004b00                exit
+ .fini9         0x000049ee        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
+                0x000049ee                _exit
+                0x000049ee                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -1950,11 +1932,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00004b00        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
+ .fini0         0x000049ee        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x00004b04                _etext = .
+                0x000049f2                _etext = .
 
-.data           0x00800100      0x4a6 load address 0x00004b04
+.data           0x00800100      0x4a6 load address 0x000049f2
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -2155,8 +2137,8 @@ END GROUP
                 0x008006f5                BME280TempUint
                 0x008006f7                BufferTempActual
                 0x008006f8                PROVIDE (__bss_end, .)
-                0x00004b04                __data_load_start = LOADADDR (.data)
-                0x00004faa                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x000049f2                __data_load_start = LOADADDR (.data)
+                0x00004e98                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x008006f8        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
@@ -2261,7 +2243,7 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x788
+.debug_aranges  0x00000000      0x770
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x78 BME280/bme280.o
@@ -2280,30 +2262,30 @@ END GROUP
  .debug_aranges
                 0x000002e8       0x38 MENU/menu.o
  .debug_aranges
-                0x00000320      0x2b8 MENU/menu_items.o
+                0x00000320      0x2a0 MENU/menu_items.o
  .debug_aranges
-                0x000005d8       0x20 MENU/menu_portsio.o
+                0x000005c0       0x20 MENU/menu_portsio.o
  .debug_aranges
-                0x000005f8       0x30 SPI/spi.o
+                0x000005e0       0x30 SPI/spi.o
  .debug_aranges
-                0x00000628       0xa0 UART/UART.o
+                0x00000610       0xa0 UART/UART.o
  .debug_aranges
-                0x000006c8       0x20 Utils/ftoa.o
+                0x000006b0       0x20 Utils/ftoa.o
  .debug_aranges
-                0x000006e8       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
+                0x000006d0       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
  .debug_aranges
-                0x00000708       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_word.o)
+                0x000006f0       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_word.o)
  .debug_aranges
-                0x00000728       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
+                0x00000710       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
  .debug_aranges
-                0x00000748       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_word.o)
+                0x00000730       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_word.o)
  .debug_aranges
-                0x00000768       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_block.o)
+                0x00000750       0x20 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_block.o)
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0xa15f
+.debug_info     0x00000000     0x9e06
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x780 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
  .debug_info    0x00000780      0xb20 BME280/bme280.o
@@ -2314,18 +2296,18 @@ END GROUP
  .debug_info    0x0000224c      0x9f7 LCD/lcd.o
  .debug_info    0x00002c43     0x20e8 main.o
  .debug_info    0x00004d2b      0x77e MENU/menu.o
- .debug_info    0x000054a9     0x3e66 MENU/menu_items.o
- .debug_info    0x0000930f       0x9a MENU/menu_portsio.o
- .debug_info    0x000093a9       0xce SPI/spi.o
- .debug_info    0x00009477      0x753 UART/UART.o
- .debug_info    0x00009bca      0x23b Utils/ftoa.o
- .debug_info    0x00009e05       0xab C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
- .debug_info    0x00009eb0       0xab C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_word.o)
- .debug_info    0x00009f5b       0xac C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
- .debug_info    0x0000a007       0xac C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_word.o)
- .debug_info    0x0000a0b3       0xac C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_block.o)
+ .debug_info    0x000054a9     0x3b0d MENU/menu_items.o
+ .debug_info    0x00008fb6       0x9a MENU/menu_portsio.o
+ .debug_info    0x00009050       0xce SPI/spi.o
+ .debug_info    0x0000911e      0x753 UART/UART.o
+ .debug_info    0x00009871      0x23b Utils/ftoa.o
+ .debug_info    0x00009aac       0xab C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
+ .debug_info    0x00009b57       0xab C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_word.o)
+ .debug_info    0x00009c02       0xac C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
+ .debug_info    0x00009cae       0xac C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_word.o)
+ .debug_info    0x00009d5a       0xac C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_block.o)
 
-.debug_abbrev   0x00000000     0x1de6
+.debug_abbrev   0x00000000     0x1e2d
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x718 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
  .debug_abbrev  0x00000718      0x1fb BME280/bme280.o
@@ -2336,18 +2318,18 @@ END GROUP
  .debug_abbrev  0x00000e29      0x2c6 LCD/lcd.o
  .debug_abbrev  0x000010ef      0x300 main.o
  .debug_abbrev  0x000013ef      0x23f MENU/menu.o
- .debug_abbrev  0x0000162e      0x307 MENU/menu_items.o
- .debug_abbrev  0x00001935       0x6b MENU/menu_portsio.o
- .debug_abbrev  0x000019a0       0x87 SPI/spi.o
- .debug_abbrev  0x00001a27      0x1e1 UART/UART.o
- .debug_abbrev  0x00001c08      0x17a Utils/ftoa.o
- .debug_abbrev  0x00001d82       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
- .debug_abbrev  0x00001d96       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_word.o)
- .debug_abbrev  0x00001daa       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
- .debug_abbrev  0x00001dbe       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_word.o)
- .debug_abbrev  0x00001dd2       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_block.o)
+ .debug_abbrev  0x0000162e      0x34e MENU/menu_items.o
+ .debug_abbrev  0x0000197c       0x6b MENU/menu_portsio.o
+ .debug_abbrev  0x000019e7       0x87 SPI/spi.o
+ .debug_abbrev  0x00001a6e      0x1e1 UART/UART.o
+ .debug_abbrev  0x00001c4f      0x17a Utils/ftoa.o
+ .debug_abbrev  0x00001dc9       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
+ .debug_abbrev  0x00001ddd       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_word.o)
+ .debug_abbrev  0x00001df1       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
+ .debug_abbrev  0x00001e05       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_word.o)
+ .debug_abbrev  0x00001e19       0x14 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_block.o)
 
-.debug_line     0x00000000     0x47fa
+.debug_line     0x00000000     0x46ee
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x169 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
  .debug_line    0x00000169      0x463 BME280/bme280.o
@@ -2358,18 +2340,18 @@ END GROUP
  .debug_line    0x000010da      0x71d LCD/lcd.o
  .debug_line    0x000017f7      0xb0c main.o
  .debug_line    0x00002303      0x3b5 MENU/menu.o
- .debug_line    0x000026b8     0x17aa MENU/menu_items.o
- .debug_line    0x00003e62       0xb2 MENU/menu_portsio.o
- .debug_line    0x00003f14      0x10c SPI/spi.o
- .debug_line    0x00004020      0x451 UART/UART.o
- .debug_line    0x00004471       0xeb Utils/ftoa.o
- .debug_line    0x0000455c       0x7a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
- .debug_line    0x000045d6       0x67 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_word.o)
- .debug_line    0x0000463d       0xb0 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
- .debug_line    0x000046ed       0x62 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_word.o)
- .debug_line    0x0000474f       0xab C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_block.o)
+ .debug_line    0x000026b8     0x169e MENU/menu_items.o
+ .debug_line    0x00003d56       0xb2 MENU/menu_portsio.o
+ .debug_line    0x00003e08      0x10c SPI/spi.o
+ .debug_line    0x00003f14      0x451 UART/UART.o
+ .debug_line    0x00004365       0xeb Utils/ftoa.o
+ .debug_line    0x00004450       0x7a C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_byte.o)
+ .debug_line    0x000044ca       0x67 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_word.o)
+ .debug_line    0x00004531       0xb0 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_byte.o)
+ .debug_line    0x000045e1       0x62 C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eeupd_word.o)
+ .debug_line    0x00004643       0xab C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5\libatmega64a.a(eerd_block.o)
 
-.debug_frame    0x00000000     0x1464
+.debug_frame    0x00000000     0x1430
  *(.debug_frame)
  .debug_frame   0x00000000      0x1f8 BME280/bme280.o
  .debug_frame   0x000001f8       0x24 DS18B20/crc8.o
@@ -2379,13 +2361,13 @@ END GROUP
  .debug_frame   0x0000060c      0x20c LCD/lcd.o
  .debug_frame   0x00000818      0x118 main.o
  .debug_frame   0x00000930       0xc0 MENU/menu.o
- .debug_frame   0x000009f0      0x794 MENU/menu_items.o
- .debug_frame   0x00001184       0x24 MENU/menu_portsio.o
- .debug_frame   0x000011a8       0x44 SPI/spi.o
- .debug_frame   0x000011ec      0x1f4 UART/UART.o
- .debug_frame   0x000013e0       0x84 Utils/ftoa.o
+ .debug_frame   0x000009f0      0x760 MENU/menu_items.o
+ .debug_frame   0x00001150       0x24 MENU/menu_portsio.o
+ .debug_frame   0x00001174       0x44 SPI/spi.o
+ .debug_frame   0x000011b8      0x1f4 UART/UART.o
+ .debug_frame   0x000013ac       0x84 Utils/ftoa.o
 
-.debug_str      0x00000000     0x205d
+.debug_str      0x00000000     0x1ffb
  *(.debug_str)
  .debug_str     0x00000000      0x27e C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.2.209/gcc/dev/atmega64a/avr5/crtatmega64a.o
  .debug_str     0x0000027e      0x5ae BME280/bme280.o
@@ -2404,18 +2386,18 @@ END GROUP
                                 0xa88 (size before relaxing)
  .debug_str     0x00001286      0x218 MENU/menu.o
                                 0x43c (size before relaxing)
- .debug_str     0x0000149e      0x9d5 MENU/menu_items.o
-                               0x112d (size before relaxing)
- .debug_str     0x00001e73       0x33 MENU/menu_portsio.o
+ .debug_str     0x0000149e      0x973 MENU/menu_items.o
+                               0x10cb (size before relaxing)
+ .debug_str     0x00001e11       0x33 MENU/menu_portsio.o
                                 0x17e (size before relaxing)
- .debug_str     0x00001ea6        0xd SPI/spi.o
+ .debug_str     0x00001e44        0xd SPI/spi.o
                                 0x16f (size before relaxing)
- .debug_str     0x00001eb3      0x180 UART/UART.o
+ .debug_str     0x00001e51      0x180 UART/UART.o
                                 0x356 (size before relaxing)
- .debug_str     0x00002033       0x2a Utils/ftoa.o
+ .debug_str     0x00001fd1       0x2a Utils/ftoa.o
                                 0x1a5 (size before relaxing)
 
-.debug_loc      0x00000000     0x7279
+.debug_loc      0x00000000     0x6f64
  *(.debug_loc)
  .debug_loc     0x00000000      0x949 BME280/bme280.o
  .debug_loc     0x00000949      0x1c0 DS18B20/crc8.o
@@ -2425,10 +2407,10 @@ END GROUP
  .debug_loc     0x00001eca      0xa81 LCD/lcd.o
  .debug_loc     0x0000294b      0x660 main.o
  .debug_loc     0x00002fab      0x3b1 MENU/menu.o
- .debug_loc     0x0000335c     0x33ba MENU/menu_items.o
- .debug_loc     0x00006716       0x21 SPI/spi.o
- .debug_loc     0x00006737      0x770 UART/UART.o
- .debug_loc     0x00006ea7      0x3d2 Utils/ftoa.o
+ .debug_loc     0x0000335c     0x30a5 MENU/menu_items.o
+ .debug_loc     0x00006401       0x21 SPI/spi.o
+ .debug_loc     0x00006422      0x770 UART/UART.o
+ .debug_loc     0x00006b92      0x3d2 Utils/ftoa.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -2448,7 +2430,7 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000      0x750
+.debug_ranges   0x00000000      0x738
  *(.debug_ranges)
  .debug_ranges  0x00000000       0x68 BME280/bme280.o
  .debug_ranges  0x00000068       0x10 DS18B20/crc8.o
@@ -2458,11 +2440,11 @@ END GROUP
  .debug_ranges  0x000001a8       0xe8 LCD/lcd.o
  .debug_ranges  0x00000290       0x68 main.o
  .debug_ranges  0x000002f8       0xb0 MENU/menu.o
- .debug_ranges  0x000003a8      0x2a8 MENU/menu_items.o
- .debug_ranges  0x00000650       0x10 MENU/menu_portsio.o
- .debug_ranges  0x00000660       0x20 SPI/spi.o
- .debug_ranges  0x00000680       0xc0 UART/UART.o
- .debug_ranges  0x00000740       0x10 Utils/ftoa.o
+ .debug_ranges  0x000003a8      0x290 MENU/menu_items.o
+ .debug_ranges  0x00000638       0x10 MENU/menu_portsio.o
+ .debug_ranges  0x00000648       0x20 SPI/spi.o
+ .debug_ranges  0x00000668       0xc0 UART/UART.o
+ .debug_ranges  0x00000728       0x10 Utils/ftoa.o
 
 .debug_macro
  *(.debug_macro)
