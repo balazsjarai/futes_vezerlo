@@ -50,7 +50,7 @@ uint8_t ComfortForwardTemp = 30; uint8_t EEMEM eeComfortForwardTemp = 30;
 
 float BME280Temp; char BME280TempBuf[7];
 float BME280Humid; char BME280HumidBuf[6];
-uint16_t BME280TempUint;
+int16_t BME280TempInt;
 
 uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
 uint16_t DHWMinTime, DHWMaxTime;
@@ -141,7 +141,7 @@ void SensorRead()
 		case (BME280TempState):
 			BME280Temp = bme280_readTemperature();
 			ftoa(BME280TempBuf, BME280Temp, 2);
-			BME280TempUint = (uint16_t)( BME280Temp * 100);
+			BME280TempInt = (int16_t)( BME280Temp * 100);
 			if (DebugMode > 0)
 				{ uart_puts_p(PSTR("BME280 Temperature: ")); uart_puts(BME280TempBuf); uart_puts_p(PSTR("C \n")); }
 			timerstate++;
@@ -372,7 +372,7 @@ void CheckConditions()
 		if ((!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) 
 			|| (EngineeringTempActual < EngineeringTempDesired) 
 			|| (ComfortMode && LivingRoomTemp < ComfortTemp && BufferTempActual > ComfortForwardTemp)) 
-			&& (BME280TempUint <= SwitchOnOutdoorTempMin))
+			&& (BME280TempInt <= SwitchOnOutdoorTempMin))
 		{
 			if (EngineeringTempActual < EngineeringTempMin 
 				|| !(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))

@@ -36,6 +36,7 @@ bool BME280Temp_Callback(MENU_BUTTON *button, uint8_t column){
 		case MENU_CANCEL:
 			return true;
 	}
+	return false;
 }
 
 void BME280Humidity_CallbackRender(uint8_t which){
@@ -53,6 +54,7 @@ bool BME280Humidity_Callback(MENU_BUTTON *button, uint8_t column){
 		case MENU_CANCEL:
 			return true;
 	}
+	return false;
 }
 
 void SwitchOnOutdoorTempMin_CallbackRender(uint8_t which){
@@ -122,6 +124,7 @@ bool DHWTempActual_Callback(MENU_BUTTON *button, uint8_t column){
 		case MENU_CANCEL:
 			return true;
 	}
+	return false;
 }
 
 void DHWTempDesired_CallbackRender(uint8_t which){
@@ -322,6 +325,7 @@ bool BufferTempActual_Callback(MENU_BUTTON *button, uint8_t column){
 		case MENU_CANCEL:
 			return true;
 	}
+	return false;
 }
 
 void ForwardHeatTemp_CallbackRender(uint8_t which){
@@ -418,6 +422,7 @@ bool EngineeringTempActual_Callback(MENU_BUTTON *button, uint8_t column){
 		case MENU_CANCEL:
 			return true;
 	}
+	return false;
 }
 
 void EngineeringTempMin_CallbackRender(uint8_t which){
@@ -705,45 +710,22 @@ static MENU_ITEM RELAYS_submenu[RELAYS_SUBMENU_ITEMS] = {
 /*************************************************************************
  Sensors, submenu definitions
 *************************************************************************/
-void lcd(uint8_t * min, uint8_t * max)
-{
+
+void GarageTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Garázs akt hõm"));
+	lcd_gotoxy(0,1);
+	lcd_puts(GarageTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempFracBuf); lcd_puts_p(PSTR(" C"));
+	
 	char buffer[7];
 	lcd_gotoxy(0,2);
-	itoa(min, buffer, 10);
+	itoa(GarageTempMin, buffer, 10);
 	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
-	itoa(max, buffer, 10);
+	itoa(GarageTempMax, buffer, 10);
 	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
-void SensorTemp_CallbackRender(uint8_t which)
-{
-	lcd_clrscr();	
-	switch (which)
-	{
-		case 1:
-		lcd_puts_hu(PSTR("Garázs akt hõm"));
-		lcd_gotoxy(0,1);
-		lcd_puts(GarageTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempFracBuf); lcd_puts_p(PSTR(" C"));
-		lcd(&GarageTempMin, &GarageTempMax);
-		break;
-		
-		case 2:
-		lcd_puts_hu(PSTR("Nappali akt hõm"));
-		lcd_gotoxy(0,1);
-		lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
-		lcd(&LivingRoomTempMin, &LivingRoomTempMax);		
-		break;
-		
-		case 3:
-		lcd_puts_hu(PSTR("Padló akt hõm"));
-		lcd_gotoxy(0,1);
-		lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));
-		lcd(&FloorTempMin, &FloorTempMax);	
-		break;
-	}
-}
 
-void SensorTemp_Callback(MENU_BUTTON *button, uint8_t column)
-{
+bool GarageTemp_Callback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
 		case MENU_DOWN:
@@ -751,34 +733,9 @@ void SensorTemp_Callback(MENU_BUTTON *button, uint8_t column)
 		case MENU_CANCEL:
 			return true;
 	}
+
+	return false;
 }
-
-// void GarageTemp_CallbackRender(uint8_t which){
-	// lcd_clrscr();
-	// lcd_puts_hu(PSTR("Garázs akt hõm"));
-	// lcd_gotoxy(0,1);
-	// lcd_puts(GarageTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempFracBuf); lcd_puts_p(PSTR(" C"));
-	
-	// char buffer[7];
-	// lcd_gotoxy(0,2);
-	// itoa(GarageTempMin, buffer, 10);
-	// lcd_puts(buffer); lcd_puts_p(PSTR("/"));
-	// itoa(GarageTempMax, buffer, 10);
-	// lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
-// }
-
-// bool GarageTemp_Callback(MENU_BUTTON *button, uint8_t column){
-	// switch(button->role){
-		// case MENU_UP:
-		// case MENU_DOWN:
-		// case MENU_CONFIRM:
-		// case MENU_CANCEL:
-			// return true;
-	// }
-
-	// GarageTemp_CallbackRender(column);
-	// return false;
-// }
 
 void GarageSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
@@ -812,32 +769,31 @@ bool GarageSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-// void LivingRoomTemp_CallbackRender(uint8_t which){
-	// lcd_clrscr();
-	// lcd_puts_hu(PSTR("Nappali akt hõm"));
-	// lcd_gotoxy(0,1);
-	// lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
+void LivingRoomTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Nappali akt hõm"));
+	lcd_gotoxy(0,1);
+	lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
 	
-	// char buffer[7];
-	// lcd_gotoxy(0,2);
-	// itoa(LivingRoomTempMin, buffer, 10);
-	// lcd_puts(buffer); lcd_puts_p(PSTR("/"));
-	// itoa(LivingRoomTempMax, buffer, 10);
-	// lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
-// }
+	char buffer[7];
+	lcd_gotoxy(0,2);
+	itoa(LivingRoomTempMin, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	itoa(LivingRoomTempMax, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
+}
 
-// bool LivingRoomTemp_Callback(MENU_BUTTON *button, uint8_t column){
-	// switch(button->role){
-		// case MENU_UP:
-		// case MENU_DOWN:
-		// case MENU_CONFIRM:
-		// case MENU_CANCEL:
-			// return true;
-	// }
+bool LivingRoomTemp_Callback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+		case MENU_CONFIRM:
+		case MENU_CANCEL:
+			return true;
+	}
 
-	// LivingRoomTemp_CallbackRender(column);
-	// return false;
-// }
+	return false;
+}
 
 void LivingRoomSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
@@ -871,32 +827,31 @@ bool LivingRoomSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-// void FloorTemp_CallbackRender(uint8_t which){
-	// lcd_clrscr();
-	// lcd_puts_hu(PSTR("Padló akt hõm"));
-	// lcd_gotoxy(0,1);
-	// lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));
+void FloorTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Padló akt hõm"));
+	lcd_gotoxy(0,1);
+	lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));
 	
-	// char buffer[7];
-	// lcd_gotoxy(0,2);
-	// itoa(FloorTempMin, buffer, 10);
-	// lcd_puts(buffer); lcd_puts_p(PSTR("/"));
-	// itoa(FloorTempMax, buffer, 10);
-	// lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
-// }
+	char buffer[7];
+	lcd_gotoxy(0,2);
+	itoa(FloorTempMin, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	itoa(FloorTempMax, buffer, 10);
+	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
+}
 
-// bool FloorTemp_Callback(MENU_BUTTON *button, uint8_t column){
-	// switch(button->role){
-		// case MENU_UP:
-		// case MENU_DOWN:
-		// case MENU_CONFIRM:
-		// case MENU_CANCEL:
-			// return true;
-	// }
+bool FloorTemp_Callback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+		case MENU_CONFIRM:
+		case MENU_CANCEL:
+			return true;
+	}
 
-	// FloorTemp_CallbackRender(column);
-	// return false;
-// }
+	return false;
+}
 
 void FloorSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
@@ -933,15 +888,12 @@ bool FloorSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 
 # define SENSORS_SUBMENU_ITEMS  6
 static MENU_ITEM SENSORS_submenu[SENSORS_SUBMENU_ITEMS] = {
-	//{"Garázs hõm",			GarageTemp_CallbackRender,			GarageTemp_Callback, 				0, NULL},
-	{"Garázs hõm",			SensorTemp_CallbackRender,			SensorTemp_Callback, 				0, NULL},
+	{"Garázs hõm",			GarageTemp_CallbackRender,			GarageTemp_Callback, 				0, NULL},
 	{"Garázs szenzor ID",	GarageSensor_CallbackRender,		GarageSensor_ActionCallback,		0, NULL},
-	//{"Nappali hõm",			LivingRoomTemp_CallbackRender,		LivingRoomTemp_Callback,			0, NULL},
-	{"Nappali hõm",			SensorTemp_CallbackRender,			SensorTemp_Callback,			0, NULL},
+	{"Nappali hõm",			LivingRoomTemp_CallbackRender,		LivingRoomTemp_Callback,			0, NULL},
 	{"Nappali szenzor ID",	LivingRoomSensor_CallbackRender,	LivingRoomSensor_ActionCallback,	0, NULL},
-	//{"Padló hõm",			FloorTemp_CallbackRender,			FloorTemp_Callback,					0, NULL},
-	{"Padló hõm",			SensorTemp_CallbackRender,			SensorTemp_Callback,					0, NULL},
-	{"Padló szenzor ID",	FloorSensor_CallbackRender,			FloorSensor_ActionCallback,	0, NULL},
+	{"Padló hõm",			FloorTemp_CallbackRender,			FloorTemp_Callback,					0, NULL},
+	{"Padló szenzor ID",	FloorSensor_CallbackRender,			FloorSensor_ActionCallback,			0, NULL},
 };
 
 
