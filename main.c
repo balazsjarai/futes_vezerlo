@@ -188,59 +188,59 @@ void SensorRead()
 					itoa(DHWTempActual, DHWTempActualBuf, 10);
 					itoa(cel_frac_bits, DHWTempActualFracBuf, 10);
 					if (DHWTempActual > DHWTempMax)
-						DHWTempActual = DHWTempMax;
+						DHWTempMax = DHWTempActual;
 					if (DHWTempActual < DHWTempMinMeasured)
-						DHWTempActual = DHWTempMinMeasured;
+						DHWTempMinMeasured = DHWTempActual;
 				}
-				else if (i == BufferSensorID)
+				if (i == BufferSensorID)
 				{
 					BufferTempActual = cel;
 					itoa(BufferTempActual, BufferTempActualBuf, 10);
 					itoa(cel_frac_bits, BufferTempActualFracBuf, 10);
 					if (BufferTempActual > BufferTempMax)
-						BufferTempActual = BufferTempMax;
+						BufferTempMax = BufferTempActual;
 					if (BufferTempActual < BufferTempMin)
-						BufferTempActual = BufferTempMin;
+						BufferTempMin = BufferTempActual;
 				}
-				else if (i == EngineeringSensorID)
+				if (i == EngineeringSensorID)
 				{
 					EngineeringTempActual = cel;
 					itoa(EngineeringTempActual, EngineeringTempActualBuf, 10);
 					itoa(cel_frac_bits, EngineeringTempActualFracBuf, 10);
 					if (EngineeringTempActual > EngineeringTempMax)
-						EngineeringTempActual = EngineeringTempMax;
+						EngineeringTempMax = EngineeringTempActual;
 					if (EngineeringTempActual < EngineeringTempMin)
-						EngineeringTempActual = EngineeringTempMin;
+						EngineeringTempMin = EngineeringTempActual;
 				}
-				else if (i == GarageSensorID)
+				if (i == GarageSensorID)
 				{
 					GarageTemp = cel;
 					itoa(GarageTemp, GarageTempBuf, 10);
 					itoa(cel_frac_bits, GarageTempFracBuf, 10);
 					if (GarageTemp > GarageTempMax)
-						GarageTemp = GarageTempMax;
+						GarageTempMax = GarageTemp;
 					if (GarageTemp < GarageTempMin)
-						GarageTemp = GarageTempMin;
+						GarageTempMin = GarageTemp;
 				}
-				else if (i == LivingRoomSensorID)
+				if (i == LivingRoomSensorID)
 				{
 					LivingRoomTemp = cel;
 					itoa(LivingRoomTemp, LivingRoomTempBuf, 10);
 					itoa(cel_frac_bits, LivingRoomTempFracBuf, 10);
 					if (LivingRoomTemp > LivingRoomTempMax)
-						LivingRoomTemp = LivingRoomTempMax;
+						LivingRoomTempMax = LivingRoomTemp;
 					if (LivingRoomTemp < LivingRoomTempMin)
-						LivingRoomTemp = LivingRoomTempMin;
+						LivingRoomTempMin = LivingRoomTemp;
 				}
-				else if (i == FloorSensorID)
+				if (i == FloorSensorID)
 				{
 					FloorTemp = cel;
 					itoa(FloorTemp, FloorTempBuf, 10);
 					itoa(cel_frac_bits, FloorTempFracBuf, 10);
 					if (FloorTemp > FloorTempMax)
-						FloorTemp = FloorTempMax;
+						FloorTempMax = FloorTemp;
 					if (FloorTemp < FloorTempMin)
-						FloorTemp = FloorTempMin;
+						FloorTempMin = FloorTemp;
 				}
 				i++;
 			}
@@ -332,7 +332,7 @@ void CheckConditions()
 	uint16_t currTime = Hour * 100 + Minute;
 	uint8_t DHW_condition;
 	uint8_t _relays = Relays;
-	
+
 	if (ClockInitialized)
 		DHW_condition = (DHWTempActual < DHWTempDesired && (DHWMaxTime >= currTime && DHWMinTime <= currTime )) ? 1 : 0;
 	else
@@ -370,12 +370,12 @@ void CheckConditions()
 	// fûtési kör
 	if (!(Relays & (1 << DHW_VALVE_RELAY)))
 	{
-		if ((!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) 
-			|| (EngineeringTempActual < EngineeringTempDesired) 
-			|| (ComfortMode && LivingRoomTemp < ComfortTemp && BufferTempActual > ComfortForwardTemp)) 
+		if ((!(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN))
+			|| (EngineeringTempActual < EngineeringTempDesired)
+			|| (ComfortMode && LivingRoomTemp < ComfortTemp && BufferTempActual > ComfortForwardTemp))
 			&& (BME280TempInt <= SwitchOnOutdoorTempMin))
 		{
-			if (EngineeringTempActual < EngineeringTempMin 
+			if (EngineeringTempActual < EngineeringTempMin
 				|| !(THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) || !(THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
 			{
 				if (BufferTempActual < ForwardHeatTemp) // Pufferben nincs elég energia
@@ -435,7 +435,7 @@ void CheckConditions()
 				if (DebugMode > 0)
 					uart_puts_P("SECOND FLOOR deactivated\n");
 			}
-			
+
 			if (ComfortMode)
 			{
 				if (LivingRoomTemp < ComfortTemp && BufferTempActual > ComfortForwardTemp)
@@ -443,7 +443,7 @@ void CheckConditions()
 				else
 					Relays &= ~(1 << FIRST_FLOOR_VALVE);
 			}
-			
+
 		}
 		else
 		{
@@ -537,6 +537,10 @@ int main(void)
 {
 	read_from_eeprom();
 
+	SPIInit();
+	SPIWrite(3, 0x00);
+	SPIClose();
+
 	lcd_init(LCD_DISP_ON);
 	lcd_defc(magyar_betuk);
 
@@ -623,7 +627,7 @@ int main(void)
 					if (++Hour == 24)
 					{
 						Hour = 0;
-						
+
 						if (++DayName == 8)
 							DayName = 1;
 						uint8_t xDay;
@@ -638,16 +642,16 @@ int main(void)
 							case 12:
 								xDay = 32;
 								break;
-								
+
 							case 4:
 							case 6:
 							case 9:
 							case 11:
 								xDay = 31;
 								break;
-							
+
 							case 2:
-								xDay = 29;	
+								xDay = 29;
 								break;
 						}
 						if (++Day == xDay)
@@ -660,7 +664,7 @@ int main(void)
 							}
 						}
 					}
-						
+
 				}
 			}
 
