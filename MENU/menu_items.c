@@ -20,12 +20,12 @@ void BME280Temp_CallbackRender(uint8_t which){
 	lcd_gotoxy(0,1);
 	lcd_puts(BME280TempBuf);
 	
-	char buffer[7];
-	lcd_gotoxy(0,2);
-	ftoa(buffer, BME280TempMin, 2);
-	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
-	ftoa(buffer, BME280TempMax, 2);
-	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
+	//char buffer[7];
+	//lcd_gotoxy(0,2);
+	//ftoa(buffer, BME280TempMin, 2);
+	//lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	//ftoa(buffer, BME280TempMax, 2);
+	//lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
 bool BME280Temp_Callback(MENU_BUTTON *button, uint8_t column){
@@ -110,7 +110,7 @@ void DHWTempActual_CallbackRender(uint8_t which){
 	
 	char buffer[7];
 	lcd_gotoxy(0,2);
-	itoa(DHWTempMin, buffer, 10);
+	itoa(DHWTempMinMeasured, buffer, 10);
 	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
 	itoa(DHWTempMax, buffer, 10);
 	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
@@ -1060,7 +1060,7 @@ bool ClockMinute_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			break;
 		case MENU_DOWN:
 			if (--Minute == 255)
-			Minute = 59;
+				Minute = 59;
 			break;
 		case MENU_CONFIRM:
 			ClockInitialized = 1;
@@ -1116,7 +1116,7 @@ bool ClockMonth_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			break;
 		case MENU_DOWN:
 			if (--Month == 0)
-			Month = 12;
+				Month = 12;
 			break;
 		case MENU_CONFIRM:
 		case MENU_CANCEL:
@@ -1144,7 +1144,7 @@ bool ClockDay_ActionCallback(MENU_BUTTON *button, uint8_t column){
 			break;
 		case MENU_DOWN:
 			if (--Day == 0)
-			Minute = 31;
+				Day = 31;
 			break;
 		case MENU_CONFIRM:
 		case MENU_CANCEL:

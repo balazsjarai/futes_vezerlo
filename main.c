@@ -46,9 +46,9 @@ uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
 uint16_t PumpPlusTime = 2; uint16_t EEMEM eePumpPlusTime = 2;
 uint8_t ComfortMode = 0; uint8_t EEMEM eeComfortMode = 0;
 uint8_t ComfortTemp = 20; uint8_t EEMEM eeComfortTemp = 20;
-uint8_t ComfortForwardTemp = 30; uint8_t EEMEM eeComfortForwardTemp = 30;
+uint8_t ComfortForwardTemp = 28; uint8_t EEMEM eeComfortForwardTemp = 28;
 
-float BME280Temp; char BME280TempBuf[7];
+float BME280Temp; char BME280TempBuf[8];
 float BME280Humid; char BME280HumidBuf[6];
 int16_t BME280TempInt;
 
@@ -62,8 +62,8 @@ uint16_t EEMEM eeDHWMinTime = 1500;
 uint16_t EEMEM eeDHWMaxTime = 2200;
 
 uint8_t BufferTempActual; char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
-uint8_t ForwardHeatTemp = 45;
-uint8_t EEMEM eeForwardHeatTemp = 45;
+uint8_t ForwardHeatTemp = 42;
+uint8_t EEMEM eeForwardHeatTemp = 42;
 
 uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin; char EngineeringTempActualBuf[3], EngineeringTempActualFracBuf[3];
 uint8_t EEMEM eeEngineeringTempDesired = 10;
@@ -79,7 +79,7 @@ uint8_t FloorTemp;
 char FloorTempBuf[3], FloorTempFracBuf[3];
 
 float BME280TempMin, BME280TempMax;
-uint8_t DHWTempMin, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMin, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
+uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMin, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
 
 uint16_t SwitchOnOutdoorTempMin;
 uint16_t EEMEM eeSwitchOnOutdoorTempMin = 2300;
@@ -141,6 +141,7 @@ void SensorRead()
 		case (BME280TempState):
 			BME280Temp = bme280_readTemperature();
 			ftoa(BME280TempBuf, BME280Temp, 2);
+			//dtostrf(BME280Temp, 4, 2, BME280TempBuf);
 			BME280TempInt = (int16_t)( BME280Temp * 100);
 			if (DebugMode > 0)
 				{ uart_puts_p(PSTR("BME280 Temperature: ")); uart_puts(BME280TempBuf); uart_puts_p(PSTR("C \n")); }
@@ -188,8 +189,8 @@ void SensorRead()
 					itoa(cel_frac_bits, DHWTempActualFracBuf, 10);
 					if (DHWTempActual > DHWTempMax)
 						DHWTempActual = DHWTempMax;
-					if (DHWTempActual < DHWTempMin)
-						DHWTempActual = DHWTempMin;
+					if (DHWTempActual < DHWTempMinMeasured)
+						DHWTempActual = DHWTempMinMeasured;
 				}
 				else if (i == BufferSensorID)
 				{

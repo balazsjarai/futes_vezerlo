@@ -78,7 +78,7 @@ uint8_t ow_reset(void)
 	OW_DIR_OUT(); // pull OW-Pin low for 480us
 	
 	delay_us(480);
-	
+		
 	sreg=SREG;
 	cli();
 	
