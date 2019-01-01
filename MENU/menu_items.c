@@ -408,7 +408,7 @@ void EngineeringTempActual_CallbackRender(uint8_t which){
 	
 	char buffer[7];
 	lcd_gotoxy(0,2);
-	itoa(EngineeringTempMin, buffer, 10);
+	itoa(EngineeringTempMinMeasured, buffer, 10);
 	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
 	itoa(EngineeringTempMax, buffer, 10);
 	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));

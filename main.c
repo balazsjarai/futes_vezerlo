@@ -7,7 +7,7 @@
 // több kijelzés -> OK
 // óra -> belsõ idõzítõvel -> OK
 // külsõ hõmérõ hiba
-// elõzõ / aktuális állapot -> kevesebb frissítés
+// elõzõ / aktuális állapot -> kevesebb frissítés -> nem jó, mert beragadhat egy-egy relé
 // dátum -> OK
 // fûtés napközben, ha elegendõ a puffer energiája, de termosztát nem kér -> OK
 // szabadság / távollét beállítás
@@ -15,6 +15,7 @@
 // termosztát funkció
 // osztó termoszelep vezérlés
 // min/max hõmérséklet regisztrálás -> OK
+// DS hõmérõ hiba -> OK
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -55,31 +56,31 @@ int16_t BME280TempInt;
 uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
 uint16_t DHWMinTime, DHWMaxTime;
 
-char DHWTempActualBuf[3], DHWTempActualFracBuf[3];
+char DHWTempActualBuf[4], DHWTempActualFracBuf[3];
 uint8_t EEMEM eeDHWTempDesired = 50;
 uint8_t EEMEM eeDHWTempMin = 40;
 uint16_t EEMEM eeDHWMinTime = 1500;
 uint16_t EEMEM eeDHWMaxTime = 2200;
 
-uint8_t BufferTempActual; char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
+uint8_t BufferTempActual; char BufferTempActualBuf[4], BufferTempActualFracBuf[3];
 uint8_t ForwardHeatTemp = 42;
 uint8_t EEMEM eeForwardHeatTemp = 42;
 
-uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin; char EngineeringTempActualBuf[3], EngineeringTempActualFracBuf[3];
+uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin; char EngineeringTempActualBuf[4], EngineeringTempActualFracBuf[3];
 uint8_t EEMEM eeEngineeringTempDesired = 10;
 uint8_t EEMEM eeEngineeringTempMin = 5;
 
 uint8_t GarageTemp;
-char GarageTempBuf[3], GarageTempFracBuf[3];
+char GarageTempBuf[4], GarageTempFracBuf[3];
 
 uint8_t LivingRoomTemp;
-char LivingRoomTempBuf[3], LivingRoomTempFracBuf[3];
+char LivingRoomTempBuf[4], LivingRoomTempFracBuf[3];
 
 uint8_t FloorTemp;
-char FloorTempBuf[3], FloorTempFracBuf[3];
+char FloorTempBuf[4], FloorTempFracBuf[3];
 
 float BME280TempMin, BME280TempMax;
-uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMin, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
+uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMinMeasured, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
 
 uint16_t SwitchOnOutdoorTempMin;
 uint16_t EEMEM eeSwitchOnOutdoorTempMin = 2300;
@@ -162,20 +163,14 @@ void SensorRead()
 
 		case (DS18B20State1):
 			ow_set_bus(&DS18B20_PIN,&DS18B20_PORT,&DS18B20_DDR,DS18B20_PINx);
-			//for ( i=0; i<nSensors; i++ )
-			//{
-			//	DS18X20_start_meas(DS18X20_POWER_EXTERN,&gSensorIDs[i][0]);
-			//}
 			DS18X20_start_meas(DS18X20_POWER_EXTERN,NULL);
 			timerstate++;
 		break;
 
 		case (DS18B20State2):
-
 			ow_set_bus(&DS18B20_PIN,&DS18B20_PORT,&DS18B20_DDR,DS18B20_PINx);
 			i = 0;
 			while (i < nSensors)
-			//for ( i=0; i<nSensors; i++ )
 			{
 				if ( DS18X20_read_meas( &gSensorIDs[i][0], &subzero, &cel, &cel_frac_bits) == DS18X20_OK )
 				{
@@ -185,62 +180,92 @@ void SensorRead()
 				if (i == DHWSensorID)
 				{
 					DHWTempActual = cel;
-					itoa(DHWTempActual, DHWTempActualBuf, 10);
-					itoa(cel_frac_bits, DHWTempActualFracBuf, 10);
+					utoa(DHWTempActual, DHWTempActualBuf, 10);
+					utoa(cel_frac_bits, DHWTempActualFracBuf, 10);
 					if (DHWTempActual > DHWTempMax)
 						DHWTempMax = DHWTempActual;
 					if (DHWTempActual < DHWTempMinMeasured)
 						DHWTempMinMeasured = DHWTempActual;
+					if (cel > 135)
+					{
+						strcpy(DHWTempActualBuf, PSTR("!!"));
+						strcpy(DHWTempActualFracBuf, PSTR("!"));
+					}
 				}
 				if (i == BufferSensorID)
 				{
 					BufferTempActual = cel;
-					itoa(BufferTempActual, BufferTempActualBuf, 10);
-					itoa(cel_frac_bits, BufferTempActualFracBuf, 10);
+					utoa(BufferTempActual, BufferTempActualBuf, 10);
+					utoa(cel_frac_bits, BufferTempActualFracBuf, 10);
 					if (BufferTempActual > BufferTempMax)
 						BufferTempMax = BufferTempActual;
 					if (BufferTempActual < BufferTempMin)
 						BufferTempMin = BufferTempActual;
+					if (cel > 135)
+					{
+						strcpy(BufferTempActualBuf, PSTR("!!"));
+						strcpy(BufferTempActualFracBuf, PSTR("!"));
+					}
 				}
 				if (i == EngineeringSensorID)
 				{
 					EngineeringTempActual = cel;
-					itoa(EngineeringTempActual, EngineeringTempActualBuf, 10);
-					itoa(cel_frac_bits, EngineeringTempActualFracBuf, 10);
+					utoa(EngineeringTempActual, EngineeringTempActualBuf, 10);
+					utoa(cel_frac_bits, EngineeringTempActualFracBuf, 10);
 					if (EngineeringTempActual > EngineeringTempMax)
 						EngineeringTempMax = EngineeringTempActual;
-					if (EngineeringTempActual < EngineeringTempMin)
-						EngineeringTempMin = EngineeringTempActual;
+					if (EngineeringTempActual < EngineeringTempMinMeasured)
+						EngineeringTempMinMeasured = EngineeringTempActual;
+					if (cel > 135)
+					{
+						strcpy(EngineeringTempActualBuf, PSTR("!!"));
+						strcpy(EngineeringTempActualFracBuf, PSTR("!"));
+					}
 				}
 				if (i == GarageSensorID)
 				{
 					GarageTemp = cel;
-					itoa(GarageTemp, GarageTempBuf, 10);
-					itoa(cel_frac_bits, GarageTempFracBuf, 10);
+					utoa(GarageTemp, GarageTempBuf, 10);
+					utoa(cel_frac_bits, GarageTempFracBuf, 10);
 					if (GarageTemp > GarageTempMax)
 						GarageTempMax = GarageTemp;
 					if (GarageTemp < GarageTempMin)
 						GarageTempMin = GarageTemp;
+					if (cel > 135)
+					{
+						strcpy(GarageTempBuf, PSTR("!!"));
+						strcpy(GarageTempFracBuf, PSTR("!"));
+					}
 				}
 				if (i == LivingRoomSensorID)
 				{
 					LivingRoomTemp = cel;
-					itoa(LivingRoomTemp, LivingRoomTempBuf, 10);
-					itoa(cel_frac_bits, LivingRoomTempFracBuf, 10);
+					utoa(LivingRoomTemp, LivingRoomTempBuf, 10);
+					utoa(cel_frac_bits, LivingRoomTempFracBuf, 10);
 					if (LivingRoomTemp > LivingRoomTempMax)
 						LivingRoomTempMax = LivingRoomTemp;
 					if (LivingRoomTemp < LivingRoomTempMin)
 						LivingRoomTempMin = LivingRoomTemp;
+					if (cel > 135)
+					{
+						strcpy(LivingRoomTempBuf, PSTR("!!"));
+						strcpy(LivingRoomTempFracBuf, PSTR("!"));
+					}
 				}
 				if (i == FloorSensorID)
 				{
 					FloorTemp = cel;
-					itoa(FloorTemp, FloorTempBuf, 10);
-					itoa(cel_frac_bits, FloorTempFracBuf, 10);
+					utoa(FloorTemp, FloorTempBuf, 10);
+					utoa(cel_frac_bits, FloorTempFracBuf, 10);
 					if (FloorTemp > FloorTempMax)
 						FloorTempMax = FloorTemp;
 					if (FloorTemp < FloorTempMin)
 						FloorTempMin = FloorTemp;
+					if (cel > 135)
+					{
+						strcpy(FloorTempBuf, PSTR("!!"));
+						strcpy(FloorTempFracBuf, PSTR("!"));
+					}
 				}
 				i++;
 			}
@@ -331,7 +356,6 @@ void CheckConditions()
 	static uint16_t pumpplustime = 0;
 	uint16_t currTime = Hour * 100 + Minute;
 	uint8_t DHW_condition;
-	uint8_t _relays = Relays;
 
 	if (ClockInitialized)
 		DHW_condition = (DHWTempActual < DHWTempDesired && (DHWMaxTime >= currTime && DHWMinTime <= currTime )) ? 1 : 0;
@@ -458,8 +482,7 @@ void CheckConditions()
 		}
 	}
 
-	if (DebugMode < 2 && _relays != Relays)
-		SwitchRelays();
+	SwitchRelays();
 }
 
 uint8_t search_sensors(void)
@@ -493,7 +516,6 @@ uint8_t search_sensors(void)
 		for (i=0;i<OW_ROMCODE_SIZE;i++)
 		{
 			gSensorIDs[nSensors][i]=id[i];
-			//uart_puts_P("ID: "); uart_puti(id[i]); uart_puts_P("\n");
 		}
 
 		nSensors++;
@@ -523,6 +545,7 @@ void read_from_eeprom()
 	EngineeringTempMin = eeprom_read_byte(&eeEngineeringTempMin);
 	GarageSensorID = eeprom_read_byte(&eeGarageSensorID);
 	LivingRoomSensorID = eeprom_read_byte(&eeLivingRoomSensorID);
+	FloorSensorID = eeprom_read_byte(&eeFloorSensorID);
 	SwitchOnOutdoorTempMin = eeprom_read_word(&eeSwitchOnOutdoorTempMin);
 	DebugMode = eeprom_read_byte(&eeDebugMode);
 	MenuTimer = eeprom_read_byte(&eeMenuTimer);

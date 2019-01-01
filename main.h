@@ -3,14 +3,14 @@
 
 #include <stdlib.h>
 
-typedef enum {
+enum states {
 	BME280TempState,
 	BME280HumidState,
 	DS18B20State1,
 	DS18B20State2
-} states;
+};
 
-typedef enum {
+enum daynames {
 	MONDAY,
 	TUESDAY,
 	WEDNESDAY,
@@ -18,7 +18,7 @@ typedef enum {
 	FRIDAY,
 	SATURDAY,
 	SUNDAY
-} daynames;
+};
 
 //#define SOLAR
 //#define BUFFER
@@ -69,28 +69,28 @@ extern uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
 extern uint16_t DHWMinTime, DHWMaxTime;
 extern uint8_t eeDHWTempDesired, eeDHWTempMin;
 extern uint16_t eeDHWMinTime, eeDHWMaxTime;
-extern char DHWTempActualBuf[3], DHWTempActualFracBuf[3];
+extern char DHWTempActualBuf[4], DHWTempActualFracBuf[3];
 
 extern uint8_t BufferTempActual;
 extern uint8_t ForwardHeatTemp;
 extern uint8_t eeForwardHeatTemp;
-extern char BufferTempActualBuf[3], BufferTempActualFracBuf[3];
+extern char BufferTempActualBuf[4], BufferTempActualFracBuf[3];
 
 extern uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin;
 extern uint8_t eeEngineeringTempDesired, eeEngineeringTempMin;
-extern char EngineeringTempActualBuf[3], EngineeringTempActualFracBuf[3];
+extern char EngineeringTempActualBuf[4], EngineeringTempActualFracBuf[3];
 
 extern uint8_t GarageTemp;
-extern char GarageTempBuf[3], GarageTempFracBuf[3];
+extern char GarageTempBuf[4], GarageTempFracBuf[3];
 
 extern uint8_t LivingRoomTemp;
-extern char LivingRoomTempBuf[3], LivingRoomTempFracBuf[3];
+extern char LivingRoomTempBuf[4], LivingRoomTempFracBuf[3];
 
 extern uint8_t FloorTemp;
-extern char FloorTempBuf[3], FloorTempFracBuf[3];
+extern char FloorTempBuf[4], FloorTempFracBuf[3];
 
 extern float BME280TempMin, BME280TempMax;
-extern uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMin, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
+extern uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMinMeasured, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
 
 extern uint16_t SwitchOnOutdoorTempMin;
 extern uint16_t eeSwitchOnOutdoorTempMin;
