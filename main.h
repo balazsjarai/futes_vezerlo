@@ -44,7 +44,7 @@ enum daynames {
 #define FIRST_THERMO_PIN	PINE6
 #define SECOND_THERMO_PIN	PINE7
 
-#define DS18B20_MAX_NO		6
+#define DS18B20_MAX_NO		8
 #define DS18B20_PORT		PORTB
 #define DS18B20_DDR			DDRB
 #define DS18B20_PIN			PINB
@@ -89,6 +89,12 @@ extern char LivingRoomTempBuf[4], LivingRoomTempFracBuf[3];
 extern uint8_t FloorTemp;
 extern char FloorTempBuf[4], FloorTempFracBuf[3];
 
+extern uint8_t ForwardTemp;
+extern char ForwardTempBuf[4], ForwardTempFracBuf[3];
+
+extern uint8_t ReturnTemp;
+extern char ReturnTempBuf[4], ReturnTempFracBuf[3];
+
 extern float BME280TempMin, BME280TempMax;
 extern uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMinMeasured, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
 
@@ -112,6 +118,12 @@ extern uint8_t eeLivingRoomSensorID;
 
 extern uint8_t FloorSensorID;
 extern uint8_t eeFloorSensorID;
+
+extern uint8_t ForwardTempSensorID;
+extern uint8_t eeForwardTempSensorID;
+
+extern uint8_t ReturnTempSensorID ;
+extern uint8_t eeReturnTempSensorID;
 
 extern unsigned char Relays;
 

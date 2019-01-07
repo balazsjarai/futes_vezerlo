@@ -79,6 +79,12 @@ char LivingRoomTempBuf[4], LivingRoomTempFracBuf[3];
 uint8_t FloorTemp;
 char FloorTempBuf[4], FloorTempFracBuf[3];
 
+uint8_t ForwardTemp;
+char ForwardTempBuf[4], ForwardTempFracBuf[3];
+
+uint8_t ReturnTemp;
+char ReturnTempBuf[4], ReturnTempFracBuf[3];
+
 float BME280TempMin, BME280TempMax;
 uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMinMeasured, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
 
@@ -105,13 +111,19 @@ uint8_t EEMEM eeLivingRoomSensorID = 4;
 uint8_t FloorSensorID = 5;
 uint8_t EEMEM eeFloorSensorID = 5;
 
+uint8_t ForwardTempSensorID = 6;
+uint8_t EEMEM eeForwardTempSensorID = 6;
+
+uint8_t ReturnTempSensorID = 7;
+uint8_t EEMEM eeReturnTempSensorID = 7;
+
 uint8_t nSensors;
 uint8_t gSensorIDs[DS18B20_MAX_NO][OW_ROMCODE_SIZE];
 
 uint8_t Hour = 0, Minute = 0, Seconds = 0;
 uint8_t ClockInitialized = 0;
 
-uint16_t Year = 2018;
+uint16_t Year = 2019;
 uint8_t Month = 1, Day = 1, DayName = MONDAY;
 
 
@@ -134,7 +146,7 @@ void SensorRead()
 	//static uint8_t timer_state = BME280_temp_state;
 	uint8_t i;
 	uint8_t subzero, cel, cel_frac_bits;
-	static uint8_t display = 15;
+	static uint8_t display = 20;
 	static uint8_t timerstate = 0;
 
 	switch (timerstate)
@@ -267,6 +279,18 @@ void SensorRead()
 						strcpy(FloorTempFracBuf, PSTR("!"));
 					}
 				}
+				if (i == ForwardTempSensorID)
+				{
+					ForwardTemp = cel;
+					utoa(ForwardTemp, ForwardTempBuf, 10);
+					utoa(cel_frac_bits, ForwardTempFracBuf, 10);
+				}
+				if (i == ReturnTempSensorID)
+				{
+					ReturnTemp = cel;
+					utoa(ReturnTemp, ReturnTempBuf, 10);
+					utoa(cel_frac_bits, ReturnTempFracBuf, 10);
+				}
 				i++;
 			}
 
@@ -281,9 +305,9 @@ void SensorRead()
 	if (MenuTimer == 0)
 	{
 		lcd_clrscr();
-		if (display > 10)
+		if (display > 15)
 		{
-			lcd_puts_p(PSTR("HMV ")); lcd_puts(DHWTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(DHWTempActualFracBuf); lcd_puts_p(PSTR(" C")); lcd_gotoxy(15,0); lcd_puti(Hour); lcd_puts_p(PSTR(":")); lcd_puti(Minute);
+			lcd_puts_p(PSTR("HMV ")); lcd_puts(DHWTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(DHWTempActualFracBuf); lcd_puts_p(PSTR(" C")); 
 			lcd_gotoxy(0,1);
 			lcd_puts_p(PSTR("Puffer ")); lcd_puts(BufferTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(BufferTempActualFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,2);
@@ -291,13 +315,21 @@ void SensorRead()
 			lcd_gotoxy(0,3);
 			lcd_puts_hu(PSTR("Külsõ ")); lcd_puts(BME280TempBuf); lcd_puts_p(PSTR(" C"));
 		}
-		else if (display <= 10 && display > 5)
+		else if (display <= 15 && display > 10)
 		{
 			lcd_puts_hu(PSTR("Garázs ")); lcd_puts(GarageTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,1);
 			lcd_puts_p(PSTR("Nappali ")); lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,2);
-			lcd_puts_hu(PSTR("Padló ")); lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));
+			lcd_puts_hu(PSTR("Padló ")); lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));			
+		}
+		else if (display <= 15 && display > 10)
+		{
+			lcd_puts_hu(PSTR("Elõremenõ ")); lcd_puts(ForwardTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(ForwardTempFracBuf); lcd_puts_p(PSTR(" C"));
+			lcd_gotoxy(0,1);
+			lcd_puts_p(PSTR("Visszatérõ ")); lcd_puts(ReturnTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(ReturnTempFracBuf); lcd_puts_p(PSTR(" C"));
+			lcd_gotoxy(0,2);
+			lcd_puti(Hour); lcd_puts_p(PSTR(":")); lcd_puti(Minute);
 			lcd_gotoxy(0,3);
 			lcd_puti(Year); lcd_puts_p(PSTR(".")); lcd_puti(Month); lcd_puts_p(PSTR(".")); lcd_puti(Day);
 			lcd_gotoxy(12,3);
@@ -337,7 +369,7 @@ void SensorRead()
 			lcd_puts_hu(PSTR("Föld/Emel ")); lcd_putbit(Relays, FIRST_FLOOR_VALVE); lcd_putbit(Relays, SECOND_FLOOR_VALVE);
 		}
 		if (--display == 0)
-			display = 15;
+			display = 20;
 		//display--;
 		//lcd_puts_hu(PSTR("Relek: ")); lcd_putbyte_bin(Relays);
 	}
@@ -424,7 +456,7 @@ void CheckConditions()
 					uart_puts_P("GAS, DHW deactivated; BUFFER relay deactivated\n");
 				}
 			}
-			else if (LivingRoomTemp < ComfortTemp && BufferTempActual > ComfortForwardTemp && (THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) && (THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)))
+			else if (LivingRoomTemp < ComfortTemp && BufferTempActual > ComfortForwardTemp && (THERMOSTAT_PIN & (1 << FIRST_THERMO_PIN)) && (THERMOSTAT_PIN & (1 << SECOND_THERMO_PIN)) && ForwardTemp < BufferTempActual)
 			{
 				if (!pumpplustime) // ha átkapcsol gázról pufferre, a gáz még utókeringetne
 				{

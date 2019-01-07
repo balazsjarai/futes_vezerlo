@@ -725,7 +725,7 @@ void GarageTemp_CallbackRender(uint8_t which){
 	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
-bool GarageTemp_Callback(MENU_BUTTON *button, uint8_t column){
+bool Universal_Callback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
 		case MENU_DOWN:
@@ -783,18 +783,6 @@ void LivingRoomTemp_CallbackRender(uint8_t which){
 	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
-bool LivingRoomTemp_Callback(MENU_BUTTON *button, uint8_t column){
-	switch(button->role){
-		case MENU_UP:
-		case MENU_DOWN:
-		case MENU_CONFIRM:
-		case MENU_CANCEL:
-			return true;
-	}
-
-	return false;
-}
-
 void LivingRoomSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Nappali szenzor ID"));
@@ -841,18 +829,6 @@ void FloorTemp_CallbackRender(uint8_t which){
 	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
-bool FloorTemp_Callback(MENU_BUTTON *button, uint8_t column){
-	switch(button->role){
-		case MENU_UP:
-		case MENU_DOWN:
-		case MENU_CONFIRM:
-		case MENU_CANCEL:
-			return true;
-	}
-
-	return false;
-}
-
 void FloorSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Padló szenzor ID"));
@@ -885,15 +861,97 @@ bool FloorSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
+void ForwardTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Elõre akt hõm"));
+	lcd_gotoxy(0,1);
+	lcd_puts(ForwardTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(ForwardTempFracBuf); lcd_puts_p(PSTR(" C"));
+}
 
-# define SENSORS_SUBMENU_ITEMS  6
+void ForwardSensor_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Elõre szenzor ID"));
+	lcd_gotoxy(0,1);
+	char buf[4];
+	itoa(ForwardTempSensorID, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ForwardSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			ForwardTempSensorID++;
+			if (ForwardTempSensorID == nSensors)
+				ForwardTempSensorID = 0;
+			break;
+		case MENU_DOWN:
+			ForwardTempSensorID--;
+			if (ForwardTempSensorID == 255)
+				ForwardTempSensorID = nSensors - 1;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeForwardTempSensorID, ForwardTempSensorID);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	ForwardSensor_CallbackRender(column);
+	return false;
+}
+
+void ReturnTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Visszatérõ akt hõm"));
+	lcd_gotoxy(0,1);
+	lcd_puts(ReturnTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(ReturnTempFracBuf); lcd_puts_p(PSTR(" C"));
+}
+
+void ReturnSensor_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Vissza szenzor ID"));
+	lcd_gotoxy(0,1);
+	char buf[4];
+	itoa(ReturnTempSensorID, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ReturnSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			ReturnTempSensorID++;
+			if (ReturnTempSensorID == nSensors)
+				ReturnTempSensorID = 0;
+			break;
+		case MENU_DOWN:
+			ReturnTempSensorID--;
+			if (ReturnTempSensorID == 255)
+				ReturnTempSensorID = nSensors - 1;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeReturnTempSensorID, ReturnTempSensorID);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	ReturnSensor_CallbackRender(column);
+	return false;
+}
+
+
+# define SENSORS_SUBMENU_ITEMS  10
 static MENU_ITEM SENSORS_submenu[SENSORS_SUBMENU_ITEMS] = {
-	{"Garázs hõm",			GarageTemp_CallbackRender,			GarageTemp_Callback, 				0, NULL},
+	{"Garázs hõm",			GarageTemp_CallbackRender,			Universal_Callback, 				0, NULL},
 	{"Garázs szenzor ID",	GarageSensor_CallbackRender,		GarageSensor_ActionCallback,		0, NULL},
-	{"Nappali hõm",			LivingRoomTemp_CallbackRender,		LivingRoomTemp_Callback,			0, NULL},
+	{"Nappali hõm",			LivingRoomTemp_CallbackRender,		Universal_Callback,					0, NULL},
 	{"Nappali szenzor ID",	LivingRoomSensor_CallbackRender,	LivingRoomSensor_ActionCallback,	0, NULL},
-	{"Padló hõm",			FloorTemp_CallbackRender,			FloorTemp_Callback,					0, NULL},
+	{"Padló hõm",			FloorTemp_CallbackRender,			Universal_Callback,					0, NULL},
 	{"Padló szenzor ID",	FloorSensor_CallbackRender,			FloorSensor_ActionCallback,			0, NULL},
+	{"Elõremenõ hõm",		ForwardTemp_CallbackRender,			Universal_Callback,					0, NULL},
+	{"Elõre szenzor ID",	ForwardSensor_CallbackRender,		ForwardSensor_ActionCallback,		0, NULL},
+	{"Visszatérõ hõm",		ReturnTemp_CallbackRender,			Universal_Callback,					0, NULL},
+	{"Vissza szenzor ID",	ReturnSensor_CallbackRender,		ReturnSensor_ActionCallback,		0, NULL},
 };
 
 
