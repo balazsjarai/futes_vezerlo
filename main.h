@@ -24,6 +24,9 @@ enum daynames {
 //#define BUFFER
 
 #define UART_BAUD_RATE      9600
+#define CHAR_NEWLINE 		'\n'
+#define CHAR_RETURN 		'\r'
+#define RETURN_NEWLINE 		"\r\n"
 
 #define RELAYS_CS_PIN		1
 

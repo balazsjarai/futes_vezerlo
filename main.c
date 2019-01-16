@@ -16,6 +16,7 @@
 // osztó termoszelep vezérlés
 // min/max hõmérséklet regisztrálás -> OK
 // DS hõmérõ hiba -> OK
+// UART érték lekérdezés/beírás ->
 
 #include <avr/io.h>
 #include <stdlib.h>
@@ -40,6 +41,9 @@
 #include "DS18B20/onewire.h"
 
 volatile uint8_t TimerElapsed = 0;
+
+char uartdata_in[15];
+unsigned char uartdata_count;
 
 uint8_t DebugMode = 0; uint8_t EEMEM eeDebugMode = 0;
 uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
@@ -200,8 +204,8 @@ void SensorRead()
 						DHWTempMinMeasured = DHWTempActual;
 					if (cel > 135)
 					{
-						strcpy(DHWTempActualBuf, PSTR("!!"));
-						strcpy(DHWTempActualFracBuf, PSTR("!"));
+						strcpy_P(DHWTempActualBuf, PSTR("!!"));
+						strcpy_P(DHWTempActualFracBuf, PSTR("!"));
 					}
 				}
 				if (i == BufferSensorID)
@@ -215,8 +219,8 @@ void SensorRead()
 						BufferTempMin = BufferTempActual;
 					if (cel > 135)
 					{
-						strcpy(BufferTempActualBuf, PSTR("!!"));
-						strcpy(BufferTempActualFracBuf, PSTR("!"));
+						strcpy_P(BufferTempActualBuf, PSTR("!!"));
+						strcpy_P(BufferTempActualFracBuf, PSTR("!"));
 					}
 				}
 				if (i == EngineeringSensorID)
@@ -230,8 +234,8 @@ void SensorRead()
 						EngineeringTempMinMeasured = EngineeringTempActual;
 					if (cel > 135)
 					{
-						strcpy(EngineeringTempActualBuf, PSTR("!!"));
-						strcpy(EngineeringTempActualFracBuf, PSTR("!"));
+						strcpy_P(EngineeringTempActualBuf, PSTR("!!"));
+						strcpy_P(EngineeringTempActualFracBuf, PSTR("!"));
 					}
 				}
 				if (i == GarageSensorID)
@@ -245,8 +249,8 @@ void SensorRead()
 						GarageTempMin = GarageTemp;
 					if (cel > 135)
 					{
-						strcpy(GarageTempBuf, PSTR("!!"));
-						strcpy(GarageTempFracBuf, PSTR("!"));
+						strcpy_P(GarageTempBuf, PSTR("!!"));
+						strcpy_P(GarageTempFracBuf, PSTR("!"));
 					}
 				}
 				if (i == LivingRoomSensorID)
@@ -260,8 +264,8 @@ void SensorRead()
 						LivingRoomTempMin = LivingRoomTemp;
 					if (cel > 135)
 					{
-						strcpy(LivingRoomTempBuf, PSTR("!!"));
-						strcpy(LivingRoomTempFracBuf, PSTR("!"));
+						strcpy_P(LivingRoomTempBuf, PSTR("!!"));
+						strcpy_P(LivingRoomTempFracBuf, PSTR("!"));
 					}
 				}
 				if (i == FloorSensorID)
@@ -275,8 +279,8 @@ void SensorRead()
 						FloorTempMin = FloorTemp;
 					if (cel > 135)
 					{
-						strcpy(FloorTempBuf, PSTR("!!"));
-						strcpy(FloorTempFracBuf, PSTR("!"));
+						strcpy_P(FloorTempBuf, PSTR("!!"));
+						strcpy_P(FloorTempFracBuf, PSTR("!"));
 					}
 				}
 				if (i == ForwardTempSensorID)
@@ -590,6 +594,7 @@ void read_from_eeprom()
 
 int main(void)
 {
+	char readchar;
 	read_from_eeprom();
 
 	SPIInit();
@@ -730,6 +735,100 @@ int main(void)
 			TimerElapsed = 0;
 		}
 		menuPollButtons();
+		
+		if (DebugMode > 0)
+		{
+			readchar = uart_getc();
+			if (readchar != UART_NO_DATA)
+			{
+				if (readchar != CHAR_RETURN)
+				{
+					uartdata_in[uartdata_count++] = readchar;
+				}
+				else
+				{
+					uartdata_in[uartdata_count] = CHAR_RETURN;
+
+					char *pch;
+					char *pch2;
+					char cmdvalue[10];
+					char cmdvalue2[5];
+					pch = strchr(uartdata_in, ';');
+					pch2 = strchr(cmdvalue, ',');
+					
+					if (pch2 == NULL)
+						strcpy(cmdvalue, pch + 1);
+					else
+					{
+						strlcpy(cmdvalue, pch, strlen(pch2));
+						strcpy(cmdvalue2, pch2 + 1);
+					}
+					
+					if (uartdata_in[0] == 'R') // read from EEPROM
+					{
+						if (uartdata_in[1] == '1')
+						{
+							uart_putc(eeprom_read_byte((uint8_t*) atoi(cmdvalue)));
+						}
+						else if (uartdata_in[1] == '2')
+						{
+							char readvalue[6];
+							itoa(eeprom_read_word((uint16_t*) atoi(cmdvalue)), readvalue, 10);
+							uart_puts(readvalue);
+						}
+					}
+					else if (uartdata_in[0] == 'S') //read sensor
+					{
+						uint8_t sensorID;
+						sensorID = atoi(pch);
+						switch (sensorID)
+						{
+							case 'D':
+								uart_puts(DHWTempActualBuf); uart_puts(DHWTempActualFracBuf);
+								break;
+							case 'B':
+								uart_puts(BufferTempActualBuf); uart_puts(BufferTempActualFracBuf);
+								break;
+							case 'E':
+								uart_puts(EngineeringTempActualBuf); uart_puts(EngineeringTempActualFracBuf);
+								break;								
+							case 'G':
+								uart_puts(GarageTempBuf); uart_puts(GarageTempFracBuf);
+								break;
+							case 'L':
+								uart_puts(LivingRoomTempBuf); uart_puts(LivingRoomTempFracBuf);
+								break;
+							case 'F':
+								uart_puts(ForwardTempBuf); uart_puts(ForwardTempFracBuf);
+								break;
+							case 'R':
+								uart_puts(ReturnTempBuf); uart_puts(ReturnTempFracBuf);
+								break;
+							case 'O':
+								uart_puts(BME280TempBuf);
+								break;
+						}
+					}	
+					else if (uartdata_in[0] == 'W') // write to EEPROM
+					{					
+						if (uartdata_in[1] == '1')
+						{
+							eeprom_update_byte((uint8_t*) atoi(cmdvalue), atoi(cmdvalue2));
+						}
+						else if (uartdata_in[1] == '2')
+						{
+							eeprom_update_word((uint16_t*) atoi(cmdvalue), atoi(cmdvalue2));
+						}
+					}					
+					else if (uartdata_in[0] == 'U') // update
+					{
+						read_from_eeprom();
+					}
+					uartdata_count = 0;
+				}
+			}
+		}
+		
 	}
 	uart_puts_p(PSTR("Fatal error, program end\n"));
 }
