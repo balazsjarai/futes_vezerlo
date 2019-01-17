@@ -62,7 +62,7 @@ extern uint8_t MenuTimer; extern uint8_t eeMenuTimer;
 extern uint8_t LCDBackLight; extern uint8_t eeLCDBackLight;
 extern uint16_t PumpPlusTime; extern uint16_t eePumpPlusTime;
 extern uint8_t ComfortMode; extern uint8_t eeComfortMode;
-extern uint8_t ComfortTemp; extern uint8_t eeComfortTemp;
+extern uint16_t ComfortTemp; extern uint16_t eeComfortTemp;
 extern uint8_t ComfortForwardTemp; extern uint8_t eeComfortForwardTemp;
 
 extern float BME280Temp, BME280Humid;
@@ -86,7 +86,7 @@ extern char EngineeringTempActualBuf[4], EngineeringTempActualFracBuf[3];
 extern uint8_t GarageTemp;
 extern char GarageTempBuf[4], GarageTempFracBuf[3];
 
-extern uint8_t LivingRoomTemp;
+extern uint16_t LivingRoomTemp;
 extern char LivingRoomTempBuf[4], LivingRoomTempFracBuf[3];
 
 extern uint8_t FloorTemp;
@@ -99,7 +99,8 @@ extern uint8_t ReturnTemp;
 extern char ReturnTempBuf[4], ReturnTempFracBuf[3];
 
 extern float BME280TempMin, BME280TempMax;
-extern uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMinMeasured, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
+extern uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMinMeasured, EngineeringTempMax, GarageTempMin, GarageTempMax, FloorTempMin, FloorTempMax;
+extern uint16_t LivingRoomTempMin, LivingRoomTempMax;
 
 extern uint16_t SwitchOnOutdoorTempMin;
 extern uint16_t eeSwitchOnOutdoorTempMin;

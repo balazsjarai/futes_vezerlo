@@ -1315,15 +1315,15 @@ void ComfortTemp_CallbackRender(uint8_t which){
 bool ComfortTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (++ComfortTemp == 35)
-				ComfortTemp = 15;
+			if (++ComfortTemp == 3500)
+				ComfortTemp = 1500;
 			break;
 		case MENU_DOWN:
-			if (--ComfortTemp == 255)
-				ComfortTemp = 35;
+			if (--ComfortTemp == 1000)
+				ComfortTemp = 3500;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeComfortTemp, ComfortTemp);
+			eeprom_update_word(&eeComfortTemp, ComfortTemp);
 			return true;
 		case MENU_CANCEL:
 			return true;

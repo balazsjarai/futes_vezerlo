@@ -50,7 +50,7 @@ uint8_t MenuTimer = 10; uint8_t EEMEM eeMenuTimer = 10;
 uint8_t LCDBackLight = 0; uint8_t EEMEM eeLCDBackLight = 0;
 uint16_t PumpPlusTime = 2; uint16_t EEMEM eePumpPlusTime = 2;
 uint8_t ComfortMode = 0; uint8_t EEMEM eeComfortMode = 0;
-uint8_t ComfortTemp = 20; uint8_t EEMEM eeComfortTemp = 20;
+uint16_t ComfortTemp = 2000; uint16_t EEMEM eeComfortTemp = 2000;
 uint8_t ComfortForwardTemp = 28; uint8_t EEMEM eeComfortForwardTemp = 28;
 
 float BME280Temp; char BME280TempBuf[8];
@@ -77,7 +77,7 @@ uint8_t EEMEM eeEngineeringTempMin = 5;
 uint8_t GarageTemp;
 char GarageTempBuf[4], GarageTempFracBuf[3];
 
-uint8_t LivingRoomTemp;
+uint16_t LivingRoomTemp;
 char LivingRoomTempBuf[4], LivingRoomTempFracBuf[3];
 
 uint8_t FloorTemp;
@@ -90,7 +90,8 @@ uint8_t ReturnTemp;
 char ReturnTempBuf[4], ReturnTempFracBuf[3];
 
 float BME280TempMin, BME280TempMax;
-uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMinMeasured, EngineeringTempMax, GarageTempMin, GarageTempMax, LivingRoomTempMin, LivingRoomTempMax, FloorTempMin, FloorTempMax;
+uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMinMeasured, EngineeringTempMax, GarageTempMin, GarageTempMax, FloorTempMin, FloorTempMax;
+uint16_t LivingRoomTempMin, LivingRoomTempMax;
 
 uint16_t SwitchOnOutdoorTempMin;
 uint16_t EEMEM eeSwitchOnOutdoorTempMin = 2300;
@@ -255,8 +256,12 @@ void SensorRead()
 				}
 				if (i == LivingRoomSensorID)
 				{
-					LivingRoomTemp = cel;
-					utoa(LivingRoomTemp, LivingRoomTempBuf, 10);
+					LivingRoomTemp = cel * 100;
+					if (cel_frac_bits < 10)
+						LivingRoomTemp += cel_frac_bits * 10;
+					else
+						LivingRoomTemp += cel_frac_bits;
+					utoa(cel, LivingRoomTempBuf, 10);
 					utoa(cel_frac_bits, LivingRoomTempFracBuf, 10);
 					if (LivingRoomTemp > LivingRoomTempMax)
 						LivingRoomTempMax = LivingRoomTemp;
@@ -311,7 +316,7 @@ void SensorRead()
 		lcd_clrscr();
 		if (display > 15)
 		{
-			lcd_puts_p(PSTR("HMV ")); lcd_puts(DHWTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(DHWTempActualFracBuf); lcd_puts_p(PSTR(" C")); 
+			lcd_puts_p(PSTR("HMV ")); lcd_puts(DHWTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(DHWTempActualFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,1);
 			lcd_puts_p(PSTR("Puffer ")); lcd_puts(BufferTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(BufferTempActualFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,2);
@@ -325,13 +330,13 @@ void SensorRead()
 			lcd_gotoxy(0,1);
 			lcd_puts_p(PSTR("Nappali ")); lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,2);
-			lcd_puts_hu(PSTR("Padló ")); lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));			
+			lcd_puts_hu(PSTR("Padló ")); lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));
 		}
-		else if (display <= 15 && display > 10)
+		else if (display <= 10 && display > 5)
 		{
 			lcd_puts_hu(PSTR("Elõremenõ ")); lcd_puts(ForwardTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(ForwardTempFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,1);
-			lcd_puts_p(PSTR("Visszatérõ ")); lcd_puts(ReturnTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(ReturnTempFracBuf); lcd_puts_p(PSTR(" C"));
+			lcd_puts_hu(PSTR("Visszatérõ ")); lcd_puts(ReturnTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(ReturnTempFracBuf); lcd_puts_p(PSTR(" C"));
 			lcd_gotoxy(0,2);
 			lcd_puti(Hour); lcd_puts_p(PSTR(":")); lcd_puti(Minute);
 			lcd_gotoxy(0,3);
@@ -364,7 +369,7 @@ void SensorRead()
 		}
 		else if (display <= 5)
 		{
-			lcd_puts_p(PSTR("HMV szelep ")); lcd_putbit(Relays, DHW_VALVE_RELAY); lcd_gotoxy(15,0); lcd_puti(Hour); lcd_puts_p(PSTR(":")); lcd_puti(Minute);
+			lcd_puts_p(PSTR("HMV szelep ")); lcd_putbit(Relays, DHW_VALVE_RELAY); lcd_gotoxy(15,0);
 			lcd_gotoxy(0,1);
 			lcd_puts_hu(PSTR("Gáz relé ")); lcd_putbit(Relays, GAS_RELAY);
 			lcd_gotoxy(0,2);
@@ -588,7 +593,7 @@ void read_from_eeprom()
 	LCDBackLight = eeprom_read_byte(&eeLCDBackLight);
 	PumpPlusTime = eeprom_read_word(&eePumpPlusTime);
 	ComfortMode = eeprom_read_byte(&eeComfortMode);
-	ComfortTemp = eeprom_read_byte(&eeComfortTemp);
+	ComfortTemp = eeprom_read_word(&eeComfortTemp);
 	ComfortForwardTemp = eeprom_read_byte(&eeComfortForwardTemp);
 }
 
@@ -735,7 +740,7 @@ int main(void)
 			TimerElapsed = 0;
 		}
 		menuPollButtons();
-		
+
 		if (DebugMode > 0)
 		{
 			readchar = uart_getc();
@@ -755,7 +760,7 @@ int main(void)
 					char cmdvalue2[5];
 					pch = strchr(uartdata_in, ';');
 					pch2 = strchr(cmdvalue, ',');
-					
+
 					if (pch2 == NULL)
 						strcpy(cmdvalue, pch + 1);
 					else
@@ -763,7 +768,7 @@ int main(void)
 						strlcpy(cmdvalue, pch, strlen(pch2));
 						strcpy(cmdvalue2, pch2 + 1);
 					}
-					
+
 					if (uartdata_in[0] == 'R') // read from EEPROM
 					{
 						if (uartdata_in[1] == '1')
@@ -784,33 +789,33 @@ int main(void)
 						switch (sensorID)
 						{
 							case 'D':
-								uart_puts(DHWTempActualBuf); uart_puts(DHWTempActualFracBuf);
+								uart_puts(DHWTempActualBuf); uart_puts_P("."); uart_puts(DHWTempActualFracBuf);
 								break;
 							case 'B':
-								uart_puts(BufferTempActualBuf); uart_puts(BufferTempActualFracBuf);
+								uart_puts(BufferTempActualBuf); uart_puts_P("."); uart_puts(BufferTempActualFracBuf);
 								break;
 							case 'E':
-								uart_puts(EngineeringTempActualBuf); uart_puts(EngineeringTempActualFracBuf);
-								break;								
+								uart_puts(EngineeringTempActualBuf); uart_puts_P("."); uart_puts(EngineeringTempActualFracBuf);
+								break;
 							case 'G':
-								uart_puts(GarageTempBuf); uart_puts(GarageTempFracBuf);
+								uart_puts(GarageTempBuf); uart_puts_P("."); uart_puts(GarageTempFracBuf);
 								break;
 							case 'L':
-								uart_puts(LivingRoomTempBuf); uart_puts(LivingRoomTempFracBuf);
+								uart_puts(LivingRoomTempBuf); uart_puts_P("."); uart_puts(LivingRoomTempFracBuf);
 								break;
 							case 'F':
-								uart_puts(ForwardTempBuf); uart_puts(ForwardTempFracBuf);
+								uart_puts(ForwardTempBuf); uart_puts_P("."); uart_puts(ForwardTempFracBuf);
 								break;
 							case 'R':
-								uart_puts(ReturnTempBuf); uart_puts(ReturnTempFracBuf);
+								uart_puts(ReturnTempBuf); uart_puts_P("."); uart_puts(ReturnTempFracBuf);
 								break;
 							case 'O':
 								uart_puts(BME280TempBuf);
 								break;
 						}
-					}	
+					}
 					else if (uartdata_in[0] == 'W') // write to EEPROM
-					{					
+					{
 						if (uartdata_in[1] == '1')
 						{
 							eeprom_update_byte((uint8_t*) atoi(cmdvalue), atoi(cmdvalue2));
@@ -819,7 +824,7 @@ int main(void)
 						{
 							eeprom_update_word((uint16_t*) atoi(cmdvalue), atoi(cmdvalue2));
 						}
-					}					
+					}
 					else if (uartdata_in[0] == 'U') // update
 					{
 						read_from_eeprom();
@@ -828,7 +833,7 @@ int main(void)
 				}
 			}
 		}
-		
+
 	}
 	uart_puts_p(PSTR("Fatal error, program end\n"));
 }
