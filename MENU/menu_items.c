@@ -19,7 +19,7 @@ void BME280Temp_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("BME280 hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(BME280TempBuf);
-	
+
 	//char buffer[7];
 	//lcd_gotoxy(0,2);
 	//ftoa(buffer, BME280TempMin, 2);
@@ -107,7 +107,7 @@ void DHWTempActual_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("HMV akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(DHWTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(DHWTempActualFracBuf); lcd_puts_p(PSTR(" C"));
-	
+
 	char buffer[7];
 	lcd_gotoxy(0,2);
 	itoa(DHWTempMinMeasured, buffer, 10);
@@ -308,7 +308,7 @@ void BufferTempActual_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Puffer akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(BufferTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(BufferTempActualFracBuf); lcd_puts_p(PSTR(" C"));
-	
+
 	char buffer[7];
 	lcd_gotoxy(0,2);
 	itoa(BufferTempMin, buffer, 10);
@@ -405,7 +405,7 @@ void EngineeringTempActual_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Gépház akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(EngineeringTempActualBuf); lcd_puts_p(PSTR(".")), lcd_puts(EngineeringTempActualFracBuf); lcd_puts_p(PSTR(" C"));
-	
+
 	char buffer[7];
 	lcd_gotoxy(0,2);
 	itoa(EngineeringTempMinMeasured, buffer, 10);
@@ -543,12 +543,8 @@ bool DHWRelay_ActionCallback(MENU_BUTTON *button, uint8_t column){
 		case MENU_UP:
 		case MENU_DOWN:
 		{
-			if (Relays & DHW_VALVE_RELAY)
-				Relays &= ~(1 << DHW_VALVE_RELAY);
-			else
-				Relays |= (1 << DHW_VALVE_RELAY);
+			Relays ^= (1 << DHW_VALVE_RELAY);
 			SwitchRelays();
-
 			break;
 		}
 		case MENU_CONFIRM:
@@ -716,7 +712,7 @@ void GarageTemp_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Garázs akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(GarageTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(GarageTempFracBuf); lcd_puts_p(PSTR(" C"));
-	
+
 	char buffer[7];
 	lcd_gotoxy(0,2);
 	itoa(GarageTempMin, buffer, 10);
@@ -774,7 +770,7 @@ void LivingRoomTemp_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Nappali akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
-	
+
 	char buffer[7];
 	lcd_gotoxy(0,2);
 	itoa(LivingRoomTempMin, buffer, 10);
@@ -820,7 +816,7 @@ void FloorTemp_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Padló akt hõm"));
 	lcd_gotoxy(0,1);
 	lcd_puts(FloorTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(FloorTempFracBuf); lcd_puts_p(PSTR(" C"));
-	
+
 	char buffer[7];
 	lcd_gotoxy(0,2);
 	itoa(FloorTempMin, buffer, 10);
@@ -1274,40 +1270,60 @@ static MENU_ITEM CLOCK_submenu[CLOCK_SUBMENU_ITEMS] = {
 
 
 void ComfortMode_CallbackRender(uint8_t which){
+	// lcd_clrscr();
+	// lcd_puts_hu(PSTR("Komfort mód"));
+	// lcd_gotoxy(0,1);
+	// char buf[4];
+	// itoa(ComfortMode, buf, 10);
+	// lcd_puts(buf);
+	
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Komfort mód"));
 	lcd_gotoxy(0,1);
-	char buf[2];
-	itoa(ComfortMode, buf, 10);
-	lcd_puts(buf);
+	if (ComfortMode & (1 << 1))
+		lcd_puts_p(PSTR("Be"));
+	else
+		lcd_puts_p(PSTR("Ki"));
 }
 
 bool ComfortMode_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	// switch(button->role){
+		// case MENU_UP:
+			// if (++ComfortMode == 2)
+				// ComfortMode = 0;
+			// break;
+		// case MENU_DOWN:
+			// if (--ComfortMode == 255)
+				// ComfortMode = 1;
+			// break;
+		// case MENU_CONFIRM:
+			// eeprom_update_byte(&eeComfortMode, ComfortMode);
+			// return true;
+		// case MENU_CANCEL:
+			// return true;
+	// }
+
 	switch(button->role){
 		case MENU_UP:
-			if (++ComfortMode == 2)
-				ComfortMode = 0;
-			break;
 		case MENU_DOWN:
-			if (--ComfortMode == 255)
-				ComfortMode = 1;
+			ComfortMode ^= (1 << 1);
 			break;
 		case MENU_CONFIRM:
 			eeprom_update_byte(&eeComfortMode, ComfortMode);
 			return true;
 		case MENU_CANCEL:
-			return true;
+		return true;
 	}
-
-	ComfortMode_CallbackRender(column);
-	return false;
+	
+	 ComfortMode_CallbackRender(column);
+	 return false;
 }
 
 void ComfortTemp_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Komfort hõm"));
 	lcd_gotoxy(0,1);
-	char buf[4];
+	char buf[5];
 	itoa(ComfortTemp, buf, 10);
 	lcd_puts(buf);
 }
@@ -1315,11 +1331,11 @@ void ComfortTemp_CallbackRender(uint8_t which){
 bool ComfortTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (++ComfortTemp == 3500)
+			if ((ComfortTemp += 10) == 3500)
 				ComfortTemp = 1500;
 			break;
 		case MENU_DOWN:
-			if (--ComfortTemp == 1000)
+			if ((ComfortTemp -= 10) == 1000)
 				ComfortTemp = 3500;
 			break;
 		case MENU_CONFIRM:
@@ -1337,7 +1353,7 @@ void ComfortForwardTemp_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Komfort elõremenõ"));
 	lcd_gotoxy(0,1);
-	char buf[4];
+	char buf[5];
 	itoa(ComfortTemp, buf, 10);
 	lcd_puts(buf);
 }

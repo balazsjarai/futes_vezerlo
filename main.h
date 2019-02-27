@@ -7,17 +7,18 @@ enum states {
 	BME280TempState,
 	BME280HumidState,
 	DS18B20State1,
-	DS18B20State2
+	DS18B20State2,
+	ReportState
 };
 
 enum daynames {
-	MONDAY,
-	TUESDAY,
-	WEDNESDAY,
-	THURSDAY,
-	FRIDAY,
-	SATURDAY,
-	SUNDAY
+	MONDAY = 1,
+	TUESDAY = 2,
+	WEDNESDAY = 3,
+	THURSDAY = 4,
+	FRIDAY = 5,
+	SATURDAY = 6,
+	SUNDAY = 7
 };
 
 //#define SOLAR
@@ -30,12 +31,12 @@ enum daynames {
 
 #define RELAYS_CS_PIN		1
 
-#define FIRST_FLOOR_VALVE	2
-#define SECOND_FLOOR_VALVE	3
-#define DHW_VALVE_RELAY 	4
+#define FIRST_FLOOR_VALVE	7
+#define SECOND_FLOOR_VALVE	6
+#define DHW_VALVE_RELAY 	0
 #define BUFFER_VALVE_RELAY 	5
-#define BUFFER_PUMP_RELAY	6
-#define GAS_RELAY			7
+#define BUFFER_PUMP_RELAY	4
+#define GAS_RELAY			1
 
 #define BUZZER_DDR		DDRC
 #define BUZZER_PORT		PORTC
@@ -72,31 +73,31 @@ extern uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
 extern uint16_t DHWMinTime, DHWMaxTime;
 extern uint8_t eeDHWTempDesired, eeDHWTempMin;
 extern uint16_t eeDHWMinTime, eeDHWMaxTime;
-extern char DHWTempActualBuf[4], DHWTempActualFracBuf[3];
+extern char DHWTempActualBuf[4], DHWTempActualFracBuf[2];
 
 extern uint8_t BufferTempActual;
 extern uint8_t ForwardHeatTemp;
 extern uint8_t eeForwardHeatTemp;
-extern char BufferTempActualBuf[4], BufferTempActualFracBuf[3];
+extern char BufferTempActualBuf[4], BufferTempActualFracBuf[2];
 
 extern uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin;
 extern uint8_t eeEngineeringTempDesired, eeEngineeringTempMin;
-extern char EngineeringTempActualBuf[4], EngineeringTempActualFracBuf[3];
+extern char EngineeringTempActualBuf[4], EngineeringTempActualFracBuf[2];
 
 extern uint8_t GarageTemp;
-extern char GarageTempBuf[4], GarageTempFracBuf[3];
+extern char GarageTempBuf[4], GarageTempFracBuf[2];
 
 extern uint16_t LivingRoomTemp;
-extern char LivingRoomTempBuf[4], LivingRoomTempFracBuf[3];
+extern char LivingRoomTempBuf[4], LivingRoomTempFracBuf[2];
 
 extern uint8_t FloorTemp;
-extern char FloorTempBuf[4], FloorTempFracBuf[3];
+extern char FloorTempBuf[4], FloorTempFracBuf[2];
 
 extern uint8_t ForwardTemp;
-extern char ForwardTempBuf[4], ForwardTempFracBuf[3];
+extern char ForwardTempBuf[4], ForwardTempFracBuf[2];
 
 extern uint8_t ReturnTemp;
-extern char ReturnTempBuf[4], ReturnTempFracBuf[3];
+extern char ReturnTempBuf[4], ReturnTempFracBuf[2];
 
 extern float BME280TempMin, BME280TempMax;
 extern uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMinMeasured, EngineeringTempMax, GarageTempMin, GarageTempMax, FloorTempMin, FloorTempMax;
@@ -145,5 +146,19 @@ void beep();
 void SensorRead();
 void CheckConditions();
 void SwitchRelays();
+uint8_t search_sensors(void);
+uint8_t GetFracCel(uint8_t cel_frac_bits);
 
 #endif /* MAIN_H_ */
+
+/*
+UART codes
+
+\n - új sor
+\r - adás vége
+
+Sxx;yyy.zz 	- szenzor érték
+RExx		- relék értékei
+
+	
+*/
