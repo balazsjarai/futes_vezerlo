@@ -4,7 +4,7 @@
 
 uint16_t read8(uint8_t reg)
 {
-	uint16_t val = 0;
+	uint8_t val = 0;
 	
 	if (i2c_start(BME280_ADDRESS<<1 | I2C_WRITE) == 0)
 	{
@@ -14,7 +14,7 @@ uint16_t read8(uint8_t reg)
 		
 		if (i2c_start(BME280_ADDRESS<<1 | I2C_READ) == 0)
 		{
-			val |= ((uint16_t)i2c_read_nack());
+			val = ((uint8_t)i2c_read_nack());
 			
 			i2c_stop();
 			
@@ -37,9 +37,9 @@ uint16_t read16(uint8_t reg)
 		
 		if (i2c_start(BME280_ADDRESS<<1 | I2C_READ) == 0)
 		{
-			val = ((uint16_t)i2c_read_ack());
+			val = ((uint8_t)i2c_read_ack());
 			val <<= 8;
-			val |= ((uint16_t)i2c_read_nack());
+			val |= ((uint8_t)i2c_read_nack());
 			
 			i2c_stop();
 			
@@ -80,11 +80,11 @@ uint32_t read24(uint8_t reg)
 
 		if (i2c_start(BME280_ADDRESS<<1 | I2C_READ) == 0)
 		{
-			val = ((uint16_t)i2c_read_ack());
+			val = ((uint8_t)i2c_read_ack());
 			val <<= 8;
-			val |= ((uint16_t)i2c_read_ack());
+			val |= ((uint8_t)i2c_read_ack());
 			val <<= 8;
-			val |= ((uint16_t)i2c_read_nack());
+			val |= ((uint8_t)i2c_read_nack());
 			
 			i2c_stop();
 			
@@ -128,10 +128,10 @@ void init_BME280()
 	if (i2c_start(BME280_ADDRESS<<1 | I2C_WRITE) == 0)
 	{
 		i2c_write(BME280_REGISTER_CONTROLHUMID);
-		i2c_write(0x05);
+		i2c_write(0x01); //(0x05)
 		
 		i2c_write(BME280_REGISTER_CONTROL);
-		i2c_write(0xB7);
+		i2c_write(0x27); // (0xB7)
 		
 		i2c_write(BME280_REGISTER_CHIPID);
 		
@@ -153,7 +153,7 @@ void init_BME280()
 
 float bme280_readTemperature(void)
 {
-	int32_t adc_T = read24(BME280_REGISTER_TEMPDATA);
+	int32_t adc_T = (int32_t)read24(BME280_REGISTER_TEMPDATA);
 
 	int32_t var1, var2;
 	

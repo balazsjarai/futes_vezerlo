@@ -648,7 +648,7 @@ void lcd_putbit(unsigned char c, unsigned char bit)
 {
 	while (bit--)
 		c=c >> 1;
-	if( c & 0x01) 
+	if( c & 0x01)
 		lcd_putc( '1');
 	else
 		lcd_putc( '0');
@@ -660,6 +660,13 @@ void lcd_puti(unsigned int i)
 	itoa(i, buf, 10);
 	if (i < 10)
 		lcd_putc('0');
+	lcd_puts(buf);
+}
+
+void lcd_puti16(uint16_t i)
+{
+	char buf[6];
+	itoa(i, buf, 10);
 	lcd_puts(buf);
 }
 

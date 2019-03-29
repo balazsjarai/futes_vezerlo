@@ -8,7 +8,8 @@ enum states {
 	BME280HumidState,
 	DS18B20State1,
 	DS18B20State2,
-	ReportState
+	ReportState1,
+	ReportState2
 };
 
 enum daynames {
@@ -19,6 +20,12 @@ enum daynames {
 	FRIDAY = 5,
 	SATURDAY = 6,
 	SUNDAY = 7
+};
+
+enum modes {
+	AUTOMATIC,
+	MANUAL,
+	DEBUG1
 };
 
 //#define SOLAR
@@ -54,17 +61,16 @@ enum daynames {
 #define DS18B20_PIN			PINB
 #define DS18B20_PINx		PINB0
 
-// extern volatile uint8_t DebugMode; extern uint8_t eeDebugMode;
-// extern volatile uint8_t MenuTimer; extern uint8_t eeMenuTimer;
-// extern volatile uint8_t LCDBackLight; extern uint8_t eeLCDBackLight;
-// extern volatile uint16_t PumpPlusTime; extern uint16_t eePumpPlusTime;
-extern uint8_t DebugMode; extern uint8_t eeDebugMode;
+extern uint8_t Mode; extern uint8_t eeMode;
 extern uint8_t MenuTimer; extern uint8_t eeMenuTimer;
 extern uint8_t LCDBackLight; extern uint8_t eeLCDBackLight;
 extern uint16_t PumpPlusTime; extern uint16_t eePumpPlusTime;
 extern uint8_t ComfortMode; extern uint8_t eeComfortMode;
 extern uint16_t ComfortTemp; extern uint16_t eeComfortTemp;
 extern uint8_t ComfortForwardTemp; extern uint8_t eeComfortForwardTemp;
+extern uint16_t ComfortMaxTime; extern uint16_t eeComfortMaxTime;
+extern uint16_t ComfortMinTime; extern uint16_t eeComfortMinTime;
+extern uint16_t Restarts; extern uint16_t eeRestarts;
 
 extern float BME280Temp, BME280Humid;
 extern char BME280TempBuf[8], BME280HumidBuf[6];
@@ -76,8 +82,8 @@ extern uint16_t eeDHWMinTime, eeDHWMaxTime;
 extern char DHWTempActualBuf[4], DHWTempActualFracBuf[2];
 
 extern uint8_t BufferTempActual;
-extern uint8_t ForwardHeatTemp;
-extern uint8_t eeForwardHeatTemp;
+extern uint8_t ForwardHeatTemp; extern uint8_t eeForwardHeatTemp;
+extern uint8_t BufferMaxTemp; extern uint8_t eeBufferMaxTemp;
 extern char BufferTempActualBuf[4], BufferTempActualFracBuf[2];
 
 extern uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin;
@@ -157,8 +163,24 @@ UART codes
 \n - új sor
 \r - adás vége
 
-Sxx;yyy.zz 	- szenzor érték
-RExx		- relék értékei
+Sxx;yyy.zz 	- szenzor érték küldés
 
-	
+R1;xx - eeprom olvasás, byte
+R2;xx - eepron olvasás, word
+S;x - szenzor olvasás
+
+W1;xx,yyy - eeprom írás, byte
+W2;xx,yyyyy - eeprom írás, word
+U - eepromból adatok újraolvasása
+M;yyy - relék kapcsolása
+
+
+hmv 1
+puffer 5
+gépház 0
+garázs 6
+nappali 3
+padló 4
+előre 2
+vissza 7
 */

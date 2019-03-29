@@ -358,6 +358,36 @@ bool ForwardHeatTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
+void BufferMaxTemp_CallbackRender(uint8_t which){
+	char buf[4];
+	itoa(BufferMaxTemp, buf, 10);
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Puffer max hõm"));
+	lcd_gotoxy(0,1);
+	lcd_puts(buf);
+}
+
+bool BufferMaxTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (BufferMaxTemp != 99)
+				++BufferMaxTemp;
+			break;
+		case MENU_DOWN:
+			if (BufferMaxTemp > 60)
+				--BufferMaxTemp;
+			break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeBufferMaxTemp, BufferMaxTemp);
+			return true;
+		case MENU_CANCEL:
+			return true;
+	}
+
+	ForwardHeatTemp_CallbackRender(column);
+	return false;
+}
+
 void BufferSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Puffer szenzor ID"));
@@ -390,10 +420,11 @@ bool BufferSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-# define BUFFER_SUBMENU_ITEMS  3
+# define BUFFER_SUBMENU_ITEMS  4
 static MENU_ITEM BUFFER_submenu[BUFFER_SUBMENU_ITEMS] = {
-	{"Buffer akt hõm", 		BufferTempActual_CallbackRender, 	BufferTempActual_Callback, 			0,				NULL},
+	{"Puffer akt hõm", 		BufferTempActual_CallbackRender, 	BufferTempActual_Callback, 			0,				NULL},
 	{"Elõremenõ hõm", 		ForwardHeatTemp_CallbackRender, 	ForwardHeatTemp_ActionCallback,		0,				NULL},
+	{"Puffer max hõm", 		BufferMaxTemp_CallbackRender, 		BufferMaxTemp_ActionCallback,		0,				NULL},
 	{"Puffer szenzor",		BufferSensor_CallbackRender, 		BufferSensor_ActionCallback, 		0, 				NULL},
 };
 
@@ -954,31 +985,44 @@ static MENU_ITEM SENSORS_submenu[SENSORS_SUBMENU_ITEMS] = {
 /*************************************************************************
  Menu Settings, submenu definition
 *************************************************************************/
-void DebugMode_CallbackRender(uint8_t which){
+void Mode_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Tesztüzem"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(DebugMode, buf, 10);
-	lcd_puts(buf);
+	switch (Mode)
+	{
+		case 0:
+			lcd_puts_hu(PSTR("Automatikus"));
+			break;
+		
+		case 1:
+			lcd_puts_hu(PSTR("Manuális"));
+			break;
+		
+		case 2:
+			lcd_puts_hu(PSTR("Hibakeresés"));
+			break;		
+	}
 }
 
-bool DebugMode_ActionCallback(MENU_BUTTON *button, uint8_t column){
+bool Mode_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			++DebugMode;
+			if (++Mode == 3)
+				Mode = 0;
 			break;
 		case MENU_DOWN:
-			--DebugMode;
+			if (--Mode == 255)
+				Mode = 2;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeDebugMode, DebugMode);
+			eeprom_update_byte(&eeMode, Mode);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
 
-	DebugMode_CallbackRender(column);
+	Mode_CallbackRender(column);
 	return false;
 }
 
@@ -1270,12 +1314,6 @@ static MENU_ITEM CLOCK_submenu[CLOCK_SUBMENU_ITEMS] = {
 
 
 void ComfortMode_CallbackRender(uint8_t which){
-	// lcd_clrscr();
-	// lcd_puts_hu(PSTR("Komfort mód"));
-	// lcd_gotoxy(0,1);
-	// char buf[4];
-	// itoa(ComfortMode, buf, 10);
-	// lcd_puts(buf);
 	
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Komfort mód"));
@@ -1287,22 +1325,6 @@ void ComfortMode_CallbackRender(uint8_t which){
 }
 
 bool ComfortMode_ActionCallback(MENU_BUTTON *button, uint8_t column){
-	// switch(button->role){
-		// case MENU_UP:
-			// if (++ComfortMode == 2)
-				// ComfortMode = 0;
-			// break;
-		// case MENU_DOWN:
-			// if (--ComfortMode == 255)
-				// ComfortMode = 1;
-			// break;
-		// case MENU_CONFIRM:
-			// eeprom_update_byte(&eeComfortMode, ComfortMode);
-			// return true;
-		// case MENU_CANCEL:
-			// return true;
-	// }
-
 	switch(button->role){
 		case MENU_UP:
 		case MENU_DOWN:
@@ -1354,7 +1376,7 @@ void ComfortForwardTemp_CallbackRender(uint8_t which){
 	lcd_puts_hu(PSTR("Komfort elõremenõ"));
 	lcd_gotoxy(0,1);
 	char buf[5];
-	itoa(ComfortTemp, buf, 10);
+	itoa(ComfortForwardTemp, buf, 10);
 	lcd_puts(buf);
 }
 
@@ -1362,11 +1384,11 @@ bool ComfortForwardTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
 			if (++ComfortForwardTemp == ForwardHeatTemp)
-				ComfortForwardTemp -= 1;
+				ComfortForwardTemp--;
 			break;
 		case MENU_DOWN:
-			if (--ComfortForwardTemp == 255)
-				ComfortForwardTemp = ForwardHeatTemp;
+			if (--ComfortForwardTemp == 10)
+				ComfortForwardTemp++;
 			break;
 		case MENU_CONFIRM:
 			eeprom_update_byte(&eeComfortForwardTemp, ComfortForwardTemp);
@@ -1379,21 +1401,120 @@ bool ComfortForwardTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-#define COMFORT_SUBMENU_ITEMS 3
+void ComfortMinTime_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Min idõ"));
+	lcd_gotoxy(0,1);
+	char buf[5];
+	itoa(ComfortMinTime, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ComfortMinTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (ComfortMinTime < 2340)
+				ComfortMinTime += 10;
+			else
+				ComfortMinTime = 0;
+			break;
+		case MENU_DOWN:
+			if (ComfortMinTime > 65525)
+				ComfortMinTime = 2350;
+			else
+				ComfortMinTime -= 10;
+			break;
+		case MENU_CONFIRM:
+		eeprom_update_word(&eeComfortMinTime, ComfortMinTime);
+		case MENU_CANCEL:
+		return true;
+	}
+
+	ComfortMinTime_CallbackRender(column);
+	return false;
+}
+
+void ComfortMaxTime_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Max idõ"));
+	lcd_gotoxy(0,1);
+	char buf[5];
+	itoa(ComfortMaxTime, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ComfortMaxTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+			if (ComfortMaxTime < 2340)
+				ComfortMaxTime += 10;
+			else
+				ComfortMaxTime = 0;
+			break;
+		case MENU_DOWN:
+			if (ComfortMaxTime > 65525)
+				ComfortMaxTime = 2350;
+			else
+				ComfortMaxTime -= 10;
+			break;
+		case MENU_CONFIRM:
+		eeprom_update_word(&eeComfortMaxTime, ComfortMaxTime);
+		case MENU_CANCEL:
+		return true;
+	}
+
+	ComfortMaxTime_CallbackRender(column);
+	return false;
+}
+
+#define COMFORT_SUBMENU_ITEMS 5
 static MENU_ITEM COMFORT_submenu[COMFORT_SUBMENU_ITEMS] = {
 	{"Komfort mód", 			ComfortMode_CallbackRender, 		ComfortMode_ActionCallback,			0,	NULL},
 	{"Komfort hõm", 			ComfortTemp_CallbackRender,			ComfortTemp_ActionCallback,			0,	NULL},
-	{"Komfort elõremenõ", 		ComfortForwardTemp_CallbackRender,	ComfortForwardTemp_ActionCallback,	0,	NULL}
+	{"Komfort elõremenõ", 		ComfortForwardTemp_CallbackRender,	ComfortForwardTemp_ActionCallback,	0,	NULL},
+	{"Komfort min idõ", 		ComfortMinTime_CallbackRender,		ComfortMinTime_ActionCallback,		0,	NULL},
+	{"Komfort max idõ", 		ComfortMaxTime_CallbackRender,		ComfortMaxTime_ActionCallback,		0,	NULL}
 };
 
-#define SYSPARAM_SUBMENU_ITEMS 6
+void Restarts_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Újraindulások"));
+	lcd_gotoxy(0,1);
+	char buf[6];
+	itoa(Restarts, buf, 10);
+	lcd_puts(buf);
+
+	//char buffer[7];
+	//lcd_gotoxy(0,2);
+	//ftoa(buffer, BME280TempMin, 2);
+	//lcd_puts(buffer); lcd_puts_p(PSTR("/"));
+	//ftoa(buffer, BME280TempMax, 2);
+	//lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
+}
+
+bool Restarts_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+		case MENU_CONFIRM:
+			eeprom_update_word(&eeRestarts, 0);
+			Restarts = 0;
+			break;
+		case MENU_CANCEL:
+		return true;
+	}
+	return false;
+}
+
+#define SYSPARAM_SUBMENU_ITEMS 7
 static MENU_ITEM SYSPARAM_submenu[SYSPARAM_SUBMENU_ITEMS] = {
 	{"Szivattyú után", 	PumpPlusTime_CallbackRender, 		PumpPlusTime_ActionCallback,	0,						NULL},
 	{"Komfort mód", 	NULL,						 		NULL,							COMFORT_SUBMENU_ITEMS,	COMFORT_submenu},
 	{"óra, dátum", 		NULL,				 				NULL,							CLOCK_SUBMENU_ITEMS,	CLOCK_submenu},
-	{"Tesztüzem", 		DebugMode_CallbackRender, 			DebugMode_ActionCallback, 		0,						NULL},
+	{"Üzemmód", 		Mode_CallbackRender, 				Mode_ActionCallback, 			0,						NULL},
 	{"Menü idõzítõ", 	MenuTimer_CallbackRender, 			MenuTimer_ActionCallback, 		0,						NULL},
 	{"LCD háttér", 		LCDBackLight_CallbackRender, 		LCDBackLight_ActionCallback,	0,						NULL},
+	{"Újraindulások",	Restarts_CallbackRender, 			Restarts_ActionCallback,		0,						NULL},
 };
 
 
