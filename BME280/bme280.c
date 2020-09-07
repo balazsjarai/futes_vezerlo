@@ -1,6 +1,10 @@
 #include "bme280.h"
+#include "../I2C/i2c_master.h"
+#include <math.h>       // for NAN
 #include <avr/pgmspace.h>
 
+#define bit_get(p,m) ((p) & (m))
+#define BIT(x) (0x01UL << (x))
 
 uint16_t read8(uint8_t reg)
 {
@@ -128,10 +132,10 @@ void init_BME280()
 	if (i2c_start(BME280_ADDRESS<<1 | I2C_WRITE) == 0)
 	{
 		i2c_write(BME280_REGISTER_CONTROLHUMID);
-		i2c_write(0x01); //(0x05)
+		i2c_write(0x05); //(0x05)
 		
 		i2c_write(BME280_REGISTER_CONTROL);
-		i2c_write(0x27); // (0xB7)
+		i2c_write(0xB7); // (0xB7) 0x25
 		
 		i2c_write(BME280_REGISTER_CHIPID);
 		
@@ -153,12 +157,18 @@ void init_BME280()
 
 float bme280_readTemperature(void)
 {
-	int32_t adc_T = (int32_t)read24(BME280_REGISTER_TEMPDATA);
+	uint32_t adc_T = (uint32_t)read24(BME280_REGISTER_TEMPDATA);
 
 	int32_t var1, var2;
+	int negative = 0;
+	if (bit_get(adc_T , BIT(31)))
+	{
+		negative = 1;
+		//adc_T |= (1UL << 31);
+		//adc_T &= ~(1UL << 27);
+	}	
 	
 	adc_T >>= 4;
-	
 	var1  = ((((adc_T>>3) - ((int32_t)_bme280_calib.dig_T1 <<1))) *
 	((int32_t)_bme280_calib.dig_T2)) >> 11;
 	
@@ -167,6 +177,9 @@ float bme280_readTemperature(void)
 	((int32_t)_bme280_calib.dig_T3)) >> 14;
 	
 	t_fine = var1 + var2;
+	
+	if (negative)
+		t_fine |= (1UL << 31);
 	
 	float T  = (t_fine * 5 + 128) >> 8;
 

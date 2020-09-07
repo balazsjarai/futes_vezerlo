@@ -4,12 +4,14 @@
 #include <stdlib.h>
 
 enum states {
-	BME280TempState,
-	BME280HumidState,
+	HIHxxxxStartMeaserementState,
+	HIHxxxxReadMeasurementState,
+	//HIHxxxxReadState,
 	DS18B20State1,
 	DS18B20State2,
 	ReportState1,
-	ReportState2
+	ReportState2,
+	ReportState3
 };
 
 enum daynames {
@@ -44,6 +46,8 @@ enum modes {
 #define BUFFER_VALVE_RELAY 	5
 #define BUFFER_PUMP_RELAY	4
 #define GAS_RELAY			1
+#define HOUSE_VALVE_RELAY	2
+#define DHW_AUX_RELAY		3
 
 #define BUZZER_DDR		DDRC
 #define BUZZER_PORT		PORTC
@@ -54,8 +58,10 @@ enum modes {
 #define THERMOSTAT_PIN		PINE
 #define FIRST_THERMO_PIN	PINE6
 #define SECOND_THERMO_PIN	PINE7
+#define FIRST_REMOTE_PIN	PINE2
+#define SECOND_REMOTE_PIN	PIND3
 
-#define DS18B20_MAX_NO		8
+#define DS18B20_MAX_NO		12
 #define DS18B20_PORT		PORTB
 #define DS18B20_DDR			DDRB
 #define DS18B20_PIN			PINB
@@ -73,7 +79,22 @@ extern uint16_t ComfortMinTime; extern uint16_t eeComfortMinTime;
 extern uint16_t Restarts; extern uint16_t eeRestarts;
 
 extern float BME280Temp, BME280Humid;
-extern char BME280TempBuf[8], BME280HumidBuf[6];
+extern char BME280TempBuf[10], BME280HumidBuf[6];
+
+extern float HIHxxxxTemp, HIHxxxxHumid;
+extern char HIHxxxxTempBuf[10], HIHxxxxHumidBuf[6];
+
+typedef struct TempSensor
+{
+	uint8_t ActualTemp;
+	uint8_t MeasuredMinimumTemp;
+	uint8_t MeasuredMaximumTemp;
+	char ActualTempBuffer[4];
+	char ActualTempFracBuffer[2];
+	uint8_t SensorID;
+} TempSensor;
+
+extern TempSensor DHW, Buffer, Engineering, Garage, LivingRoom, Floor, GasForward, GasReturn, Forward, Return, Mixed;
 
 extern uint8_t DHWTempActual, DHWTempDesired, DHWTempMin;
 extern uint16_t DHWMinTime, DHWMaxTime;
@@ -84,26 +105,27 @@ extern char DHWTempActualBuf[4], DHWTempActualFracBuf[2];
 extern uint8_t BufferTempActual;
 extern uint8_t ForwardHeatTemp; extern uint8_t eeForwardHeatTemp;
 extern uint8_t BufferMaxTemp; extern uint8_t eeBufferMaxTemp;
+extern uint8_t GasForwardHeatTemp; extern uint8_t eeGasForwardHeatTemp;
 extern char BufferTempActualBuf[4], BufferTempActualFracBuf[2];
 
 extern uint8_t EngineeringTempActual, EngineeringTempDesired, EngineeringTempMin;
 extern uint8_t eeEngineeringTempDesired, eeEngineeringTempMin;
 extern char EngineeringTempActualBuf[4], EngineeringTempActualFracBuf[2];
 
-extern uint8_t GarageTemp;
-extern char GarageTempBuf[4], GarageTempFracBuf[2];
+//extern uint8_t GarageTemp;
+//extern char GarageTempBuf[4], GarageTempFracBuf[2];
 
 extern uint16_t LivingRoomTemp;
 extern char LivingRoomTempBuf[4], LivingRoomTempFracBuf[2];
 
-extern uint8_t FloorTemp;
-extern char FloorTempBuf[4], FloorTempFracBuf[2];
-
-extern uint8_t ForwardTemp;
-extern char ForwardTempBuf[4], ForwardTempFracBuf[2];
-
-extern uint8_t ReturnTemp;
-extern char ReturnTempBuf[4], ReturnTempFracBuf[2];
+//extern uint8_t FloorTemp;
+//extern char FloorTempBuf[4], FloorTempFracBuf[2];
+//
+//extern uint8_t ForwardTemp;
+//extern char ForwardTempBuf[4], ForwardTempFracBuf[2];
+//
+//extern uint8_t ReturnTemp;
+//extern char ReturnTempBuf[4], ReturnTempFracBuf[2];
 
 extern float BME280TempMin, BME280TempMax;
 extern uint8_t DHWTempMinMeasured, DHWTempMax, BufferTempMin, BufferTempMax, EngineeringTempMinMeasured, EngineeringTempMax, GarageTempMin, GarageTempMax, FloorTempMin, FloorTempMax;
@@ -130,11 +152,20 @@ extern uint8_t eeLivingRoomSensorID;
 extern uint8_t FloorSensorID;
 extern uint8_t eeFloorSensorID;
 
+extern uint8_t GasForwardTempSensorID;
+extern uint8_t eeGasForwardTempSensorID;
+
+extern uint8_t GasReturnTempSensorID ;
+extern uint8_t eeGasReturnTempSensorID;
+
 extern uint8_t ForwardTempSensorID;
 extern uint8_t eeForwardTempSensorID;
 
 extern uint8_t ReturnTempSensorID ;
 extern uint8_t eeReturnTempSensorID;
+
+extern uint8_t MixedTempSensorID ;
+extern uint8_t eeMixedTempSensorID;
 
 extern unsigned char Relays;
 

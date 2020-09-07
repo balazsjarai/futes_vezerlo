@@ -2,8 +2,6 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
-BME280\bme280.c
-
 DS18B20\crc8.c
 
 DS18B20\delay.c
@@ -11,6 +9,8 @@ DS18B20\delay.c
 DS18B20\ds18x20.c
 
 DS18B20\onewire.c
+
+HIHxxxx\HIHxxxx.c
 
 I2C\i2c_master.c
 
