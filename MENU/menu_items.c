@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <avr/pgmspace.h>
+#include <string.h>
 
 #include "../LCD/lcd.h"
 #include "menu.h"
@@ -20,6 +21,16 @@ bool Simple_Callback(MENU_BUTTON *button, uint8_t column){
 			return true;
 	}
 	return false;
+}
+
+uint8_t FindActSensor(uint8_t id[])
+{
+	for (uint8_t i = 0; i < nSensors; i++)
+	{
+		if (memcmp(gSensorIDs[i], id, sizeof(uint8_t)*OW_ROMCODE_SIZE) == 0)
+			return i;
+	}
+	return 0;
 }
 
 /*************************************************************************
@@ -46,6 +57,33 @@ void HIHxxxxHumidity_CallbackRender(uint8_t which){
 	lcd_puts(HIHxxxxHumidBuf);
 }
 
+void SwitchOnOutdoorTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Külsõ hõm tiltás"));
+	lcd_gotoxy(0,1);
+	if (SwitchOnOutdoorTemp)
+		lcd_puts_hu(PSTR("aktív"));
+	else
+		lcd_puts_hu(PSTR("letiltva"));
+}
+
+bool SwitchOnOutdoorTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		case MENU_DOWN:
+			SwitchOnOutdoorTemp ^= (1 << 0);			
+		break;
+		case MENU_CONFIRM:
+			eeprom_update_byte(&eeSwitchOnOutdoorTemp, SwitchOnOutdoorTemp);
+		return true;
+		case MENU_CANCEL:
+		return true;
+	}
+
+	SwitchOnOutdoorTemp_CallbackRender(column);
+	return false;
+}
+
 void SwitchOnOutdoorTempMin_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Külsõ min hõm"));
@@ -58,19 +96,19 @@ void SwitchOnOutdoorTempMin_CallbackRender(uint8_t which){
 bool SwitchOnOutdoorTempMin_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (SwitchOnOutdoorTempMin > 3490)
-				SwitchOnOutdoorTempMin = 310;
+			if (SwitchOnOutdoorTempMin > 349)
+				SwitchOnOutdoorTempMin = 31;
 			else
-				SwitchOnOutdoorTempMin += 10;
+				SwitchOnOutdoorTempMin++;
 			break;
 		case MENU_DOWN:
-			if (SwitchOnOutdoorTempMin > 310)
-				SwitchOnOutdoorTempMin -= 10;
+			if (SwitchOnOutdoorTempMin > 31)
+				SwitchOnOutdoorTempMin--;
 			else
-				SwitchOnOutdoorTempMin = 3500;
+				SwitchOnOutdoorTempMin = 350;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_word(&eeSwitchOnOutdoorTempMin, SwitchOnOutdoorTempMin);
+			eeprom_update_word(&eeSwitchOnOutdoorTempMin, (uint16_t)SwitchOnOutdoorTempMin);
 			return true;
 		case MENU_CANCEL:
 			return true;
@@ -80,13 +118,187 @@ bool SwitchOnOutdoorTempMin_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-# define HIHxxxx_SUBMENU_ITEMS  3
+# define HIHxxxx_SUBMENU_ITEMS  4
 static MENU_ITEM HIHxxxx_submenu[HIHxxxx_SUBMENU_ITEMS] = {
 	{"Külsõ hõm",			HIHxxxxTemp_CallbackRender,				Simple_Callback, 						0, NULL},
 	{"Külsõ pára",			HIHxxxxHumidity_CallbackRender,			Simple_Callback,						0, NULL},
-	{"Külsõ hõm tiltás",	SwitchOnOutdoorTempMin_CallbackRender,	SwitchOnOutdoorTempMin_ActionCallback,	0, NULL},
+	{"Külsõ hõm tiltás",	SwitchOnOutdoorTemp_CallbackRender,		SwitchOnOutdoorTemp_ActionCallback,		0, NULL},
+	{"Külsõ hõm tiltás C",	SwitchOnOutdoorTempMin_CallbackRender,	SwitchOnOutdoorTempMin_ActionCallback,	0, NULL},
 };
 
+/*************************************************************************
+ Menu Wood, submenu definitions
+*************************************************************************/
+void Wood_CallbackRender(uint8_t which)
+{
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Vegyes kazán "));
+	lcd_gotoxy(13,0);
+	switch (which)
+	{
+		case 0:
+			lcd_puts_hu(PSTR("hõm"));
+			lcd_gotoxy(0,1);
+			lcd_puts(Wood.ActualTempBuffer); lcd_puts_p(PSTR(".")); lcd_puts(Wood.ActualTempFracBuffer); lcd_puts_p(PSTR(" C"));
+		break;
+		
+		case 1:
+			lcd_puts_hu(PSTR("nyomás"));
+			
+			lcd_gotoxy(0,1);
+			lcd_puts_hu(PSTR("elõtt"));
+			lcd_gotoxy(10,1);
+			lcd_puti16(WoodPressureBefore);
+			
+			lcd_gotoxy(0,2);
+			lcd_puts_hu(PSTR("után"));
+			lcd_gotoxy(10,2);
+			lcd_puti16(WoodPressureAfter);
+			
+		break;
+		
+		case 2:
+			lcd_puts_hu(PSTR("sziv dt"));
+			lcd_gotoxy(0,1);
+			lcd_puti(WoodDelta); lcd_puts_p(PSTR(" C"));
+		break;
+		
+		case 3:
+			lcd_puts_hu(PSTR("nyom r"));
+			lcd_gotoxy(0,1);
+			lcd_puti16(WoodPressureAlert);
+		break;
+		
+		case 4:
+			lcd_puts_hu(PSTR("rárak"));
+			lcd_gotoxy(0,1);
+			lcd_puti(WoodToPut);
+		break;
+		
+		case 5:
+			lcd_puts_hu(PSTR("hõm r."));
+			lcd_gotoxy(0,1);
+			lcd_puti(WoodTempAlert);		
+		break;
+		
+		case 6:
+			lcd_gotoxy(12,0);
+			lcd_puts_hu(PSTR("ID"));
+			lcd_gotoxy(0,1);
+			for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+			{
+				lcd_putbyte_hex(Wood.SensorID[i]);
+			}
+		break;
+	}
+	
+}
+
+bool Wood_ActionCallback(MENU_BUTTON *button, uint8_t column)
+{
+	uint8_t actSensor = FindActSensor(Wood.SensorID);
+	switch(button->role){
+		case MENU_UP:
+		switch (column)
+		{
+			case 2:
+				++WoodDelta;
+			break;
+			
+			case 3:
+				++WoodPressureAlert;
+			break;
+			
+			case 4:
+				++WoodToPut;
+			break;
+			
+			case 5:
+				++WoodTempAlert;
+			break;
+			
+			case 6:
+				if (++actSensor == nSensors)
+					actSensor = 0;
+			break;
+		}
+		break;
+		
+		case MENU_DOWN:
+		switch (column)
+		{		
+			case 2:
+				--WoodDelta;
+			break;
+				
+			case 3:
+				--WoodPressureAlert;
+			break;
+			
+			case 4:
+				--WoodToPut;
+			break;
+			
+			case 5:
+				--WoodTempAlert;
+			break;
+			
+			case 6:
+				if (--actSensor == 255)
+					actSensor = nSensors - 1;
+			break;
+		}
+		
+		
+		break;
+		
+		case MENU_CONFIRM:
+		switch (column)
+		{
+			case 0:
+			case 1:
+				return true;
+				
+			case 2:
+				eeprom_update_byte(&eeWoodDelta, WoodDelta);
+			break;
+				
+			case 3:
+				eeprom_update_word(&eeWoodPressureAlert, WoodPressureAlert);
+			break;
+			
+			case 4:
+				eeprom_update_byte(&eeWoodToPut, WoodToPut);
+			break;
+			
+			case 5:
+				eeprom_update_byte(&eeWoodTempAlert, WoodTempAlert);
+			break;
+			
+			case 6:
+				eeprom_update_block(gSensorIDs[actSensor], &eeWoodSensorID, OW_ROMCODE_SIZE);
+			break;
+		}
+		return true;
+		
+		case MENU_CANCEL:
+			return true;
+	}
+	memcpy(&Wood.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
+	Wood_CallbackRender(column);
+	return false;
+}
+
+# define Wood_SUBMENU_ITEMS  7
+static MENU_ITEM Wood_submenu[Wood_SUBMENU_ITEMS] = {
+	{"Vegyes hõm",				Wood_CallbackRender,			Wood_ActionCallback, 						0, NULL},
+	{"Vegyes nyomás",			Wood_CallbackRender,			Wood_ActionCallback, 						0, NULL},
+	{"Vegyes sziv kapcs.",		Wood_CallbackRender,			Wood_ActionCallback, 						0, NULL},
+	{"Vegyes ny. riaszt",		Wood_CallbackRender,			Wood_ActionCallback,						0, NULL},
+	{"Vegyes h. leég",			Wood_CallbackRender,			Wood_ActionCallback,						0, NULL},	
+	{"Vegyes h. riaszt",		Wood_CallbackRender,			Wood_ActionCallback,						0, NULL},	
+	{"Vegyes szenzor ID",		Wood_CallbackRender,			Wood_ActionCallback,						0, NULL},
+};
 
 /*************************************************************************
  Menu DHW, submenu definitions
@@ -168,30 +380,33 @@ void DHWSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("HMV szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(DHW.SensorID, buf, 10);
-	lcd_puts(buf);
+	//char buf[4];
+	//itoa(DHW.SensorID, buf, 10);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(DHW.SensorID[i]);
+	}
+	
 }
 
 bool DHWSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(DHW.SensorID);
 	switch(button->role){
 		case MENU_UP:
-			DHW.SensorID++;
-			if (DHW.SensorID == nSensors)
-				DHW.SensorID = 0;
+			if (++actSensor == nSensors)
+				actSensor = 0;
 			break;
 		case MENU_DOWN:
-			DHW.SensorID--;
-			if (DHW.SensorID == 255)
-				DHW.SensorID = nSensors - 1;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
 			break;
-		case MENU_CONFIRM:
-			eeprom_update_byte(&eeDHWSensorID, DHW.SensorID);
+		case MENU_CONFIRM:			
+			eeprom_update_block(gSensorIDs[actSensor], &eeDHWSensorID, OW_ROMCODE_SIZE);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
-
+	memcpy(&DHW.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	DHWSensor_CallbackRender(column);
 	return false;
 }
@@ -200,29 +415,37 @@ void DHWMinTime_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Min idõ"));
 	lcd_gotoxy(0,1);
-	char buf[5];
-	itoa(DHWMinTime, buf, 10);
-	lcd_puts(buf);
+	lcd_puti(DHWMinTimeHour); lcd_puts_p(PSTR(":")); lcd_puti(DHWMinTimeMinute);
+	//char buf[5];
+	//itoa(DHWMinTime, buf, 10);
+	//lcd_puts(buf);
 }
 
 bool DHWMinTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (DHWMinTime < 2340)
-				DHWMinTime += 10;
-			else
-				DHWMinTime = 0;
-			break;
+			if (++DHWMinTimeMinute == 60)
+			{
+				DHWMinTimeMinute = 0;
+				if (++DHWMinTimeHour == 24)
+				DHWMinTimeHour = 0;
+			}
+		break;
 		case MENU_DOWN:
-			if (DHWMinTime > 65525)
-				DHWMinTime = 2350;
-			else
-				DHWMinTime -= 10;
-			break;
+			if (--DHWMinTimeMinute == 255)
+			{
+				DHWMinTimeMinute = 59;
+				if (--DHWMinTimeHour == 255)
+					DHWMinTimeHour = 23;
+			}
+			//else
+			//	DHWMaxTime -= 10;
+		break;
 		case MENU_CONFIRM:
-		eeprom_update_word(&eeDHWMinTime, DHWMinTime);
+			eeprom_update_byte(&eeDHWMinTimeHour, DHWMinTimeHour);
+			eeprom_update_byte(&eeDHWMinTimeMinute, DHWMinTimeMinute);
 		case MENU_CANCEL:
-		return true;
+			return true;
 	}
 
 	DHWMinTime_CallbackRender(column);
@@ -233,27 +456,35 @@ void DHWMaxTime_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Max idõ"));
 	lcd_gotoxy(0,1);
-	char buf[5];
-	itoa(DHWMaxTime, buf, 10);
-	lcd_puts(buf);
+	lcd_puti(DHWMaxTimeHour); lcd_puts_p(PSTR(":")); lcd_puti(DHWMaxTimeMinute);
+	//char buf[5];
+	//itoa(DHWMaxTimeHour, buf, 10);
+	//lcd_puts(buf);
 }
 
 bool DHWMaxTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (DHWMaxTime < 2340)
-				DHWMaxTime += 10;
-			else
-				DHWMaxTime = 0;
+			if (++DHWMaxTimeMinute == 60)
+			{
+				DHWMaxTimeMinute = 0;
+				if (++DHWMaxTimeHour == 24)
+					DHWMaxTimeHour = 0;
+			}
 			break;
 		case MENU_DOWN:
-			if (DHWMaxTime > 65525)
-				DHWMaxTime = 2350;
-			else
-				DHWMaxTime -= 10;
+			if (--DHWMaxTimeMinute == 255)
+			{
+				DHWMaxTimeMinute = 59;
+				if (--DHWMaxTimeHour == 255)
+					DHWMaxTimeHour = 23;
+			}
+			//else
+			//	DHWMaxTime -= 10;
 			break;
 		case MENU_CONFIRM:
-		eeprom_update_word(&eeDHWMaxTime, DHWMaxTime);
+			eeprom_update_byte(&eeDHWMaxTimeHour, DHWMaxTimeHour);
+			eeprom_update_byte(&eeDHWMaxTimeMinute, DHWMaxTimeMinute);
 		case MENU_CANCEL:
 		return true;
 	}
@@ -276,6 +507,226 @@ static MENU_ITEM DHW_submenu[DHW_SUBMENU_ITEMS] = {
 	{"HMV min hõm",			DHWTempMin_CallbackRender,  	DHWTempMin_ActionCallback, 		0, 						NULL},
 	{"HMV órák",			NULL,							NULL,							DHWHOURS_SUBMENU_ITEMS,	DHWHOURS_submenu},
 	{"HMV szenzor",			DHWSensor_CallbackRender, 		DHWSensor_ActionCallback, 		0, 						NULL},
+};
+
+/*************************************************************************
+ Menu SecondFloor, submenu definitions
+*************************************************************************/
+void SecondFloor_CallbackRender(uint8_t which)
+{
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Felsõ szint"));
+	char buf1[5];
+	char buf2[2];
+	switch (which)
+	{
+		case 0:
+			lcd_gotoxy(12,0);
+			lcd_puts_hu(PSTR("hõm"));
+			lcd_gotoxy(0,1);
+			lcd_puts(SecondFloor.ActualTempBuffer); lcd_puts_p(PSTR(".")); lcd_puts(SecondFloor.ActualTempFracBuffer); lcd_puts_p(PSTR(" C"));
+		break;
+		
+		case 1:			
+			itoa(SecondFloorDesired, buf1, 10);
+			strcat(buf1, ".");
+			itoa(SecondFloorFracDesired, buf2, 10);
+			strcat(buf1, buf2);			
+			lcd_gotoxy(12,0);
+			lcd_puts_hu(PSTR("kívánt"));
+			lcd_gotoxy(0,1);
+			lcd_puts(buf1);
+		break;
+		
+		case 2:
+			lcd_gotoxy(12,0);
+			lcd_puts_hu(PSTR("term."));
+			lcd_gotoxy(0,1);
+			if (SecondFloorThermostatActive)
+				lcd_puts_p(PSTR("bekapcsolva")); 
+			else
+				lcd_puts_p(PSTR("kikapcsolva"));
+		break;
+		
+		case 3:
+			lcd_gotoxy(12,0);
+			lcd_puts_hu(PSTR("hiszt."));
+			lcd_gotoxy(0,1);
+			lcd_puts_p(PSTR("0.")); lcd_putc((char)(SecondFloorHysteresis + 48)); lcd_puts_p(PSTR(" C"));
+		break;
+		
+		case 4:
+			lcd_clrscr();
+			lcd_puts_hu(PSTR("Min idõ"));
+			lcd_gotoxy(0,1);
+			lcd_puti(SecondFloorMinTimeHour); lcd_puts_p(PSTR(":")); lcd_puti(SecondFloorMinTimeMinute);
+		break;
+		
+		case 5:
+			lcd_clrscr();
+			lcd_puts_hu(PSTR("Max idõ"));
+			lcd_gotoxy(0,1);
+			lcd_puti(SecondFloorMaxTimeHour); lcd_puts_p(PSTR(":")); lcd_puti(SecondFloorMaxTimeMinute);
+		break;
+		
+		case 6:
+			lcd_gotoxy(12,0);
+			lcd_puts_hu(PSTR("ID"));
+			lcd_gotoxy(0,1);
+			for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+			{
+				lcd_putbyte_hex(SecondFloor.SensorID[i]);
+			}
+		break;
+	}
+	
+}
+
+bool SecondFloor_ActionCallback(MENU_BUTTON *button, uint8_t column)
+{
+	uint8_t actSensor = FindActSensor(SecondFloor.SensorID);
+	switch(button->role){
+		case MENU_UP:
+			switch (column)
+			{
+				case 1:
+					if (++SecondFloorFracDesired == 10)
+					{
+						++SecondFloorDesired;
+						SecondFloorFracDesired = 0;
+					}
+				break;
+				
+				case 2:
+					SecondFloorThermostatActive ^= (1 << 0);
+					break;
+				
+				case 3:
+					if (++SecondFloorHysteresis == 10)
+						SecondFloorHysteresis = 0;					
+				break;
+				
+				case 4:
+					if (++SecondFloorMinTimeMinute == 60)
+					{
+						SecondFloorMinTimeMinute = 0;
+						if (++SecondFloorMinTimeHour == 24)
+						SecondFloorMinTimeHour = 0;
+					}
+				break;
+				
+				case 5:
+					if (++SecondFloorMaxTimeMinute == 60)
+					{
+						SecondFloorMaxTimeMinute = 0;
+						if (++SecondFloorMaxTimeHour == 24)
+						SecondFloorMaxTimeHour = 0;
+					}
+				break;
+				
+				case 6:
+					if (++actSensor == nSensors)
+						actSensor = 0;
+				break;
+			}			
+		break;
+		
+		case MENU_DOWN:
+			switch (column)
+			{
+				case 1:
+					if (--SecondFloorFracDesired == 255)
+					{
+						--SecondFloorDesired;
+						SecondFloorFracDesired = 9;
+					}
+				break;
+				
+				case 2:
+					SecondFloorThermostatActive ^= (1 << 0);
+				break;
+				
+				case 3:
+					if (++SecondFloorHysteresis == 255)
+						SecondFloorHysteresis = 9;
+				break;
+				
+				case 4:
+					if (--SecondFloorMinTimeMinute == 255)
+					{
+						SecondFloorMinTimeMinute = 59;
+						if (--SecondFloorMinTimeHour == 255)
+						SecondFloorMinTimeHour = 23;
+					}
+				break;
+				
+				case 5:
+					if (--SecondFloorMaxTimeMinute == 255)
+					{
+						SecondFloorMaxTimeMinute = 59;
+						if (--SecondFloorMaxTimeHour == 255)
+						SecondFloorMaxTimeHour = 23;
+					}
+				break;
+				
+				case 6:
+					if (--actSensor == 255)
+						actSensor = nSensors - 1;				
+				break;
+			}
+		
+		
+		break;
+		
+		case MENU_CONFIRM:
+			switch (column)
+			{	
+				case 1:
+					eeprom_update_byte(&eeSecondFloorDesired, SecondFloorDesired);
+					eeprom_update_byte(&eeSecondFloorFracDesired, SecondFloorFracDesired);
+					break;
+					
+				case 2:
+					eeprom_update_byte(&eeSecondFloorThermostatActive, SecondFloorThermostatActive);
+				break;
+					
+				case 3:
+					eeprom_update_byte(&eeSecondFloorHysteresis, SecondFloorHysteresis);
+				break;
+				
+				case 4:
+					eeprom_update_byte(&eeSecondFloorMinTimeHour, SecondFloorMinTimeHour);
+					eeprom_update_byte(&eeSecondFloorMinTimeMinute, SecondFloorMinTimeMinute);
+				break;
+				
+				case 5:
+					eeprom_update_byte(&eeSecondFloorMaxTimeHour, SecondFloorMaxTimeHour);
+					eeprom_update_byte(&eeSecondFloorMaxTimeMinute, SecondFloorMaxTimeMinute);
+				break;
+				
+				case 6:
+					eeprom_update_block(gSensorIDs[actSensor], &eeSecondFloorSensorID, OW_ROMCODE_SIZE);
+				break;
+			}
+			return true;
+					
+		case MENU_CANCEL:
+		return true;
+	}
+	memcpy(&SecondFloor.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
+	SecondFloor_CallbackRender(column);
+	return false;
+}
+
+# define SECONDFLOOR_SUBMENU_ITEMS  7
+static MENU_ITEM SecondFloor_submenu[SECONDFLOOR_SUBMENU_ITEMS] = {
+	{"Felsõ szint hõm", 	SecondFloor_CallbackRender, 	Simple_Callback, 					0,						NULL},
+	{"Felsõ szint kivánt",	SecondFloor_CallbackRender,		SecondFloor_ActionCallback,			0,						NULL},
+	{"Felsõ szint aktiv",	SecondFloor_CallbackRender,		SecondFloor_ActionCallback,			0,						NULL},
+	{"Felsõ szint hiszt.",	SecondFloor_CallbackRender,		SecondFloor_ActionCallback,			0,						NULL},
+	{"F. szint min idõ",	SecondFloor_CallbackRender, 	SecondFloor_ActionCallback, 		0, 						NULL},
+	{"F. szint max idõ",	SecondFloor_CallbackRender, 	SecondFloor_ActionCallback, 		0, 						NULL},
+	{"Felsõ szint ID",		SecondFloor_CallbackRender, 	SecondFloor_ActionCallback, 		0, 						NULL},
 };
 
 /*************************************************************************
@@ -359,30 +810,30 @@ void BufferSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Puffer szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(Buffer.SensorID, buf, 10);
-	lcd_puts(buf);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(Buffer.SensorID[i]);
+	}
 }
 
 bool BufferSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(Buffer.SensorID);
 	switch(button->role){
 		case MENU_UP:
-			Buffer.SensorID++;
-			if (Buffer.SensorID == nSensors)
-				Buffer.SensorID = 0;
+			if (++actSensor == nSensors)
+				actSensor = 0;
 			break;
 		case MENU_DOWN:
-			Buffer.SensorID--;
-			if (Buffer.SensorID == 255)
-				Buffer.SensorID = nSensors - 1;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
 			break;
-		case MENU_CONFIRM:
-			eeprom_update_byte(&eeBufferSensorID, Buffer.SensorID);
+		case MENU_CONFIRM:			
+			eeprom_update_block(gSensorIDs[actSensor], &eeBufferSensorID, OW_ROMCODE_SIZE);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
-
+	memcpy(&Buffer.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	BufferSensor_CallbackRender(column);
 	return false;
 }
@@ -475,30 +926,30 @@ void EngineeringSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Gépház szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(Engineering.SensorID, buf, 10);
-	lcd_puts(buf);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(Engineering.SensorID[i]);
+	}
 }
 
 bool EngineeringSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(Engineering.SensorID);
 	switch(button->role){
 		case MENU_UP:
-			Engineering.SensorID++;
-			if (Engineering.SensorID == nSensors)
-				Engineering.SensorID = 0;
+			if (++actSensor == nSensors)
+				actSensor = 0;
 			break;
 		case MENU_DOWN:
-			Engineering.SensorID--;
-			if (Engineering.SensorID == 255)
-				Engineering.SensorID = nSensors - 1;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeEngineeringSensorID, Engineering.SensorID);
+			eeprom_update_block(gSensorIDs[actSensor], &eeEngineeringSensorID, OW_ROMCODE_SIZE);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
-
+	memcpy(&Engineering.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	EngineeringSensor_CallbackRender(column);
 	return false;
 }
@@ -712,30 +1163,30 @@ void GarageSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Garázs szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(Garage.SensorID, buf, 10);
-	lcd_puts(buf);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(Garage.SensorID[i]);
+	}
 }
 
 bool GarageSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(Garage.SensorID);
 	switch(button->role){
 		case MENU_UP:
-			Garage.SensorID++;
-			if (Garage.SensorID == nSensors)
-				Garage.SensorID = 0;
+			if (++actSensor == nSensors)
+				actSensor = 0;
 			break;
 		case MENU_DOWN:
-			Garage.SensorID--;
-			if (Garage.SensorID == 255)
-				Garage.SensorID = nSensors - 1;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeGarageSensorID, Garage.SensorID);
+			eeprom_update_block(gSensorIDs[actSensor], &eeGarageSensorID, OW_ROMCODE_SIZE);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
-
+	memcpy(&Garage.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	GarageSensor_CallbackRender(column);
 	return false;
 }
@@ -744,13 +1195,13 @@ void LivingRoomTemp_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Nappali akt hõm"));
 	lcd_gotoxy(0,1);
-	lcd_puts(LivingRoomTempBuf); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoomTempFracBuf); lcd_puts_p(PSTR(" C"));
+	lcd_puts(LivingRoom.ActualTempBuffer); lcd_puts_p(PSTR(".")), lcd_puts(LivingRoom.ActualTempFracBuffer); lcd_puts_p(PSTR(" C"));
 
 	char buffer[7];
 	lcd_gotoxy(0,2);
-	itoa(LivingRoomTempMin, buffer, 10);
+	itoa(LivingRoom.MeasuredMinimumTemp, buffer, 10);
 	lcd_puts(buffer); lcd_puts_p(PSTR("/"));
-	itoa(LivingRoomTempMax, buffer, 10);
+	itoa(LivingRoom.MeasuredMaximumTemp, buffer, 10);
 	lcd_puts(buffer); lcd_puts_p(PSTR(" C"));
 }
 
@@ -758,30 +1209,30 @@ void LivingRoomSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Nappali szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(LivingRoomSensorID, buf, 10);
-	lcd_puts(buf);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(LivingRoom.SensorID[i]);
+	}
 }
 
 bool LivingRoomSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(LivingRoom.SensorID);
 	switch(button->role){
 		case MENU_UP:
-			LivingRoomSensorID++;
-			if (LivingRoomSensorID == nSensors)
-				LivingRoomSensorID = 0;
+			if (++actSensor == nSensors)
+				actSensor = 0;
 			break;
 		case MENU_DOWN:
-			LivingRoomSensorID--;
-			if (LivingRoomSensorID == 255)
-				LivingRoomSensorID = nSensors - 1;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeLivingRoomSensorID, LivingRoomSensorID);
+			eeprom_update_block(gSensorIDs[actSensor], &eeLivingRoomSensorID, OW_ROMCODE_SIZE);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
-
+	memcpy(&LivingRoom.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	LivingRoomSensor_CallbackRender(column);
 	return false;
 }
@@ -804,30 +1255,31 @@ void FloorSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Padló szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(Floor.SensorID, buf, 10);
-	lcd_puts(buf);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(Floor.SensorID[i]);
+	}
 }
 
 bool FloorSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(Floor.SensorID);
 	switch(button->role){
 		case MENU_UP:
-			Floor.SensorID++;
-			if (Floor.SensorID == nSensors)
-				Floor.SensorID = 0;
+			if (++actSensor == nSensors)
+				actSensor = 0;
 			break;
 		case MENU_DOWN:
-			Floor.SensorID--;
-			if (Floor.SensorID == 255)
-				Floor.SensorID = nSensors - 1;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeFloorSensorID, Floor.SensorID);
+			eeprom_update_block(gSensorIDs[actSensor], &eeFloorSensorID, OW_ROMCODE_SIZE);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
 
+	memcpy(&Floor.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	FloorSensor_CallbackRender(column);
 	return false;
 }
@@ -843,30 +1295,31 @@ void GasForwardSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Elõre szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(GasForward.SensorID, buf, 10);
-	lcd_puts(buf);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(GasForward.SensorID[i]);
+	}
 }
 
 bool GasForwardSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(GasForward.SensorID);
 	switch(button->role){
 		case MENU_UP:
-			GasForward.SensorID++;
-			if (GasForward.SensorID == nSensors)
-				GasForward.SensorID = 0;
+			if (++actSensor == nSensors)
+				actSensor = 0;
 			break;
 		case MENU_DOWN:
-			GasForward.SensorID--;
-			if (GasForward.SensorID == 255)
-				GasForward.SensorID = nSensors - 1;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeGasForwardTempSensorID, GasForward.SensorID);
+			eeprom_update_block(gSensorIDs[actSensor], &eeGasForwardTempSensorID, OW_ROMCODE_SIZE);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
 
+	memcpy(&GasForward.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	GasForwardSensor_CallbackRender(column);
 	return false;
 }
@@ -882,30 +1335,31 @@ void GasReturnSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Vissza szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(GasReturn.SensorID, buf, 10);
-	lcd_puts(buf);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(GasReturn.SensorID[i]);
+	}
 }
 
 bool GasReturnSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(GasReturn.SensorID);
 	switch(button->role){
 		case MENU_UP:
-			GasReturn.SensorID++;
-			if (GasReturn.SensorID == nSensors)
-				GasReturn.SensorID = 0;
+			if (++actSensor == nSensors)
+				actSensor = 0;
 			break;
 		case MENU_DOWN:
-			GasReturn.SensorID--;
-			if (GasReturn.SensorID == 255)
-				GasReturn.SensorID = nSensors - 1;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_byte(&eeGasReturnTempSensorID, GasReturn.SensorID);
+			eeprom_update_block(gSensorIDs[actSensor], &eeGasReturnTempSensorID, OW_ROMCODE_SIZE);
 			return true;
 		case MENU_CANCEL:
 			return true;
 	}
 
+	memcpy(&GasReturn.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	GasReturnSensor_CallbackRender(column);
 	return false;
 }
@@ -921,30 +1375,30 @@ void ForwardSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Elõre szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(Forward.SensorID, buf, 10);
-	lcd_puts(buf);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(Forward.SensorID[i]);
+	}
 }
 
 bool ForwardSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(Forward.SensorID);
 	switch(button->role){
 		case MENU_UP:
-		Forward.SensorID++;
-		if (Forward.SensorID == nSensors)
-		Forward.SensorID = 0;
-		break;
+			if (++actSensor == nSensors)
+				actSensor = 0;
+			break;
 		case MENU_DOWN:
-		Forward.SensorID--;
-		if (Forward.SensorID == 255)
-		Forward.SensorID = nSensors - 1;
-		break;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
+			break;
 		case MENU_CONFIRM:
-		eeprom_update_byte(&eeForwardTempSensorID, Forward.SensorID);
-		return true;
+			eeprom_update_block(gSensorIDs[actSensor], &eeForwardTempSensorID, OW_ROMCODE_SIZE);
+			return true;
 		case MENU_CANCEL:
-		return true;
+			return true;
 	}
-
+	memcpy(&Forward.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	ForwardSensor_CallbackRender(column);
 	return false;
 }
@@ -960,30 +1414,31 @@ void ReturnSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Vissza szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(Return.SensorID, buf, 10);
-	lcd_puts(buf);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(Return.SensorID[i]);
+	}
 }
 
 bool ReturnSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(Return.SensorID);
 	switch(button->role){
 		case MENU_UP:
-		Return.SensorID++;
-		if (Return.SensorID == nSensors)
-		Return.SensorID = 0;
-		break;
+			if (++actSensor == nSensors)
+				actSensor = 0;
+			break;
 		case MENU_DOWN:
-		Return.SensorID--;
-		if (Return.SensorID == 255)
-		Return.SensorID = nSensors - 1;
-		break;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
+			break;
 		case MENU_CONFIRM:
-		eeprom_update_byte(&eeReturnTempSensorID, Return.SensorID);
-		return true;
+			eeprom_update_block(gSensorIDs[actSensor], &eeReturnTempSensorID, OW_ROMCODE_SIZE);
+			return true;
 		case MENU_CANCEL:
-		return true;
+			return true;
 	}
 
+	memcpy(&Return.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	ReturnSensor_CallbackRender(column);
 	return false;
 }
@@ -999,30 +1454,31 @@ void MixedSensor_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Kevert szenzor ID"));
 	lcd_gotoxy(0,1);
-	char buf[4];
-	itoa(Mixed.SensorID, buf, 10);
-	lcd_puts(buf);
+	for (uint8_t i = 0; i < OW_ROMCODE_SIZE; i++)
+	{
+		lcd_putbyte_hex(Mixed.SensorID[i]);
+	}
 }
 
 bool MixedSensor_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	uint8_t actSensor = FindActSensor(Mixed.SensorID);
 	switch(button->role){
 		case MENU_UP:
-		Mixed.SensorID++;
-		if (Mixed.SensorID == nSensors)
-		Mixed.SensorID = 0;
-		break;
+			if (++actSensor == nSensors)
+				actSensor = 0;
+			break;
 		case MENU_DOWN:
-		Mixed.SensorID--;
-		if (Mixed.SensorID == 255)
-		Mixed.SensorID = nSensors - 1;
-		break;
+			if (--actSensor == 255)
+				actSensor = nSensors - 1;
+			break;
 		case MENU_CONFIRM:
-		eeprom_update_byte(&eeMixedTempSensorID, Mixed.SensorID);
-		return true;
+			eeprom_update_block(gSensorIDs[actSensor], &eeMixedTempSensorID, OW_ROMCODE_SIZE);
+			return true;
 		case MENU_CANCEL:
-		return true;
+			return true;
 	}
 
+	memcpy(&Mixed.SensorID, &gSensorIDs[actSensor], OW_ROMCODE_SIZE);
 	MixedSensor_CallbackRender(column);
 	return false;
 }
@@ -1096,6 +1552,7 @@ void MenuTimer_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Menü idõzítõ (mp)"));
 	char buf[4];
+	lcd_gotoxy(0,1);
 	itoa(MenuTimer, buf, 10);
 	lcd_puts(buf);
 }
@@ -1189,16 +1646,16 @@ void GasForwardHeatTemp_CallbackRender(uint8_t which){
 bool GasForwardHeatTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-		++GasForwardHeatTemp;
-		break;
+			++GasForwardHeatTemp;
+			break;
 		case MENU_DOWN:
-		--GasForwardHeatTemp;
-		break;
+			--GasForwardHeatTemp;
+			break;
 		case MENU_CONFIRM:
-		eeprom_update_byte(&eeGasForwardHeatTemp, GasForwardHeatTemp);
-		return true;
+			eeprom_update_byte(&eeGasForwardHeatTemp, GasForwardHeatTemp);
+			return true;
 		case MENU_CANCEL:
-		return true;
+			return true;
 	}
 
 	GasForwardHeatTemp_CallbackRender(column);
@@ -1412,23 +1869,33 @@ void ComfortMode_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Komfort mód"));
 	lcd_gotoxy(0,1);
-	if (ComfortMode & (1 << 1))
-		lcd_puts_p(PSTR("Be"));
-	else
-		lcd_puts_p(PSTR("Ki"));
+	if (ComfortMode == 0)
+		lcd_puts_p(PSTR("Kikapcsolva"));
+	else if (ComfortMode == 1)
+		lcd_puts_hu(PSTR("Alsó szint"));
+	else if (ComfortMode == 2)
+		lcd_puts_hu(PSTR("Felsõ szint"));
+	else if (ComfortMode == 3)
+		lcd_puts_hu(PSTR("Mindkét szint"));
+	else if (ComfortMode == 4)
+		lcd_puts_hu(PSTR("Padló"));
 }
 
 bool ComfortMode_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
+			if (++ComfortMode > 4)
+				ComfortMode = 0;
+		break;
 		case MENU_DOWN:
-			ComfortMode ^= (1 << 1);
-			break;
+			if (--ComfortMode == 255)
+				ComfortMode = 4;
+		break;
 		case MENU_CONFIRM:
 			eeprom_update_byte(&eeComfortMode, ComfortMode);
 			return true;
 		case MENU_CANCEL:
-		return true;
+			return true;
 	}
 	
 	 ComfortMode_CallbackRender(column);
@@ -1436,26 +1903,38 @@ bool ComfortMode_ActionCallback(MENU_BUTTON *button, uint8_t column){
 }
 
 void ComfortTemp_CallbackRender(uint8_t which){
+	char buf1[5];
+	char buf2[2];
+	itoa(ComfortTemp, buf1, 10);
+	strcat(buf1, ".");
+	itoa(ComfortTempFrac, buf2, 10);
+	strcat(buf1, buf2);
+	
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Komfort hõm"));
 	lcd_gotoxy(0,1);
-	char buf[5];
-	itoa(ComfortTemp, buf, 10);
-	lcd_puts(buf);
+	lcd_puts(buf1);
 }
 
 bool ComfortTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if ((ComfortTemp += 10) == 3500)
-				ComfortTemp = 1500;
+			if (++ComfortTempFrac == 10)
+			{
+				ComfortTemp++;
+				ComfortTempFrac = 0;
+			}
 			break;
 		case MENU_DOWN:
-			if ((ComfortTemp -= 10) == 1000)
-				ComfortTemp = 3500;
+			if (--ComfortTempFrac == 0xFF)
+			{
+				ComfortTemp--;
+				ComfortTempFrac = 9;
+			}
 			break;
 		case MENU_CONFIRM:
-			eeprom_update_word(&eeComfortTemp, ComfortTemp);
+			eeprom_update_byte(&eeComfortTemp, ComfortTemp);
+			eeprom_update_byte(&eeComfortTempFrac, ComfortTempFrac);
 			return true;
 		case MENU_CANCEL:
 			return true;
@@ -1495,31 +1974,64 @@ bool ComfortForwardTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
+void ComfortFloorTemp_CallbackRender(uint8_t which){
+	lcd_clrscr();
+	lcd_puts_hu(PSTR("Komfort padló"));
+	lcd_gotoxy(0,1);
+	char buf[5];
+	itoa(ComfortFloorTemp, buf, 10);
+	lcd_puts(buf);
+}
+
+bool ComfortFloorTemp_ActionCallback(MENU_BUTTON *button, uint8_t column){
+	switch(button->role){
+		case MENU_UP:
+		if (++ComfortFloorTemp == ForwardHeatTemp)
+		ComfortFloorTemp--;
+		break;
+		case MENU_DOWN:
+		if (--ComfortFloorTemp == 10)
+		ComfortFloorTemp++;
+		break;
+		case MENU_CONFIRM:
+		eeprom_update_byte(&eeComfortFloorTemp, ComfortFloorTemp);
+		return true;
+		case MENU_CANCEL:
+		return true;
+	}
+
+	ComfortFloorTemp_CallbackRender(column);
+	return false;
+}
+
 void ComfortMinTime_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Min idõ"));
-	lcd_gotoxy(0,1);
-	char buf[5];
-	itoa(ComfortMinTime, buf, 10);
-	lcd_puts(buf);
+	lcd_gotoxy(0,1);	
+	lcd_puti(ComfortMinTimeHour); lcd_puts_p(PSTR(":")); lcd_puti(ComfortMinTimeMinute);
 }
 
 bool ComfortMinTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (ComfortMinTime < 2340)
-				ComfortMinTime += 10;
-			else
-				ComfortMinTime = 0;
-			break;
+			if (++ComfortMinTimeMinute == 60)
+			{
+				ComfortMinTimeMinute = 0;
+				if (++ComfortMinTimeHour == 24)
+				ComfortMinTimeHour = 0;
+			}
+		break;
 		case MENU_DOWN:
-			if (ComfortMinTime > 65525)
-				ComfortMinTime = 2350;
-			else
-				ComfortMinTime -= 10;
-			break;
+			if (--ComfortMinTimeMinute == 255)
+			{
+				ComfortMinTimeMinute = 59;
+				if (--ComfortMinTimeHour == 255)
+					ComfortMinTimeHour = 23;
+			}
+		break;
 		case MENU_CONFIRM:
-		eeprom_update_word(&eeComfortMinTime, ComfortMinTime);
+			eeprom_update_byte(&eeComfortMinTimeHour, ComfortMinTimeHour);
+			eeprom_update_byte(&eeComfortMinTimeMinute, ComfortMinTimeMinute);
 		case MENU_CANCEL:
 		return true;
 	}
@@ -1531,28 +2043,31 @@ bool ComfortMinTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
 void ComfortMaxTime_CallbackRender(uint8_t which){
 	lcd_clrscr();
 	lcd_puts_hu(PSTR("Max idõ"));
-	lcd_gotoxy(0,1);
-	char buf[5];
-	itoa(ComfortMaxTime, buf, 10);
-	lcd_puts(buf);
+	lcd_gotoxy(0,1);	
+	lcd_puti(ComfortMaxTimeHour); lcd_puts_p(PSTR(":")); lcd_puti(ComfortMaxTimeMinute);
 }
 
 bool ComfortMaxTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	switch(button->role){
 		case MENU_UP:
-			if (ComfortMaxTime < 2340)
-				ComfortMaxTime += 10;
-			else
-				ComfortMaxTime = 0;
-			break;
+		if (++ComfortMaxTimeMinute == 60)
+		{
+			ComfortMaxTimeMinute = 0;
+			if (++ComfortMaxTimeHour == 24)
+			ComfortMaxTimeHour = 0;
+		}
+		break;
 		case MENU_DOWN:
-			if (ComfortMaxTime > 65525)
-				ComfortMaxTime = 2350;
-			else
-				ComfortMaxTime -= 10;
-			break;
+			if (--ComfortMaxTimeMinute == 255)
+			{
+				ComfortMaxTimeMinute = 59;
+				if (--ComfortMaxTimeHour == 255)
+					ComfortMaxTimeHour = 23;
+			}
+		break;
 		case MENU_CONFIRM:
-		eeprom_update_word(&eeComfortMaxTime, ComfortMaxTime);
+			eeprom_update_byte(&eeComfortMaxTimeHour, ComfortMaxTimeHour);
+			eeprom_update_byte(&eeComfortMaxTimeMinute, ComfortMaxTimeMinute);
 		case MENU_CANCEL:
 		return true;
 	}
@@ -1561,11 +2076,12 @@ bool ComfortMaxTime_ActionCallback(MENU_BUTTON *button, uint8_t column){
 	return false;
 }
 
-#define COMFORT_SUBMENU_ITEMS 5
+#define COMFORT_SUBMENU_ITEMS 6
 static MENU_ITEM COMFORT_submenu[COMFORT_SUBMENU_ITEMS] = {
 	{"Komfort mód", 			ComfortMode_CallbackRender, 		ComfortMode_ActionCallback,			0,	NULL},
 	{"Komfort hõm", 			ComfortTemp_CallbackRender,			ComfortTemp_ActionCallback,			0,	NULL},
 	{"Komfort elõremenõ", 		ComfortForwardTemp_CallbackRender,	ComfortForwardTemp_ActionCallback,	0,	NULL},
+	{"Komfort padló", 			ComfortFloorTemp_CallbackRender,	ComfortFloorTemp_ActionCallback,	0,	NULL},
 	{"Komfort min idõ", 		ComfortMinTime_CallbackRender,		ComfortMinTime_ActionCallback,		0,	NULL},
 	{"Komfort max idõ", 		ComfortMaxTime_CallbackRender,		ComfortMaxTime_ActionCallback,		0,	NULL}
 };
@@ -1612,16 +2128,17 @@ static MENU_ITEM SYSPARAM_submenu[SYSPARAM_SUBMENU_ITEMS] = {
 	{"Újraindulások",	Restarts_CallbackRender, 			Restarts_ActionCallback,		0,						NULL},
 };
 
-
 /*
 ** HOME menu items definition
 */
-#define MENU_HOME_ITEMS  7
+#define MENU_HOME_ITEMS  9
 static MENU_ITEM home_items[MENU_HOME_ITEMS] = {
 	{"HMV beállítás",   	NULL,                           NULL,                     DHW_SUBMENU_ITEMS,     		DHW_submenu	  	},
+	{"Felsõ szint",   		NULL,                           NULL,                     SECONDFLOOR_SUBMENU_ITEMS,    SecondFloor_submenu	},	
 	{"Puffer beállítás",   	NULL,                           NULL,                     BUFFER_SUBMENU_ITEMS,     	BUFFER_submenu	},
-	{"Kazánház termoszt",	NULL,                           NULL,                     ENGINEERING_SUBMENU_ITEMS,	ENGINEERING_submenu	},
+	{"Gépház termoszt",		NULL,                           NULL,                     ENGINEERING_SUBMENU_ITEMS,	ENGINEERING_submenu	},
 	{"Külsõ érzékelõ",		NULL,                           NULL,                     HIHxxxx_SUBMENU_ITEMS,   		HIHxxxx_submenu	},
+	{"Vegyes kazán",		NULL,                           NULL,                     Wood_SUBMENU_ITEMS,   		Wood_submenu	},
 	{"Relék",				NULL,							NULL,					  RELAYS_SUBMENU_ITEMS, 		RELAYS_submenu	},
 	{"Egyéb érzékelõ",		NULL,							NULL,					  SENSORS_SUBMENU_ITEMS, 		SENSORS_submenu	},
 	{"Vezérlõ beállítás",	NULL,							NULL,					  SYSPARAM_SUBMENU_ITEMS, 		SYSPARAM_submenu},

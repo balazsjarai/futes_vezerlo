@@ -300,6 +300,7 @@ void lcd_puts_hu( const char *s);
 
 void lcd_puti(unsigned int i);
 
+void lcd_puti16(uint16_t i);
 
 static const PROGMEM uint8_t magyar_betuk[] =
 {

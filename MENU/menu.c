@@ -145,6 +145,8 @@ static void scrollMenu(MENU_BUTTON *button){
 			if(current_state->level != MENU_LEVEL_1){
 				current_state = &menu_states[current_state->prev_state->level];
 			}
+			else
+				menutimer = 0;
 			break;
 	}
 	if(current_state->level != MENU_CALLBACK){
@@ -177,7 +179,7 @@ void menuPollButtons(){
 
 		if(b->state == 0xF000){
 			b->pressed = true;
-			MenuTimer = eeprom_read_byte(&eeMenuTimer);
+			menutimer = MenuTimer; //= eeprom_read_byte(&eeMenuTimer);
 			BUZZER_PORT |= (1 << BUZZER_PIN);
 			if(current_state->level != MENU_CALLBACK){
 				scrollMenu(b);

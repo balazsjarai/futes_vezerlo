@@ -65,8 +65,7 @@
 
 /* for description of functions see ds18x20.c */
 
-extern void DS18X20_find_sensor(uint8_t *diff, 
-	uint8_t id[]);
+extern void DS18X20_find_sensor(uint8_t *diff, 	uint8_t id[]);
 	
 extern uint8_t	DS18X20_get_power_status(uint8_t id[]);
 

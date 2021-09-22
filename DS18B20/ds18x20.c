@@ -143,10 +143,11 @@ int8_t DS18X20_temp_cmp(uint8_t subzero1, uint16_t cel1,
 void DS18X20_find_sensor(uint8_t *diff, uint8_t id[])
 {
 	for (;;) {
-		*diff = ow_rom_search( *diff, &id[0] );
-		if ( *diff==OW_PRESENCE_ERR || *diff==OW_DATA_ERR ||
-		  *diff == OW_LAST_DEVICE ) return;
-		if ( id[0] == DS18B20_ID || id[0] == DS18S20_ID ) return;
+		*diff = ow_rom_search( *diff, &id[0]);
+		if ( *diff==OW_PRESENCE_ERR || *diff==OW_DATA_ERR || *diff == OW_LAST_DEVICE )
+			return;
+		if ( id[0] == DS18B20_ID || id[0] == DS18S20_ID ) 
+			return;
 	}
 }
 
